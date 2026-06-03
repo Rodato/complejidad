@@ -121,8 +121,40 @@ export default function RedRealExplorer() {
   const filtroActivo = FILTROS.find((f) => f.clave === filtro)!;
 
   return (
-    <div className="grid lg:grid-cols-[1.6fr_1fr] gap-6">
-      <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
+      <details className="group rounded-lg border border-slate-200 bg-white text-sm [&_summary]:list-none">
+        <summary className="flex cursor-pointer items-center gap-1.5 px-4 py-2.5 font-medium text-brand-700">
+          <svg
+            className="h-3.5 w-3.5 transition-transform group-open:rotate-90"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path d="M7 5l6 5-6 5V5z" />
+          </svg>
+          ¿Qué mide esto?
+        </summary>
+        <div className="space-y-2 border-t border-slate-100 px-4 py-3 leading-relaxed text-slate-600">
+          <p>
+            La flecha va del <strong>vendedor al comprador</strong>: sigue a la{" "}
+            <strong>tierra</strong>, no al dinero. La punta cae en quien la recibe.
+          </p>
+          <p>
+            El <strong>tamaño y color</strong> de cada actor son sus <strong>compras</strong>{" "}
+            (cuántas veces adquirió tierra). Un nodo grande y rojo{" "}
+            <strong>acumuló tierra</strong>; uno azul claro compró poco o solo vendió.
+          </p>
+          <p className="text-slate-500">
+            No medimos dinero: si siguiéramos el dinero, la flecha iría al revés (del comprador
+            al vendedor). Dos matices: comprar requiere capital, así que un gran acumulador
+            seguramente también tenía dinero; y es la tierra que pasó por la Notaría 2 en
+            1938–1944 (una sola notaría), un indicio de la concentración, no el total de
+            propiedades de cada quien.
+          </p>
+        </div>
+      </details>
+
+      <div className="grid lg:grid-cols-[1.6fr_1fr] gap-6">
+        <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <label htmlFor="slider-anio" className="whitespace-nowrap text-sm font-medium text-slate-600">
@@ -247,8 +279,9 @@ export default function RedRealExplorer() {
         </div>
       </div>
 
-      <div className="card p-4">
-        <PanelDistribucion grafo={grafoAnio} compacto />
+        <div className="card p-4">
+          <PanelDistribucion grafo={grafoAnio} compacto />
+        </div>
       </div>
     </div>
   );
