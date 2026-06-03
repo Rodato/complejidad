@@ -1,8 +1,28 @@
 @import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+
+/* ── Tokens de marca ─────────────────────────────────────────────────────────
+   Color primario = acción (botones, enlaces activos, foco). Rampa indigo/blue.
+   Convención de color semántico en toda la app:
+     brand   = acción / interacción
+     emerald = éxito (solo)
+     rose    = error / peligro (solo)
+     sky/rose en gráficas = curvas de referencia (campana / cola larga)        */
+@theme {
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
 }
 
 @theme inline {
@@ -12,15 +32,117 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, Arial, sans-serif;
+}
+
+/* ── Utilidades de componente reutilizables ──────────────────────────────── */
+@layer components {
+  .card {
+    @apply rounded-xl border border-slate-200/80 bg-white shadow-sm;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2
+      text-sm font-medium transition-colors duration-150
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500
+      focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed
+      active:scale-[0.98];
+  }
+  /* Usar junto a .btn en el markup: className="btn btn-primary" */
+  .btn-primary {
+    @apply bg-brand-600 text-white hover:bg-brand-700;
+  }
+  .btn-secondary {
+    @apply border border-slate-300 bg-white text-slate-700 hover:bg-slate-50;
+  }
+  .btn-ghost {
+    @apply text-slate-600 hover:bg-slate-100;
+  }
+  .btn-sm {
+    @apply px-2.5 py-1.5 text-xs;
+  }
+
+  .field {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm
+      text-slate-900 placeholder:text-slate-400 outline-none transition
+      focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20;
+  }
+
+  .eyebrow {
+    @apply text-sm font-semibold uppercase tracking-wide text-slate-500;
+  }
+}
+
+/* ── Nodos del editor (React Flow) ───────────────────────────────────────── */
+.rf-nodo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 9999px;
+  border: 1.5px solid #1d4ed8;
+  background: #dbeafe;
+  color: #1e3a8a;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: box-shadow 0.12s ease, background 0.12s ease;
+}
+.rf-nodo:hover {
+  background: #bfdbfe;
+}
+.rf-nodo-input {
+  width: 70px;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e3a8a;
+  outline: none;
+}
+.react-flow__node.selected .rf-nodo {
+  box-shadow: 0 0 0 2px #2563eb;
+}
+/* Handles más visibles para que se entienda que se arrastra para conectar */
+.react-flow__handle {
+  width: 9px;
+  height: 9px;
+  background: #2563eb;
+  border: 1.5px solid #fff;
+}
+.react-flow__handle:hover {
+  background: #1d4ed8;
+}
+
+/* ── Animación de feedback (tarjeta de guardado) ─────────────────────────── */
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.anim-in {
+  animation: fade-slide-up 0.25s ease-out;
+}
+
+/* ── Accesibilidad: respetar prefers-reduced-motion ──────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

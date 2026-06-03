@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Taller 5 — "Dibuja el proceso"
 
-## Getting Started
+App interactiva del curso **Introducción a la Complejidad** (Univalle, Daniel Otero).
+Los estudiantes exploran la red real de la Notaría 2 de Cali, **dibujan su propia red**
+viendo emerger en vivo su distribución de grado, y **narran el proceso**.
 
-First, run the development server:
+Stack: **Next.js 16** (App Router, TS) · **React Flow** (`@xyflow/react`) · **Recharts** ·
+**d3-force** · **Google Sheets** (vía service account). Pensado para desplegar en **Vercel**.
+
+## Flujo (3 actos)
+
+1. **Explora la red real** — `data/consolidado_notaria2.csv` (1938–1944) acumulada por año.
+2. **Construye tu red** — lienzo drag-and-draw + distribución en vivo + pista de régimen
+   (campana ≈ azar vs cola larga ≈ vinculación preferencial).
+3. **Escribe la narrativa** — se guarda en Google Sheets (red + secuencia + texto).
+
+`/docente` es el dashboard para proyectar en clase (protegido por contraseña).
+
+## Desarrollo
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run data      # regenera public/data/red.json desde ../../data/consolidado_notaria2.csv
+npm run dev       # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sin variables de entorno, las respuestas se guardan en un archivo temporal local
+(solo para probar). Para Sheets, copiar `.env.example` a `.env.local` y completar.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables de entorno (Vercel)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ver `.env.example`. Reusa el service account `detective-redes@complejidad-496215`:
 
-## Learn More
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY` (con `\n` literales), `SHEET_ID`
+- `SHEET_TAB` (opcional, por defecto `respuestas_taller5`)
+- `DASHBOARD_PASSWORD` (contraseña de `/docente`)
 
-To learn more about Next.js, take a look at the following resources:
+## Datos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`public/data/red.json` se genera desde el consolidado con `scripts/build-red-data.mjs`
+(reusa la limpieza de nombres del taller en Python). Re-correr `npm run data` si cambian
+los datos.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notas
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- La pista de régimen (CV de los grados) es una **intuición visual**, no una prueba
+  estadística de ley de potencia.
+- La heurística: CV ≤ 0.5 → campana · CV ≥ 1.0 → cola larga · intermedio en medio.
