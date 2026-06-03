@@ -126,6 +126,7 @@ export async function leerRespuestas(): Promise<{
   if (tieneCredenciales()) {
     try {
       const sheets = getSheets();
+      await asegurarHoja(sheets); // crea la pestaña si aún no existe (lectura antes del primer guardado)
       const res = await sheets.spreadsheets.values.get({
         spreadsheetId: process.env.SHEET_ID!,
         range: NOMBRE_HOJA,
