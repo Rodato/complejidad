@@ -11,6 +11,7 @@ import {
 import {
   addEdge,
   Background,
+  ConnectionMode,
   Controls,
   Handle,
   MarkerType,
@@ -26,7 +27,6 @@ import {
   type Edge,
   type Node,
   type NodeProps,
-  type OnConnectEnd,
 } from "@xyflow/react";
 import { construirGrafoSimple, PLANTILLAS } from "@/lib/red";
 import type { Accion, GrafoSimple, Topologia } from "@/lib/tipos";
@@ -78,11 +78,14 @@ function ActorEditorNode({ id, data, selected }: NodeProps) {
           ✕ borrar
         </button>
       </NodeToolbar>
-      <Handle type="target" position={Position.Left} />
+      {/* Ambos conectores son "source": con connectionMode=Loose la flecha sigue el
+          SENTIDO DEL ARRASTRE (del nodo donde empiezas al nodo donde sueltas), sin
+          importar qué conector se agarre. Así el estudiante decide la dirección. */}
+      <Handle type="source" id="izq" position={Position.Left} className="rf-handle" />
       <div
         className="rf-nodo"
         onDoubleClick={() => setEditando(true)}
-        title="Doble click para renombrar"
+        title="Arrastra desde el borde hacia otro actor para crear un vínculo · doble click para renombrar"
       >
         {editando ? (
           <input
@@ -104,7 +107,7 @@ function ActorEditorNode({ id, data, selected }: NodeProps) {
           d.label
         )}
       </div>
-      <Handle type="source" position={Position.Right} />
+      <Handle type="source" id="der" position={Position.Right} className="rf-handle" />
     </>
   );
 }
@@ -209,8 +212,20 @@ function Lienzo({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
   );
 
   const { screenToFlowPosition } = useReactFlow();
+
+  // Evita crear un nodo FANTASMA cuando el "click" en el lienzo es en realidad la cola de
+  // un arrastre de vínculo. React Flow resetea connectionInProgress en el pointerup (antes
+  // de que dispare el click), así que su propio guard se escapa por timing y termina
+  // llamando a onPaneClick. Marcamos el gesto al iniciar la conexión (onConnectStart) y lo
+  // limpiamos en cada pointerdown nuevo sobre el lienzo (auto-sana si la conexión terminó
+  // sobre un nodo y nunca hubo click de lienzo que lo consumiera).
+  const gestoConexion = useRef(false);
   const onPaneClick = useCallback(
     (event: React.MouseEvent) => {
+      if (gestoConexion.current) {
+        gestoConexion.current = false;
+        return; // fue el cierre de un vínculo, no un click para crear nodo
+      }
       const pos = screenToFlowPosition({ x: event.clientX, y: event.clientY });
       nuevoNodo(pos.x, pos.y);
     },
@@ -231,25 +246,9 @@ function Lienzo({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
     [edges, setEdges, log, pushHistorial],
   );
 
-  // Soltar un vínculo en el vacío → crea un nodo nuevo YA CONECTADO al de origen.
-  const onConnectEnd = useCallback<OnConnectEnd>(
-    (event, connectionState) => {
-      if (connectionState.isValid) return; // se conectó a un nodo existente (lo maneja onConnect)
-      const desde = connectionState.fromNode;
-      if (!desde) return;
-      const punto = "changedTouches" in event ? event.changedTouches[0] : event;
-      const pos = screenToFlowPosition({ x: punto.clientX, y: punto.clientY });
-      const id = `n${contadorRef.current}`;
-      const label = `${contadorRef.current}`;
-      contadorRef.current += 1;
-      pushHistorial();
-      setNodes((nds) => [...nds, { id, position: pos, data: { label }, type: "actor" }]);
-      setEdges((eds) => addEdge({ id: `${desde.id}-${id}`, source: desde.id, target: id, markerEnd: MARKER }, eds));
-      log("add-nodo", `actor ${label} (conectado a ${desde.id})`);
-      log("add-arista", `${desde.id} → ${id}`);
-    },
-    [screenToFlowPosition, setNodes, setEdges, log, pushHistorial],
-  );
+  // Nota: arrastrar un vínculo al vacío NO crea nada (nodos y vínculos están separados).
+  // Los nodos se crean con click en el lienzo o el botón "+Actor"; los vínculos solo
+  // arrastrando de un actor a otro, y la flecha sigue el sentido del arrastre.
 
   const onNodesDelete = useCallback(
     (b: Node[]) =>
@@ -356,7 +355,15 @@ function Lienzo({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
           puedeRehacer={puedeRehacer}
           onLimpiar={limpiar}
         />
-        <div className="relative flex-1 rounded-lg border border-slate-200 bg-white overflow-hidden">
+        <div
+          className="relative flex-1 rounded-lg border border-slate-200 bg-white overflow-hidden"
+          // En la fase de captura (antes de onConnectStart) limpia la marca: si el gesto
+          // empieza en un conector, onConnectStart la volverá a poner; si empieza en el
+          // lienzo o un nodo, queda limpia y el click sí crea nodo.
+          onPointerDownCapture={() => {
+            gestoConexion.current = false;
+          }}
+        >
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -364,8 +371,11 @@ function Lienzo({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-            onConnectEnd={onConnectEnd}
+            onConnectStart={() => {
+              gestoConexion.current = true;
+            }}
             onPaneClick={onPaneClick}
+            connectionMode={ConnectionMode.Loose}
             defaultEdgeOptions={defaultEdgeOptions}
             onNodesDelete={onNodesDelete}
             onEdgesDelete={onEdgesDelete}
@@ -387,7 +397,8 @@ function Lienzo({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
                     <path d="M8 7l8 1.5M8 8l1 8" stroke="currentColor" strokeWidth="1.2" />
                   </svg>
                   <p className="text-sm font-medium">Haz click en cualquier parte para crear tu primer actor</p>
-                  <p className="text-xs">luego arrastra desde un nodo a otro —o al vacío— para crear un vínculo</p>
+                  <p className="text-xs">luego arrastra de un actor a otro para crear un vínculo</p>
+                  <p className="text-xs text-slate-400">la flecha apunta hacia donde sueltas (vendedor → comprador)</p>
                   <p className="text-xs text-slate-400">o empieza con una plantilla de arriba</p>
                 </div>
               </Panel>

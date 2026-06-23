@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { adyacencia, componentes, construirGrafoAcumulado, gradoEntrada, grados } from "@/lib/red";
+import { adyacencia, componentes, construirGrafoAcumulado, gradoEntrada } from "@/lib/red";
 import type { AristaReal, GrafoSimple } from "@/lib/tipos";
 import PanelDistribucion from "./PanelDistribucion";
 import RedRealCanvas, { type VizArista, type VizNodo } from "./RedRealCanvas";
@@ -21,7 +21,7 @@ const FILTROS: { clave: Filtro; nombre: string; desc: string }[] = [
   {
     clave: "conectados",
     nombre: "Conectados",
-    desc: "Solo actores con 2 o más vínculos: oculta los pares que transaron una sola vez y deja ver la estructura.",
+    desc: "Oculta a quienes solo transaron una vez (actores sueltos y pares aislados) y deja ver los grupos conectados de 3 o más actores.",
   },
   {
     clave: "nucleos",
@@ -87,8 +87,7 @@ export default function RedRealExplorer() {
   );
 
   const degIn = useMemo(() => gradoEntrada(grafoAnio), [grafoAnio]); // compras (métrica central)
-  const degTot = useMemo(() => grados(grafoAnio), [grafoAnio]); // conexiones totales (para el filtro)
-  const comp = useMemo(() => componentes(grafoAnio), [grafoAnio]);
+  const comp = useMemo(() => componentes(grafoAnio), [grafoAnio]); // tamaño de componente (para los filtros)
   const adyAnio = useMemo(() => adyacencia(grafoAnio), [grafoAnio]);
 
   // Nodos/aristas visibles según el filtro estructural (solo afecta lo que se DIBUJA).
@@ -96,7 +95,10 @@ export default function RedRealExplorer() {
     if (!grafoAnio.nodos.length) return { vizNodos: [] as VizNodo[], vizAristas: [] as VizArista[], nVis: 0 };
     const gMax = Math.max(1, ...degIn.values());
     const visible = (id: string) => {
-      if (filtro === "conectados") return (degTot.get(id) ?? 0) >= 2;
+      // "conectados": grupos de 3+ (oculta sueltos y pares de una sola transacción).
+      // Filtrar por componente —no por grado— mantiene las estrellas/grupos COMPLETOS,
+      // así sus aristas siempre se dibujan y ningún nodo queda visible pero suelto.
+      if (filtro === "conectados") return (comp.get(id) ?? 1) >= 3;
       if (filtro === "nucleos") return (comp.get(id) ?? 1) >= 4;
       return true;
     };
@@ -109,7 +111,7 @@ export default function RedRealExplorer() {
       .filter((e) => visibles.has(e.source) && visibles.has(e.target))
       .map((e) => ({ source: e.source, target: e.target }));
     return { vizNodos, vizAristas, nVis: visibles.size };
-  }, [grafoAnio, degIn, degTot, comp, filtro]);
+  }, [grafoAnio, degIn, comp, filtro]);
 
   const hovered = hoverId
     ? {
