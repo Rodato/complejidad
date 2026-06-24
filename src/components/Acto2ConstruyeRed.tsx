@@ -8,15 +8,17 @@ export default function Acto2ConstruyeRed({
   grafo,
   onCambio,
   onRegimen,
+  codigo,
 }: {
   grafo: GrafoSimple;
   onCambio: (e: EstadoEditor) => void;
   onRegimen?: (r: Regimen) => void;
+  codigo: string;
 }) {
   return (
     <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6">
       <div className="h-[560px]">
-        <EditorRed onCambio={onCambio} />
+        <EditorRed onCambio={onCambio} codigo={codigo} />
       </div>
       <div className="card p-5">
         <PanelDistribucion grafo={grafo} onRegimen={onRegimen} />

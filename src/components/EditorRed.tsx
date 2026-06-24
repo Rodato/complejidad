@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -29,6 +30,7 @@ import {
   type NodeProps,
 } from "@xyflow/react";
 import { construirGrafoSimple, PLANTILLAS } from "@/lib/red";
+import { claveGrafo, CLAVES_LEGADO } from "@/lib/claves";
 import type { Accion, GrafoSimple, Topologia } from "@/lib/tipos";
 
 export type EstadoEditor = {
@@ -39,8 +41,6 @@ export type EstadoEditor = {
     aristas: { source: string; target: string }[];
   };
 };
-
-const CLAVE_LS = "taller5-grafo";
 
 // Contextos para que el nodo custom registre el renombrado en el log y en el historial.
 const LogCtx = createContext<(tipo: Accion["tipo"], detalle: string) => void>(() => {});
@@ -120,10 +120,14 @@ const defaultEdgeOptions = { markerEnd: MARKER };
 
 type Snapshot = { nodes: Node[]; edges: Edge[] };
 
-function Lienzo({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
+function Lienzo({ onCambio, codigo }: { onCambio: (e: EstadoEditor) => void; codigo: string }) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { fitView } = useReactFlow();
+
+  // Clave del borrador atada al estudiante: cada código tiene su propia red, así un
+  // computador compartido no arrastra la red del estudiante anterior.
+  const claveLS = useMemo(() => claveGrafo(codigo), [codigo]);
 
   const contadorRef = useRef(1);
   const ordenRef = useRef(0);
@@ -153,8 +157,13 @@ function Lienzo({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
 
   // Rehidratar el trabajo guardado al montar.
   useEffect(() => {
+    // Purga el formato viejo (clave global, sin código) para que no reaparezca la red de
+    // otra sesión guardada en este navegador.
     try {
-      const raw = localStorage.getItem(CLAVE_LS);
+      for (const k of CLAVES_LEGADO) localStorage.removeItem(k);
+    } catch {}
+    try {
+      const raw = localStorage.getItem(claveLS);
       if (raw) {
         const s = JSON.parse(raw);
         if (Array.isArray(s.nodes)) setNodes(s.nodes);
@@ -167,7 +176,7 @@ function Lienzo({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
       }
     } catch {}
     hidratadoRef.current = true;
-  }, [setNodes, setEdges]);
+  }, [setNodes, setEdges, claveLS]);
 
   // Reportar al padre + autosave (debounced) en cada cambio.
   useEffect(() => {
@@ -189,12 +198,12 @@ function Lienzo({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
     guardarTimer.current = setTimeout(() => {
       try {
         localStorage.setItem(
-          CLAVE_LS,
+          claveLS,
           JSON.stringify({ nodes, edges, contador: contadorRef.current, acciones: accionesRef.current }),
         );
       } catch {}
     }, 400);
-  }, [nodes, edges, onCambio]);
+  }, [nodes, edges, onCambio, claveLS]);
 
   const nuevoNodo = useCallback(
     (x: number, y: number) => {
@@ -476,10 +485,16 @@ function Toolbar(props: {
   );
 }
 
-export default function EditorRed({ onCambio }: { onCambio: (e: EstadoEditor) => void }) {
+export default function EditorRed({
+  onCambio,
+  codigo,
+}: {
+  onCambio: (e: EstadoEditor) => void;
+  codigo: string;
+}) {
   return (
     <ReactFlowProvider>
-      <Lienzo onCambio={onCambio} />
+      <Lienzo onCambio={onCambio} codigo={codigo} />
     </ReactFlowProvider>
   );
 }

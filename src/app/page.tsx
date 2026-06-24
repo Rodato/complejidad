@@ -6,9 +6,9 @@ import RedRealExplorer from "@/components/RedRealExplorer";
 import Acto2ConstruyeRed from "@/components/Acto2ConstruyeRed";
 import Acto3Narrativa from "@/components/Acto3Narrativa";
 import type { EstadoEditor } from "@/components/EditorRed";
+import { CLAVE_REGISTRO, limpiarBorrador } from "@/lib/claves";
 import type { GrafoSimple, Regimen } from "@/lib/tipos";
 
-const CLAVE_LS = "taller5-registro";
 const ACTOS = [
   { n: 1, corto: "Explora" },
   { n: 2, corto: "Construye" },
@@ -24,7 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      const guardado = localStorage.getItem(CLAVE_LS);
+      const guardado = localStorage.getItem(CLAVE_REGISTRO);
       if (guardado) setRegistro(JSON.parse(guardado));
     } catch {}
     setHidratado(true);
@@ -52,7 +52,7 @@ export default function Home() {
   const onListo = useCallback((d: DatosRegistro) => {
     setRegistro(d);
     try {
-      localStorage.setItem(CLAVE_LS, JSON.stringify(d));
+      localStorage.setItem(CLAVE_REGISTRO, JSON.stringify(d));
     } catch {}
   }, []);
 
@@ -92,7 +92,11 @@ export default function Home() {
             </div>
             <button
               onClick={() => {
-                localStorage.removeItem(CLAVE_LS);
+                // Al salir, limpia también el borrador (grafo + narrativa) de este
+                // estudiante: red de seguridad para computadores compartidos donde el
+                // siguiente entra sin recargar.
+                limpiarBorrador(registro.codigo);
+                localStorage.removeItem(CLAVE_REGISTRO);
                 setRegistro(null);
               }}
               className="text-xs text-slate-500 underline hover:text-slate-700"
@@ -126,7 +130,7 @@ export default function Home() {
           titulo="Construye tu red"
           bajada="Ahora dibuja tú. Coloca actores y traza vínculos —o parte de una plantilla— y al lado verás, en vivo, a qué régimen de distribución te acercas. Intenta reproducir la forma que viste en la red real, o invéntate un proceso distinto."
         >
-          <Acto2ConstruyeRed grafo={grafoEditor} onCambio={onCambioEditor} onRegimen={setRegimenActual} />
+          <Acto2ConstruyeRed grafo={grafoEditor} onCambio={onCambioEditor} onRegimen={setRegimenActual} codigo={registro.codigo} />
         </Seccion>
 
         <Seccion

@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { estadisticasGrado, regimen as calcularRegimen } from "@/lib/red";
+import { claveGrafo, claveNarrativa } from "@/lib/claves";
 import type { EstadoEditor } from "./EditorRed";
 import type { DatosRegistro } from "./Registro";
 import type { Accion, PayloadGuardar, Regimen } from "@/lib/tipos";
 
-const LS_NARRATIVA = "taller5-narrativa";
-const LS_GRAFO = "taller5-grafo";
 const LS_ULTIMO = "taller5-ultimo-envio";
 
 export default function Acto3Narrativa({
@@ -24,13 +23,17 @@ export default function Acto3Narrativa({
   const [guardado, setGuardado] = useState(false);
   const [resultado, setResultado] = useState<{ ok: boolean; msg: string } | null>(null);
 
+  // Claves del borrador atadas al estudiante (mismo esquema que el editor del Acto 2).
+  const LS_NARRATIVA = useMemo(() => claveNarrativa(registro.codigo), [registro.codigo]);
+  const LS_GRAFO = useMemo(() => claveGrafo(registro.codigo), [registro.codigo]);
+
   // Restaurar el borrador de narrativa al montar.
   useEffect(() => {
     try {
       const draft = localStorage.getItem(LS_NARRATIVA);
       if (draft) setNarrativa(draft);
     } catch {}
-  }, []);
+  }, [LS_NARRATIVA]);
 
   function onNarrativa(v: string) {
     setNarrativa(v);
