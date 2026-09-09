@@ -99,12 +99,30 @@ en el primer guardado), service account `detective-redes@complejidad-496215`.
 califican. `a1_aciertos`, `a2_n_conocer` y `a2_n_actuar` vienen precalculadas para ordenar
 rápido en la hoja.
 
-## Borrador local
+## Continuidad entre sesiones y dispositivos
 
-El progreso se autoguarda en `localStorage` **atado al código del estudiante**
-(`taller-sismo-respuestas:<código>`), no en una clave global: en un celular o computador
-compartido el siguiente estudiante no hereda las respuestas del anterior. «Salir» borra el
-borrador de ese dispositivo.
+Dos capas, porque los estudiantes empiezan un día y siguen otro, a veces desde otro equipo.
+
+**1. Borrador local (instantáneo).** Cada tecla se guarda en `localStorage`, **atado al
+código del estudiante** (`taller-sismo-respuestas:<código>` y `taller-sismo-acto:<código>`),
+no en una clave global: en un celular o computador compartido el siguiente estudiante no
+hereda las respuestas del anterior. Se guarda también **en qué acto iba**, y al volver ve un
+aviso de «Retomaste donde ibas». «Salir» borra este borrador —y solo «Salir»: cerrar la
+página no borra nada.
+
+**2. Respaldo en servidor (viaja con el código).** Pestaña `taller_sismo_borradores`, una
+fila por código que se sobrescribe. Se escribe en tres momentos: al cambiar de acto (punto
+de control silencioso), al pulsar «Respaldar mi avance», y al cerrar u ocultar la página
+(`pagehide` + `navigator.sendBeacon`, que sobrevive a la descarga de la página).
+
+Al registrarse, **solo si este dispositivo no tiene nada escrito**, la app consulta el
+servidor y ofrece «Continuar donde quedé / Empezar de cero». Si hay borrador local, ese
+manda y no se pregunta nada.
+
+Limitaciones asumidas: gana la última escritura, así que si la misma pareja trabaja en dos
+aparatos a la vez uno pisa al otro. Y cualquiera que sepa un código ajeno podría recuperar
+ese borrador — pero entonces su entrega quedaría archivada bajo ese código y con el
+escenario de esa otra pareja, así que el atajo se castiga solo.
 
 ## Variables de entorno
 

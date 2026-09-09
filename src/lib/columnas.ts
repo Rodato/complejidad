@@ -37,3 +37,14 @@ export const COLUMNAS = [
 ] as const;
 
 export type Columna = (typeof COLUMNAS)[number];
+
+// Pestaña aparte para los borradores en curso: una fila por código, que se sobrescribe.
+// No se mezcla con las entregas finales, que son inmutables y se califican.
+export const COLUMNAS_BORRADOR = [
+  "codigo",
+  "actualizado",
+  "nombre",
+  "pareja",
+  "acto",
+  "respuestas",
+] as const;

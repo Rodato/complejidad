@@ -61,3 +61,18 @@ export type PayloadGuardar = Registro & {
   a2_n_actuar: number;
   respuestas: Respuestas;
 };
+
+/** Borrador en curso que viaja con el código, para retomar en otro dispositivo. */
+export type PayloadBorrador = Registro & {
+  acto: number;
+  respuestas: Respuestas;
+};
+
+/** Lo que devuelve el servidor al recuperar un borrador. */
+export type BorradorGuardado = {
+  nombre: string;
+  pareja: string;
+  acto: number;
+  actualizado: string;
+  respuestas: Respuestas;
+};

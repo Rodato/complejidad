@@ -18,6 +18,7 @@ import { ENUNCIADOS_FACTOR } from "@/lib/contenido";
 import { escenarioPara } from "@/lib/escenarios";
 import {
   RESPUESTAS_VACIAS,
+  type BorradorGuardado,
   type PayloadGuardar,
   type Registro,
   type Respuestas,
@@ -35,6 +36,21 @@ type Envio =
   | { estado: "enviando" }
   | { estado: "ok" }
   | { estado: "error"; mensaje: string };
+
+/** Estado del respaldo en servidor, el que permite retomar en otro dispositivo. */
+type Nube = "inactivo" | "guardando" | "ok" | "error";
+
+function fechaLegible(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleString("es-CO", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
 
 /** Lee el borrador de un código. Devuelve las respuestas vacías si no hay o está corrupto. */
 function leerRespuestas(codigo: string | undefined): Respuestas {
@@ -125,7 +141,13 @@ function Taller() {
   const [retomado, setRetomado] = useState(
     () => Boolean(inicial.reg) && tieneAvance(inicial.res),
   );
+  // Respaldo en servidor: lo que permite empezar en el celular y seguir en otro equipo.
+  const [nube, setNube] = useState<Nube>("inactivo");
+  const [buscando, setBuscando] = useState(false);
+  const [propuesta, setPropuesta] = useState<BorradorGuardado | null>(null);
   const tope = useRef<HTMLDivElement>(null);
+  // Espejo del estado para el guardado al cerrar la página, que no puede leer el closure.
+  const espejo = useRef({ registro: inicial.reg, acto: inicial.acto, r: inicial.res });
 
   // Autoguardado del borrador (respuestas y posición), atado al código del estudiante.
   useEffect(() => {
@@ -135,6 +157,50 @@ function Taller() {
       localStorage.setItem(claveActo(registro.codigo), String(acto));
     } catch {}
   }, [r, acto, registro]);
+
+  useEffect(() => {
+    espejo.current = { registro, acto, r };
+  }, [registro, acto, r]);
+
+  // Al cerrar la pestaña o mandar el navegador a segundo plano (bloquear el celular,
+  // cambiar de app) se manda un último respaldo. sendBeacon sobrevive a la descarga
+  // de la página, cosa que un fetch normal no garantiza.
+  useEffect(() => {
+    const alSalir = () => {
+      const { registro: reg, acto: a, r: res } = espejo.current;
+      if (!reg || !tieneAvance(res)) return;
+      try {
+        navigator.sendBeacon?.(
+          "/api/borrador",
+          new Blob(
+            [JSON.stringify({ ...reg, acto: a, respuestas: res })],
+            { type: "application/json" },
+          ),
+        );
+      } catch {}
+    };
+    window.addEventListener("pagehide", alSalir);
+    return () => window.removeEventListener("pagehide", alSalir);
+  }, []);
+
+  const respaldar = useCallback(
+    async (actoActual: number, silencioso: boolean) => {
+      const reg = espejo.current.registro;
+      if (!reg) return;
+      if (!silencioso) setNube("guardando");
+      try {
+        const res = await fetch("/api/borrador", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...reg, acto: actoActual, respuestas: espejo.current.r }),
+        });
+        if (!silencioso) setNube(res.ok ? "ok" : "error");
+      } catch {
+        if (!silencioso) setNube("error");
+      }
+    },
+    [],
+  );
 
   const set = useCallback(
     <K extends keyof Respuestas>(k: K, v: Respuestas[K]) =>
@@ -147,7 +213,7 @@ function Taller() {
     [registro?.codigo],
   );
 
-  function entrar(d: Registro) {
+  async function entrar(d: Registro) {
     try {
       localStorage.setItem(CLAVE_REGISTRO, JSON.stringify(d));
     } catch {}
@@ -156,6 +222,28 @@ function Taller() {
     setActo(leerActo(d.codigo));
     setRetomado(tieneAvance(previas));
     setRegistro(d);
+
+    // Solo se consulta el servidor cuando este aparato no tiene nada: es el caso de
+    // "empecé en el celular y sigo en otro equipo". Si hay borrador local, ese manda.
+    if (tieneAvance(previas)) return;
+    setBuscando(true);
+    try {
+      const res = await fetch(`/api/borrador?codigo=${encodeURIComponent(d.codigo)}`);
+      const data = await res.json();
+      if (res.ok && data?.borrador && tieneAvance(data.borrador.respuestas)) {
+        setPropuesta(data.borrador as BorradorGuardado);
+      }
+    } catch {
+      // Sin conexión no se ofrece nada: el taller sigue funcionando contra el aparato.
+    }
+    setBuscando(false);
+  }
+
+  function recuperar(b: BorradorGuardado) {
+    setR({ ...RESPUESTAS_VACIAS, ...b.respuestas });
+    setActo(b.acto);
+    setRetomado(true);
+    setPropuesta(null);
   }
 
   function salir() {
@@ -182,6 +270,9 @@ function Taller() {
   function irA(i: number) {
     setActo(i);
     tope.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Cada cambio de acto es un punto de control natural. En silencio, para no
+    // distraer, y solo si ya hay algo escrito.
+    if (tieneAvance(espejo.current.r)) void respaldar(i, true);
   }
 
   async function enviar() {
@@ -235,6 +326,46 @@ function Taller() {
   }
 
   if (!registro) return <FormularioRegistro onListo={entrar} />;
+
+  if (buscando) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-lg items-center px-4 py-10">
+        <div className="card w-full p-6 text-center sm:p-8">
+          <p className="text-[15px] text-stone-600">Buscando si tienes avance guardado…</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (propuesta) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-lg items-center px-4 py-10">
+        <div className="card w-full p-6 sm:p-8">
+          <p className="eyebrow">Encontramos tu avance</p>
+          <h1 className="mt-1 text-xl font-bold leading-tight text-stone-900">
+            Ya habías empezado este taller
+          </h1>
+          <p className="mt-3 text-[15px] leading-relaxed text-stone-600">
+            Con el código <strong>{registro.codigo}</strong> hay un avance guardado
+            {propuesta.actualizado ? ` del ${fechaLegible(propuesta.actualizado)}` : ""}, que
+            llegaba hasta el <strong>Acto {propuesta.acto + 1}</strong>. Lo guardaste desde otro
+            dispositivo o en otra sesión.
+          </p>
+          <div className="mt-6 flex flex-col gap-2.5">
+            <button onClick={() => recuperar(propuesta)} className="btn btn-primary">
+              Continuar donde quedé
+            </button>
+            <button onClick={() => setPropuesta(null)} className="btn btn-secondary">
+              Empezar de cero
+            </button>
+          </div>
+          <p className="mt-4 text-sm leading-relaxed text-stone-500">
+            Si empiezas de cero, lo guardado no se borra hasta que escribas encima.
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   if (envio.estado === "ok") {
     return (
@@ -345,6 +476,35 @@ function Taller() {
         {acto === 1 && <Acto2Castaneda r={r} set={set} />}
         {acto === 2 && <Acto3Treq r={r} set={set} escenario={escenario} />}
         {acto === 3 && <Acto4Lazo r={r} set={set} />}
+
+        <section className="card mt-6 p-4 sm:p-5">
+          <h3 className="text-base font-bold text-stone-900">
+            ¿Vas a seguir en otro dispositivo?
+          </h3>
+          <p className="mt-1.5 text-[15px] leading-relaxed text-stone-600">
+            Tu avance se guarda solo en este aparato. Si vas a continuar desde otro celular o
+            computador, respáldalo aquí: al entrar allá con tu código{" "}
+            <strong>{registro.codigo}</strong> te ofrecemos retomarlo.
+          </p>
+          <button
+            onClick={() => void respaldar(acto, false)}
+            disabled={nube === "guardando" || !tieneAvance(r)}
+            className="btn btn-secondary mt-3 w-full"
+          >
+            {nube === "guardando" ? "Respaldando…" : "Respaldar mi avance"}
+          </button>
+          {nube === "ok" && (
+            <p className="mt-2 text-sm font-medium text-emerald-700">
+              Listo. Entra con tu código desde el otro dispositivo y podrás continuar.
+            </p>
+          )}
+          {nube === "error" && (
+            <p className="mt-2 text-sm font-medium text-rose-700">
+              No se pudo respaldar; revisa tu conexión e inténtalo otra vez. Tu avance sigue
+              guardado en este dispositivo.
+            </p>
+          )}
+        </section>
 
         {ultimo && (
           <section className="card mt-6 p-4 sm:p-5">
