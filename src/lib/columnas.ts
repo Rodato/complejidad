@@ -34,6 +34,7 @@ export const COLUMNAS = [
   "a4_donde_rompe",
   "a4_argumento",
   "a4_modelo_vs_dano",
+  "a4_letalidad",
   "a4_ensayo_2004",
 ] as const;
 

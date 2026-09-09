@@ -1,7 +1,13 @@
 "use client";
 
 import { ETAPAS_LAZO, OPCIONES_LAZO, type Cumplimiento } from "@/lib/contenido";
-import { ANALOGO_2004, PERFIL_MITIGACION, SISMO_REAL } from "@/lib/escenarios";
+import {
+  ANALOGO_2004,
+  IMPACTO_REAL,
+  MODELO_VS_REAL,
+  PERFIL_MITIGACION,
+  SISMO_REAL,
+} from "@/lib/escenarios";
 import type { Respuestas } from "@/lib/tipos";
 import {
   CabezaActo,
@@ -189,25 +195,67 @@ export default function Acto4Lazo({
         </div>
 
         <p className="mt-5 text-[15px] leading-relaxed text-stone-700">
-          Para ese escenario, el modelo estimó lo que le pasaría a Cali:
+          Ahora pon lo que el modelo estimó en 2022 al lado de lo que reportó la Alcaldía:
         </p>
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[
-            { n: ANALOGO_2004.indiceColapsos, l: "índice de colapsos" },
-            { n: ANALOGO_2004.colapsos, l: "estructuras colapsadas" },
-            { n: ANALOGO_2004.fallecidos, l: "fallecidos" },
-            { n: ANALOGO_2004.desplazados, l: "desplazados" },
-          ].map((d) => (
-            <div key={d.l} className="rounded-lg bg-stone-100 p-3 text-center">
-              <p className="text-xl font-bold text-stone-900">{d.n}</p>
-              <p className="mt-0.5 text-xs leading-tight text-stone-600">{d.l}</p>
-            </div>
-          ))}
+
+        <div className="-mx-4 mt-3 overflow-x-auto sm:mx-0">
+          <table className="w-full min-w-[480px] border-collapse text-sm">
+            <thead>
+              <tr className="border-b-2 border-stone-300 text-left">
+                <th className="px-3 py-2 font-semibold text-stone-700"></th>
+                <th className="px-3 py-2 text-right font-semibold text-stone-700">
+                  TREQ 2022
+                  <span className="block text-xs font-normal text-stone-500">promedio</span>
+                </th>
+                <th className="px-3 py-2 text-right font-semibold text-stone-700">
+                  TREQ 2022
+                  <span className="block text-xs font-normal text-stone-500">rango</span>
+                </th>
+                <th className="px-3 py-2 text-right font-semibold text-brand-700">
+                  Real
+                  <span className="block text-xs font-normal text-stone-500">Alcaldía</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {MODELO_VS_REAL.map((f) => (
+                <tr key={f.metrica} className="border-b border-stone-200">
+                  <td className="px-3 py-2 text-stone-800">{f.metrica}</td>
+                  <td className="px-3 py-2 text-right font-mono text-stone-600">{f.promedio}</td>
+                  <td className="px-3 py-2 text-right font-mono text-stone-500">{f.rango}</td>
+                  <td className="px-3 py-2 text-right font-mono font-bold text-brand-700">
+                    {f.real}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <p className="mt-2 text-xs text-stone-500">
-          Promedios de 2.000 simulaciones. Colapsos: entre {ANALOGO_2004.colapsosRango}.
-          Fallecidos: entre {ANALOGO_2004.fallecidosRango}.
+        <p className="mt-2 text-xs leading-relaxed text-stone-500">
+          Modelo: promedios y rangos de 2.000 simulaciones del escenario 13 (TREQ, 2022).
+          Realidad: Alcaldía de Santiago de Cali, repositorio oficial del terremoto, corte{" "}
+          {IMPACTO_REAL.corte}. Son cifras provisionales; los desaparecidos siguen en
+          validación.
         </p>
+
+        <div className="my-5 rounded-lg border border-amber-300 bg-amber-50 p-3.5">
+          <p className="text-sm font-semibold text-amber-900">Cuidado al comparar</p>
+          <p className="mt-1 text-sm leading-relaxed text-amber-900">
+            La última fila no compara lo mismo. El TREQ cuenta solo «heridos de gravedad», es
+            decir quienes necesitan atención urgente porque su vida corre peligro; la Alcaldía
+            reporta «lesionados», que es mucho más amplio. Que los dos números se parezcan tanto
+            probablemente sea casualidad. Antes de comparar dos cifras hay que preguntarse si
+            miden lo mismo.
+          </p>
+        </div>
+
+        <Texto
+          label="Menos edificios caídos y muchos más muertos. ¿Cómo se explica?"
+          ayuda="Haz la cuenta: el modelo daba 53 muertos para 81 colapsos, menos de un muerto por edificio. La realidad fue 154 muertos con 24 colapsos: más de seis por edificio, unas diez veces más letal. Pistas: ¿qué TIPO de edificios nombra Castañeda entre los que fallaron? ¿Y qué decía el TREQ sobre dónde vive el 48 % de los caleños? Piensa en cuánta gente cabe en cada estructura que se cae."
+          valor={r.a4_letalidad}
+          onChange={(v) => set("a4_letalidad", v)}
+          filas={8}
+        />
 
         <div className="my-5 rounded-lg border-l-4 border-brand-500 bg-brand-50 p-4">
           <p className="text-[15px] leading-relaxed text-brand-900">
@@ -225,6 +273,21 @@ export default function Acto4Lazo({
           onChange={(v) => set("a4_ensayo_2004", v)}
           filas={9}
         />
+
+        <p className="mt-4 border-t border-stone-200 pt-3 text-sm leading-relaxed text-stone-500">
+          Las cifras del terremoto salen del{" "}
+          <a
+            href={IMPACTO_REAL.fuente}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-brand-700 underline underline-offset-2"
+          >
+            repositorio oficial de la Alcaldía de Santiago de Cali
+          </a>
+          , que se actualiza. Si al momento de resolver el taller los números ya cambiaron,
+          usa los del repositorio y dilo en tu respuesta: que una cifra se mueva mientras se
+          la mide también es un dato.
+        </p>
       </Ejercicio>
     </div>
   );

@@ -166,6 +166,46 @@ export const SISMO_REAL = {
     "Chocó, donde convergen las placas de Nazca, Suramérica y Panamá: una de las zonas de mayor actividad sísmica del Pacífico latinoamericano.",
 };
 
+/**
+ * Cifras oficiales del terremoto, para confrontarlas con lo que el modelo estimó.
+ * Fuente: Alcaldía de Santiago de Cali, repositorio oficial de información del
+ * terremoto. Corte 8 de septiembre de 2026, 6:00 p. m. Son provisionales: los
+ * desaparecidos siguen en validación por la Cruz Roja.
+ */
+export const IMPACTO_REAL = {
+  corte: "8 de septiembre de 2026",
+  fuente:
+    "https://www.cali.gov.co/gobierno/publicaciones/193607/terremoto-de-cali-repositorio-oficial-de-informacion/",
+  fallecidos: "154",
+  lesionados: "1.657",
+  colapsoTotal: "24",
+  rescatados: "88",
+  desaparecidos: "14",
+  presupuesto: "más de $420 mil millones",
+};
+
+/** Lo que el modelo estimó (perfil 13) frente a lo que reportó la Alcaldía. */
+export const MODELO_VS_REAL = [
+  {
+    metrica: "Estructuras colapsadas",
+    promedio: "81",
+    rango: "21 – 268",
+    real: "24",
+  },
+  {
+    metrica: "Fallecidos",
+    promedio: "53",
+    rango: "13 – 172",
+    real: "154",
+  },
+  {
+    metrica: "Heridos de gravedad",
+    promedio: "1.600",
+    rango: "400 – 5.200",
+    real: "1.657 lesionados",
+  },
+];
+
 export const ANALOGO_2004 = {
   nombre: "Terremoto de Pizarro (Bajo Baudó, Chocó)",
   anio: "2004",
