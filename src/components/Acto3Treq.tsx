@@ -211,7 +211,46 @@ export default function Acto3Treq({
           la pena hojearlo. Son 79 páginas: cómo construyeron el modelo de exposición, las
           funciones de vulnerabilidad, los trece escenarios y sus límites declarados.
         </p>
-        <ul className="mt-3 space-y-2 text-[15px]">
+        <p className="mt-3 text-sm text-stone-500">
+          Es el mismo archivo en los cuatro enlaces; cada uno lo abre en la página que
+          interesa. Pesa unos 8 MB, así que mejor con wifi.
+        </p>
+        <ul className="mt-2 space-y-2 text-[15px]">
+          <li>
+            <a
+              href="/TREQ_riesgo_sismico_Cali_2022.pdf#page=11"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-brand-700 underline underline-offset-2"
+            >
+              Resumen ejecutivo
+            </a>{" "}
+            <span className="text-stone-500">— cuatro páginas con todo lo esencial.</span>
+          </li>
+          <li>
+            <a
+              href="/TREQ_riesgo_sismico_Cali_2022.pdf#page=60"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-brand-700 underline underline-offset-2"
+            >
+              Los trece perfiles de escenario
+            </a>{" "}
+            <span className="text-stone-500">
+              — el tuyo y los doce de tus compañeros, seguidos.
+            </span>
+          </li>
+          <li>
+            <a
+              href="/TREQ_riesgo_sismico_Cali_2022.pdf#page=76"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-brand-700 underline underline-offset-2"
+            >
+              Perfil de mitigación y gestión del riesgo
+            </a>{" "}
+            <span className="text-stone-500">— el que usarás en el Acto 4.</span>
+          </li>
           <li>
             <a
               href="/TREQ_riesgo_sismico_Cali_2022.pdf"
@@ -219,11 +258,9 @@ export default function Acto3Treq({
               rel="noopener noreferrer"
               className="font-medium text-brand-700 underline underline-offset-2"
             >
-              Informe completo en PDF
+              Informe completo desde el principio
             </a>{" "}
-            <span className="text-stone-500">
-              — ojo, pesa unos 8 MB: mejor con wifi.
-            </span>
+            <span className="text-stone-500">— las 79 páginas.</span>
           </li>
           <li>
             <a
