@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 import Papa from "papaparse";
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
-const CSV = path.resolve(aqui, "../../../data/consolidado_notaria2.csv");
+const CSV = path.resolve(aqui, "../../../../data/consolidado_notaria2.csv");
 const SALIDA = path.resolve(aqui, "../public/data/red.json");
 
 const NA = new Set(["", "na", "n/a", "nan", "none", "null"]);
