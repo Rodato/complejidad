@@ -12,9 +12,12 @@ function slug(codigo: string): string {
 }
 
 export const claveRespuestas = (codigo: string) => `taller-sismo-respuestas:${slug(codigo)}`;
+/** En qué acto iba, para que al volver otro día retome donde estaba y no en el 1. */
+export const claveActo = (codigo: string) => `taller-sismo-acto:${slug(codigo)}`;
 
 export function limpiarBorrador(codigo: string) {
   try {
     localStorage.removeItem(claveRespuestas(codigo));
+    localStorage.removeItem(claveActo(codigo));
   } catch {}
 }

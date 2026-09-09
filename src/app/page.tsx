@@ -13,7 +13,7 @@ import Acto2Castaneda from "@/components/Acto2Castaneda";
 import Acto3Treq from "@/components/Acto3Treq";
 import Acto4Lazo from "@/components/Acto4Lazo";
 import FormularioRegistro from "@/components/Registro";
-import { CLAVE_REGISTRO, claveRespuestas, limpiarBorrador } from "@/lib/claves";
+import { CLAVE_REGISTRO, claveActo, claveRespuestas, limpiarBorrador } from "@/lib/claves";
 import { ENUNCIADOS_FACTOR } from "@/lib/contenido";
 import { escenarioPara } from "@/lib/escenarios";
 import {
@@ -46,15 +46,34 @@ function leerRespuestas(codigo: string | undefined): Respuestas {
   return RESPUESTAS_VACIAS;
 }
 
-function leerInicial(): { reg: Registro | null; res: Respuestas } {
+/** En qué acto quedó. Se acota al rango válido por si el borrador viene de otra versión. */
+function leerActo(codigo: string | undefined): number {
+  if (!codigo) return 0;
+  try {
+    const n = Number(localStorage.getItem(claveActo(codigo)));
+    if (Number.isInteger(n) && n >= 0 && n < ACTOS.length) return n;
+  } catch {}
+  return 0;
+}
+
+/** ¿Hay algo escrito? Sirve para avisarle al estudiante que retomó su borrador. */
+function tieneAvance(r: Respuestas): boolean {
+  return Object.values(r).some((v) =>
+    typeof v === "string" ? v.trim() !== "" : Object.values(v).some(Boolean),
+  );
+}
+
+function leerInicial(): { reg: Registro | null; res: Respuestas; acto: number } {
   try {
     const crudo = localStorage.getItem(CLAVE_REGISTRO);
     if (crudo) {
       const reg = JSON.parse(crudo) as Registro;
-      if (reg?.codigo) return { reg, res: leerRespuestas(reg.codigo) };
+      if (reg?.codigo) {
+        return { reg, res: leerRespuestas(reg.codigo), acto: leerActo(reg.codigo) };
+      }
     }
   } catch {}
-  return { reg: null, res: RESPUESTAS_VACIAS };
+  return { reg: null, res: RESPUESTAS_VACIAS, acto: 0 };
 }
 
 // Puerta de montaje: el servidor renderiza la portada estática y el cliente monta
@@ -100,17 +119,22 @@ function Taller() {
   const [inicial] = useState(leerInicial);
   const [registro, setRegistro] = useState<Registro | null>(inicial.reg);
   const [r, setR] = useState<Respuestas>(inicial.res);
-  const [acto, setActo] = useState(0);
+  const [acto, setActo] = useState(inicial.acto);
   const [envio, setEnvio] = useState<Envio>({ estado: "inactivo" });
+  // Solo se anuncia el borrador recuperado si ya venía con algo escrito al abrir.
+  const [retomado, setRetomado] = useState(
+    () => Boolean(inicial.reg) && tieneAvance(inicial.res),
+  );
   const tope = useRef<HTMLDivElement>(null);
 
-  // Autoguardado del borrador, atado al código del estudiante.
+  // Autoguardado del borrador (respuestas y posición), atado al código del estudiante.
   useEffect(() => {
     if (!registro) return;
     try {
       localStorage.setItem(claveRespuestas(registro.codigo), JSON.stringify(r));
+      localStorage.setItem(claveActo(registro.codigo), String(acto));
     } catch {}
-  }, [r, registro]);
+  }, [r, acto, registro]);
 
   const set = useCallback(
     <K extends keyof Respuestas>(k: K, v: Respuestas[K]) =>
@@ -127,7 +151,10 @@ function Taller() {
     try {
       localStorage.setItem(CLAVE_REGISTRO, JSON.stringify(d));
     } catch {}
-    setR(leerRespuestas(d.codigo));
+    const previas = leerRespuestas(d.codigo);
+    setR(previas);
+    setActo(leerActo(d.codigo));
+    setRetomado(tieneAvance(previas));
     setRegistro(d);
   }
 
@@ -135,7 +162,9 @@ function Taller() {
     if (!registro) return;
     if (
       !confirm(
-        "Vas a salir y borrar el borrador de este dispositivo. Si ya enviaste el taller, no pasa nada. ¿Continuar?",
+        "OJO: esto BORRA todo lo que has escrito en este dispositivo y no se puede deshacer.\n\n" +
+          "Solo sal así si ya enviaste el taller, o si le vas a prestar el equipo a otra pareja.\n\n" +
+          "Si únicamente quieres seguir después, cierra la página: tu avance queda guardado aquí.",
       )
     )
       return;
@@ -146,6 +175,7 @@ function Taller() {
     setRegistro(null);
     setR(RESPUESTAS_VACIAS);
     setActo(0);
+    setRetomado(false);
     setEnvio({ estado: "inactivo" });
   }
 
@@ -274,6 +304,43 @@ function Taller() {
       </header>
 
       <main className="mx-auto max-w-2xl px-4 py-6">
+        {retomado && (
+          <div className="mb-5 flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3.5">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="mt-0.5 shrink-0 text-emerald-700"
+              aria-hidden
+            >
+              <path
+                d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <div className="min-w-0 flex-1">
+              <p className="text-[15px] font-semibold text-emerald-900">
+                Retomaste donde ibas
+              </p>
+              <p className="mt-0.5 text-sm leading-relaxed text-emerald-800">
+                Encontramos tu avance guardado en este dispositivo y lo cargamos, incluido el
+                acto en el que quedaste. Puedes seguir tranquilo.
+              </p>
+            </div>
+            <button
+              onClick={() => setRetomado(false)}
+              aria-label="Cerrar aviso"
+              className="shrink-0 px-1 text-emerald-700 hover:text-emerald-900"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         {acto === 0 && <Acto1Riesgo r={r} set={set} />}
         {acto === 1 && <Acto2Castaneda r={r} set={set} />}
         {acto === 2 && <Acto3Treq r={r} set={set} escenario={escenario} />}
