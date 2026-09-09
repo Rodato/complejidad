@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 AQUI = Path(__file__).resolve().parent
-DATA = AQUI.parent / "data"
+DATA = AQUI.parents[1] / "data"
 sys.path.insert(0, str(DATA))
 
 import limpiar_red as LR  # noqa: E402
