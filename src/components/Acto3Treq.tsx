@@ -201,6 +201,60 @@ export default function Acto3Treq({
           filas={7}
         />
       </Ejercicio>
+
+      <section className="card mb-5 p-4 sm:p-5">
+        <h3 className="mb-2 text-base font-bold text-stone-900">
+          Si quieres ir al informe completo
+        </h3>
+        <p className="text-[15px] leading-relaxed text-stone-600">
+          Para el taller te basta con tu perfil, pero el estudio entero está disponible y vale
+          la pena hojearlo. Son 79 páginas: cómo construyeron el modelo de exposición, las
+          funciones de vulnerabilidad, los trece escenarios y sus límites declarados.
+        </p>
+        <ul className="mt-3 space-y-2 text-[15px]">
+          <li>
+            <a
+              href="/TREQ_riesgo_sismico_Cali_2022.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-brand-700 underline underline-offset-2"
+            >
+              Informe completo en PDF
+            </a>{" "}
+            <span className="text-stone-500">
+              — ojo, pesa unos 8 MB: mejor con wifi.
+            </span>
+          </li>
+          <li>
+            <a
+              href="https://www.globalquakemodel.org/proj/treq"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-brand-700 underline underline-offset-2"
+            >
+              Página del proyecto TREQ
+            </a>{" "}
+            <span className="text-stone-500">(Fundación GEM)</span>
+          </li>
+          <li>
+            <a
+              href="https://github.com/gem/treq-riesgo-urbano"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-brand-700 underline underline-offset-2"
+            >
+              Repositorio abierto con los modelos y resultados
+            </a>{" "}
+            <span className="text-stone-500">— los datos crudos, si te dan ganas.</span>
+          </li>
+        </ul>
+        <p className="mt-4 border-t border-stone-200 pt-3 text-sm leading-relaxed text-stone-500">
+          Yepes-Estrada C, Calderón A, Acevedo A, Pérez H (2022).{" "}
+          <em>Evaluación de Riesgo Sísmico para Santiago de Cali.</em> GEM-TREQ, Reporte
+          Técnico D2.6.2. Financiado por USAID/BHA. Publicado bajo licencia CC BY-NC-SA 4.0 y
+          reproducido aquí sin modificaciones, con fines educativos.
+        </p>
+      </section>
     </div>
   );
 }
