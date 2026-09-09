@@ -29,6 +29,21 @@ del código del estudiante que registra (`escenarioPara()` en `src/lib/escenario
 Es estable: el mismo código siempre da el mismo escenario, en cualquier dispositivo. En la
 puesta en común de la clase se juntan los trece y aparece el patrón de no linealidad.
 
+## Despliegue
+
+- **URL para estudiantes:** https://complejidad-taller1-sismo.vercel.app
+- **Repo:** `Rodato/complejidad-taller1-sismo` (privado, rama `main`). Es privado porque
+  incluye el texto íntegro de Castañeda y las infografías del TREQ (CC BY-NC-SA), que no son
+  material nuestro para publicar abierto.
+- **Vercel:** proyecto `complejidad-taller1-sismo` (scope `rodatos-projects`), con GitHub
+  conectado: **un push a `main` redespliega solo**.
+- Variables de entorno cargadas **solo en production**: `GOOGLE_SERVICE_ACCOUNT_EMAIL`,
+  `GOOGLE_PRIVATE_KEY`, `SHEET_ID`, `SHEET_TAB`. Las de *preview* no se cargaron.
+
+⚠️ Para probar en el celular por la red local **no sirve `npm run dev`**: el websocket de
+recarga en caliente falla el handshake contra una IP que no sea `localhost`, la hidratación
+se cuelga y la página queda en blanco. Usar `npm run build && npx next start -H 0.0.0.0`.
+
 ## Stack
 
 Next.js 16 (App Router, TypeScript, Turbopack) + Tailwind 4 + `googleapis`. Sin librerías
