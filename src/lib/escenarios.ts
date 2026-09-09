@@ -152,3 +152,29 @@ export const COMPARACION = [
   { escenario: "Terremoto de 1994", mw: "6.8", prof: "12 km", indice: "0,031 %", colapsos: "108", fallecidos: "74" },
   { escenario: "Terremoto de 1906", mw: "8.8", prof: "21 km", indice: "0,004 %", colapsos: "14", fallecidos: "12" },
 ];
+
+/**
+ * El sismo del 10 de agosto de 2026 y el escenario del TREQ que más se le parece.
+ * El estudio es de 2022, así que no pudo incluirlo; pero sí modeló el terremoto de
+ * Pizarro de 2004 (Bajo Baudó, Chocó), del mismo origen tectónico y magnitud muy
+ * cercana. Cifras leídas del perfil 13 del informe.
+ */
+export const SISMO_REAL = {
+  fecha: "10 de agosto de 2026",
+  magnitud: "7.4",
+  origen:
+    "Chocó, donde convergen las placas de Nazca, Suramérica y Panamá: una de las zonas de mayor actividad sísmica del Pacífico latinoamericano.",
+};
+
+export const ANALOGO_2004 = {
+  nombre: "Terremoto de Pizarro (Bajo Baudó, Chocó)",
+  anio: "2004",
+  magnitud: "7.2",
+  profundidad: "15 km",
+  indiceColapsos: "0,023 %",
+  colapsos: "81",
+  colapsosRango: "21 – 268",
+  fallecidos: "53",
+  fallecidosRango: "13 – 172",
+  desplazados: "10.500",
+};

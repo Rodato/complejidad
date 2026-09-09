@@ -89,6 +89,7 @@ export function payloadAFila(p: PayloadGuardar): string[] {
     r.a4_donde_rompe,
     r.a4_argumento,
     r.a4_modelo_vs_dano,
+    r.a4_ensayo_2004,
   ];
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { ETAPAS_LAZO, OPCIONES_LAZO, type Cumplimiento } from "@/lib/contenido";
-import { PERFIL_MITIGACION } from "@/lib/escenarios";
+import { ANALOGO_2004, PERFIL_MITIGACION, SISMO_REAL } from "@/lib/escenarios";
 import type { Respuestas } from "@/lib/tipos";
 import {
   CabezaActo,
@@ -154,6 +154,76 @@ export default function Acto4Lazo({
           valor={r.a4_modelo_vs_dano}
           onChange={(v) => set("a4_modelo_vs_dano", v)}
           filas={8}
+        />
+      </Ejercicio>
+
+      <Ejercicio numero="4.4" titulo="El ensayo general de 2004">
+        <p className="mb-4 text-[15px] leading-relaxed text-stone-600">
+          El estudio TREQ es de 2022, así que el terremoto del 10 de agosto no podía estar
+          entre sus trece escenarios. Pero mira con cuidado estas dos fichas.
+        </p>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border-2 border-brand-300 bg-brand-50 p-3.5">
+            <p className="eyebrow text-brand-700">Lo que pasó</p>
+            <p className="mt-1 text-lg font-bold text-brand-900">
+              {SISMO_REAL.fecha}
+            </p>
+            <p className="mt-1 font-mono text-sm text-brand-800">
+              Magnitud {SISMO_REAL.magnitud}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-brand-900">{SISMO_REAL.origen}</p>
+          </div>
+
+          <div className="rounded-lg border border-stone-300 bg-white p-3.5">
+            <p className="eyebrow">Escenario 13 del TREQ</p>
+            <p className="mt-1 text-lg font-bold text-stone-900">{ANALOGO_2004.nombre}</p>
+            <p className="mt-1 font-mono text-sm text-stone-700">
+              {ANALOGO_2004.anio} · Magnitud {ANALOGO_2004.magnitud} · {ANALOGO_2004.profundidad}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-stone-600">
+              Mismo origen tectónico: la costa pacífica del Chocó. Dos décimas de magnitud
+              menos que el de 2026.
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-5 text-[15px] leading-relaxed text-stone-700">
+          Para ese escenario, el modelo estimó lo que le pasaría a Cali:
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { n: ANALOGO_2004.indiceColapsos, l: "índice de colapsos" },
+            { n: ANALOGO_2004.colapsos, l: "estructuras colapsadas" },
+            { n: ANALOGO_2004.fallecidos, l: "fallecidos" },
+            { n: ANALOGO_2004.desplazados, l: "desplazados" },
+          ].map((d) => (
+            <div key={d.l} className="rounded-lg bg-stone-100 p-3 text-center">
+              <p className="text-xl font-bold text-stone-900">{d.n}</p>
+              <p className="mt-0.5 text-xs leading-tight text-stone-600">{d.l}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-stone-500">
+          Promedios de 2.000 simulaciones. Colapsos: entre {ANALOGO_2004.colapsosRango}.
+          Fallecidos: entre {ANALOGO_2004.fallecidosRango}.
+        </p>
+
+        <div className="my-5 rounded-lg border-l-4 border-brand-500 bg-brand-50 p-4">
+          <p className="text-[15px] leading-relaxed text-brand-900">
+            Y ahora vuelve al texto de Castañeda. Ese <strong>mismo</strong> terremoto de
+            Pizarro de 2004 es el que la Red de Acelerógrafos registró en nueve estaciones, la
+            prueba de que Cali sabía observarse a sí misma. Poco después la red se quedó sin
+            recursos para operar.
+          </p>
+        </div>
+
+        <Texto
+          label="El mismo sismo aparece tres veces en esta historia. ¿Qué te dice eso?"
+          ayuda="En 2004 fue el evento que demostró que Cali podía medirse. En 2022 fue el escenario 13, con un número puesto a lo que ese sismo le haría a la ciudad. En 2026 volvió, un poco más grande. Piensa en qué tuvo la ciudad en las manos durante esos veintidós años, y qué habría hecho falta para que sirviera de algo. Ojo con una trampa: nadie podía saber la fecha. La pregunta no es si debieron predecirlo."
+          valor={r.a4_ensayo_2004}
+          onChange={(v) => set("a4_ensayo_2004", v)}
+          filas={9}
         />
       </Ejercicio>
     </div>

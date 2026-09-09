@@ -28,6 +28,7 @@ export type Respuestas = {
   a4_donde_rompe: string;
   a4_argumento: string;
   a4_modelo_vs_dano: string;
+  a4_ensayo_2004: string;
 };
 
 export const RESPUESTAS_VACIAS: Respuestas = {
@@ -50,6 +51,7 @@ export const RESPUESTAS_VACIAS: Respuestas = {
   a4_donde_rompe: "",
   a4_argumento: "",
   a4_modelo_vs_dano: "",
+  a4_ensayo_2004: "",
 };
 
 /** Lo que se envía a guardar (Sheets). */

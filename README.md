@@ -15,12 +15,21 @@ y no todos los estudiantes tienen computador ni conexión estable.
 | 1 | Un terremoto no es un desastre | Riesgo = Amenaza × Exposición × Vulnerabilidad | Clasifica 6 enunciados del TREQ + argumenta qué factor puede mover una alcaldía |
 | 2 | Veintiséis años de saber sin hacer | Cómo leer un texto que sostiene una tesis | Clasifica 9 hitos como *conocer* / *actuar* + lectura crítica del argumento |
 | 3 | Leer el estudio que Cali sí tenía | No linealidad; el riesgo como distribución | Extrae cifras de **su** perfil TREQ + explica el desacople plata/muertos |
-| 4 | El lazo que no se cerró | Variables lentas y rápidas · retroalimentación · dependencia de trayectoria | Marca dónde se rompe el lazo de control + argumento de 200–300 palabras |
+| 4 | El lazo que no se cerró | Variables lentas y rápidas · retroalimentación · dependencia de trayectoria | Marca dónde se rompe el lazo de control, escribe su argumento de 200–300 palabras y confronta el modelo con lo que pasó |
 
 **El hallazgo que estructura el taller** (Acto 3): el terremoto de 1906 tuvo magnitud
 **8.8** y el modelo estima **12 fallecidos**; el hipotético de Dagua–Calima tiene magnitud
 **6.5** y estima **1.200**. Cien veces más muertos con mucha menos magnitud, porque lo que
 cambia no es la amenaza sino la distancia, el suelo y lo construido.
+
+**El cierre del Acto 4 (4.4)**: el sismo del 10 de agosto de 2026 fue **Mw 7.4 con origen en
+el Chocó**, y el escenario 13 del TREQ es el **terremoto de Pizarro de 2004 (Bajo Baudó,
+Chocó), Mw 7.2** — mismo origen tectónico, dos décimas menos. Es decir que desde 2022 la
+ciudad tenía cuantificado lo que le haría un sismo así: 0,023 % de índice de colapsos, ~81
+estructuras colapsadas, ~53 fallecidos, ~10.500 desplazados. Y ese *mismo* sismo de 2004 es
+el que la Red de Acelerógrafos registró en nueve estaciones antes de quedarse sin
+presupuesto. El mismo evento aparece tres veces: como prueba de que Cali sabía medirse, como
+escenario modelado, y como lo que volvió a ocurrir.
 
 ## Asignación de escenarios
 
