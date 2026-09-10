@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /** Encabezado de un acto. */
 export function CabezaActo({
@@ -100,6 +100,64 @@ export function Opciones<T extends string>({
   );
 }
 
+/**
+ * Deshabilita pegar y arrastrar texto dentro de un campo de respuesta: el taller
+ * se responde escribiendo. No es una barrera infranqueable —ninguna lo es en el
+ * navegador— pero quita el camino fácil de traer una respuesta ya escrita.
+ *
+ * Se cierran tres vías: `paste` (Ctrl+V, menú contextual, «Pegar» del celular),
+ * `drop` (arrastrar texto hasta el campo) y `beforeinput` con tipo de inserción
+ * pegada, que es por donde entra la sugerencia de portapapeles del teclado en
+ * Android sin disparar `paste`. El aviso existe para que el campo no parezca
+ * dañado cuando no pasa nada al intentarlo.
+ */
+function useSinPegar<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [aviso, setAviso] = useState(false);
+  const reloj = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const avisar = useCallback(() => {
+    setAviso(true);
+    if (reloj.current) clearTimeout(reloj.current);
+    reloj.current = setTimeout(() => setAviso(false), 4000);
+  }, []);
+
+  useEffect(() => {
+    const campo = ref.current;
+    const alInsertar = (e: Event) => {
+      const tipo = (e as InputEvent).inputType;
+      if (
+        tipo === "insertFromPaste" ||
+        tipo === "insertFromPasteAsQuotation" ||
+        tipo === "insertFromDrop"
+      ) {
+        e.preventDefault();
+        avisar();
+      }
+    };
+    campo?.addEventListener("beforeinput", alInsertar);
+    return () => {
+      campo?.removeEventListener("beforeinput", alInsertar);
+      if (reloj.current) clearTimeout(reloj.current);
+    };
+  }, [avisar]);
+
+  const bloquear = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    avisar();
+  };
+
+  return {
+    ref,
+    props: { onPaste: bloquear, onDrop: bloquear },
+    aviso: aviso ? (
+      <span className="text-xs font-medium text-brand-700">
+        Pegar está desactivado: escribe la respuesta con tus palabras.
+      </span>
+    ) : null,
+  };
+}
+
 /** Campo de texto largo con contador opcional de palabras. */
 export function Texto({
   label,
@@ -120,6 +178,7 @@ export function Texto({
   maxPalabras?: number;
   placeholder?: string;
 }) {
+  const sinPegar = useSinPegar<HTMLTextAreaElement>();
   const palabras = valor.trim() ? valor.trim().split(/\s+/).length : 0;
   const corto = minPalabras !== undefined && palabras > 0 && palabras < minPalabras;
   const largo = maxPalabras !== undefined && palabras > maxPalabras;
@@ -129,12 +188,15 @@ export function Texto({
       <span className="text-[15px] font-medium text-stone-800">{label}</span>
       {ayuda && <span className="text-sm leading-relaxed text-stone-500">{ayuda}</span>}
       <textarea
+        ref={sinPegar.ref}
         value={valor}
         onChange={(e) => onChange(e.target.value)}
         rows={filas}
         placeholder={placeholder}
         className="field resize-y"
+        {...sinPegar.props}
       />
+      {sinPegar.aviso}
       {(minPalabras !== undefined || maxPalabras !== undefined) && (
         <span
           className={`text-xs ${corto || largo ? "text-brand-700" : "text-stone-400"}`}
@@ -161,16 +223,21 @@ export function Campo({
   onChange: (v: string) => void;
   placeholder?: string;
 }) {
+  const sinPegar = useSinPegar<HTMLInputElement>();
+
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-[15px] font-medium text-stone-800">{label}</span>
       <input
+        ref={sinPegar.ref}
         value={valor}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         maxLength={160}
         className="field"
+        {...sinPegar.props}
       />
+      {sinPegar.aviso}
     </label>
   );
 }
