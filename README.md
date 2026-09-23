@@ -31,6 +31,15 @@ del 10 de agosto, sin sala de cómputo. Se empieza en clase y se termina en la s
   Dothraki). Petyr Baelish es lo contrario: 8.º en vector propio, 43.º en intermediación
   (un «Strozzi»).
 
+## Despliegue
+
+- **URL para estudiantes:** https://complejidad-taller2-redes.vercel.app
+- **Repo:** `Rodato/complejidad-taller2-redes` (privado, rama `main`).
+- **Vercel:** proyecto `complejidad-taller2-redes` (scope `rodatos-projects`), con GitHub
+  conectado: **un push a `main` redespliega solo**. `vercel.json` fija el preset de Next.js:
+  el proyecto se creó vacío y quedó en «Other», que da 404 en todo.
+- Variables de entorno solo en production, las mismas del Taller 1 con `SHEET_TAB=taller_redes`.
+
 ## Asignación de familias
 
 Cada pareja sigue una de las **13 familias** (todas menos Medici y Strozzi, que son las
