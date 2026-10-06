@@ -1,0 +1,131 @@
+{
+  "nodos": [
+    {
+      "id": "Acciaiuoli",
+      "x": 0.7975,
+      "y": 0.6705,
+      "riqueza": 10,
+      "priorias": 53
+    },
+    {
+      "id": "Albizzi",
+      "x": 0.4758,
+      "y": 0.5994,
+      "riqueza": 36,
+      "priorias": 65
+    },
+    {
+      "id": "Barbadori",
+      "x": 0.4808,
+      "y": 0.8535,
+      "riqueza": 55,
+      "priorias": 0
+    },
+    {
+      "id": "Bischeri",
+      "x": 0.0791,
+      "y": 0.5025,
+      "riqueza": 44,
+      "priorias": 12
+    },
+    {
+      "id": "Castellani",
+      "x": 0.2548,
+      "y": 0.94,
+      "riqueza": 20,
+      "priorias": 22
+    },
+    {
+      "id": "Ginori",
+      "x": 0.6182,
+      "y": 0.9103,
+      "riqueza": 32,
+      "priorias": 0
+    },
+    {
+      "id": "Guadagni",
+      "x": 0.2722,
+      "y": 0.3317,
+      "riqueza": 8,
+      "priorias": 21
+    },
+    {
+      "id": "Lamberteschi",
+      "x": 0.1792,
+      "y": 0.06,
+      "riqueza": 42,
+      "priorias": 0
+    },
+    {
+      "id": "Medici",
+      "x": 0.6065,
+      "y": 0.5287,
+      "riqueza": 103,
+      "priorias": 53
+    },
+    {
+      "id": "Pazzi",
+      "x": 0.94,
+      "y": 0.1773,
+      "riqueza": 48,
+      "priorias": 0
+    },
+    {
+      "id": "Peruzzi",
+      "x": 0.06,
+      "y": 0.7957,
+      "riqueza": 49,
+      "priorias": 42
+    },
+    {
+      "id": "Ridolfi",
+      "x": 0.391,
+      "y": 0.4992,
+      "riqueza": 27,
+      "priorias": 38
+    },
+    {
+      "id": "Salviati",
+      "x": 0.7709,
+      "y": 0.3306,
+      "riqueza": 10,
+      "priorias": 35
+    },
+    {
+      "id": "Strozzi",
+      "x": 0.2069,
+      "y": 0.6825,
+      "riqueza": 146,
+      "priorias": 74
+    },
+    {
+      "id": "Tornabuoni",
+      "x": 0.4681,
+      "y": 0.2802,
+      "riqueza": 48,
+      "priorias": 0
+    }
+  ],
+  "aristas": [
+    ["Acciaiuoli", "Medici"],
+    ["Albizzi", "Ginori"],
+    ["Albizzi", "Guadagni"],
+    ["Albizzi", "Medici"],
+    ["Barbadori", "Castellani"],
+    ["Barbadori", "Medici"],
+    ["Bischeri", "Guadagni"],
+    ["Bischeri", "Peruzzi"],
+    ["Bischeri", "Strozzi"],
+    ["Castellani", "Peruzzi"],
+    ["Castellani", "Strozzi"],
+    ["Guadagni", "Lamberteschi"],
+    ["Guadagni", "Tornabuoni"],
+    ["Medici", "Ridolfi"],
+    ["Medici", "Salviati"],
+    ["Medici", "Tornabuoni"],
+    ["Pazzi", "Salviati"],
+    ["Peruzzi", "Strozzi"],
+    ["Ridolfi", "Strozzi"],
+    ["Ridolfi", "Tornabuoni"]
+  ]
+}
