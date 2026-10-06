@@ -15,7 +15,7 @@ terremoto del 10 de agosto). Misma base técnica y mismo almacenamiento del Tall
 |---|---|---|
 | 1 | Poniente, temporada a temporada | Recorre las 8 redes · en qué temporada hay menos personajes (T8) · qué le pasa a la red al final · la curva de **su personaje** (puesto en grado por temporada, con Tyrion de referencia) · por qué Ned sigue conectado en la T6 · **relato de Poniente, 150–250 palabras** |
 | 2 | De una escritura a una red | Las seis escrituras de Francisco Caicedo B. (la reserva del Taller 2) · ¿acumula o reparte? → grado de entrada vs. salida · qué se pierde al pasar de escritura a flecha |
-| 3 | Cali, año por año | Recorre 1938→1944, solo el año o acumulado · el año con más escrituras · **¿creció Cali o creció el archivo?** · el bazar (7,2 % en el grupo más grande) · quién acumula / quién reparte · las escrituras de **su actor** |
+| 3 | Cali, año por año | Recorre 1938→1944, solo el año o acumulado · el año con más escrituras · **¿creció Cali o creció el archivo?** (con una ficha técnica de la base) · el bazar (7,2 % en el grupo más grande) · quién acumula / quién reparte · las escrituras de **su actor** |
 | 4 | El relato de Cali | Cifras a la mano · **relato de 250–400 palabras** con cinco piezas (lista de chequeo) · comparación entre los dos relatos |
 
 El hilo es la definición del Acto 1: un relato con datos tiene **patrón, quiebre,

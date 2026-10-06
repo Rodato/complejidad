@@ -21,6 +21,7 @@ export const COLUMNAS_RESPUESTA = [
   "a2_se_pierde",
   // Acto 3 — Cali año por año
   "a3_anio_mas",
+  "a3_archivo_op",
   "a3_archivo",
   "a3_gigante",
   "a3_bazar",

@@ -19,6 +19,7 @@ export type Respuestas = {
   a2_se_pierde: string;
 
   a3_anio_mas: string;
+  a3_archivo_op: string;
   a3_archivo: string;
   a3_gigante: string;
   a3_bazar: string;
@@ -42,6 +43,7 @@ export const RESPUESTAS_VACIAS: Respuestas = {
   a2_caicedo: "",
   a2_se_pierde: "",
   a3_anio_mas: "",
+  a3_archivo_op: "",
   a3_archivo: "",
   a3_gigante: "",
   a3_bazar: "",

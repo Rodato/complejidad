@@ -33,7 +33,6 @@ import {
   Ejercicio,
   Lienzo,
   Opciones,
-  Revelable,
   Texto,
   Veredicto,
 } from "./ui";
@@ -79,6 +78,17 @@ const FILTROS: { clave: Filtro; nombre: string; desc: string; min: number }[] = 
 const ACUMULA = top(TOTAL.entrada, 1)[0][0];
 const REPARTE = top(TOTAL.salida, 1)[0][0];
 const COMPRAS_SEB = porAnio(SEBASTIAN).filter((x) => x.compras > 0);
+
+const MAX_ESCRITURAS = Math.max(...ESCRITURAS_POR_ANIO);
+
+const OPCIONES_ARCHIVO = [
+  { clave: "exploto", nombre: `En ${ANIO_MAS} el mercado de tierras de Cali explotó.` },
+  {
+    clave: "mejor_conocido",
+    nombre: `${ANIO_MAS} es el año que mejor conocemos, pero el número de escrituras no se puede comparar entre años.`,
+  },
+  { clave: "no_sirven", nombre: "Con datos tan desparejos no se puede afirmar nada." },
+];
 
 const leerPct = (s: string) => Number(s.replace("%", "").replace(",", ".").trim());
 
@@ -235,31 +245,80 @@ export default function Acto3Cali({ r, set, actor }: Props) {
 
       <Ejercicio numero="3.2" titulo="¿Creció Cali o creció el archivo?">
         <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
-          Escrituras por año en la base del curso:{" "}
-          {ANIOS.map((y, i) => `${y}: ${ESCRITURAS_POR_ANIO[i]}`).join(" · ")}.
+          Antes de contar una historia con números hay que mirar cuántos datos hay detrás de
+          cada año. Estas son las escrituras por año en la base del curso:
         </p>
-        <Texto
-          label={`Un relato fácil sería «en ${ANIO_MAS} el mercado de tierras de Cali explotó». Antes de escribirlo, ¿qué otras explicaciones hay para ese salto? ¿Qué tendrías que saber para decidir entre ellas?`}
-          ayuda="Piensa en Ned Stark: antes de contar la historia, pregúntate cómo se construyó el dato."
-          valor={r.a3_archivo}
-          onChange={(v) => set("a3_archivo", v)}
-          filas={5}
-          placeholder="Escribe aquí…"
+        <figure className="mb-4" aria-label="Escrituras por año en la base del curso">
+          <ul className="space-y-1.5">
+            {ANIOS.map((y, i) => {
+              const v = ESCRITURAS_POR_ANIO[i];
+              return (
+                <li key={y} className="flex items-center gap-2 text-sm">
+                  <span className="w-9 shrink-0 tabular-nums text-stone-500">{y}</span>
+                  <span className="flex-1">
+                    <span
+                      className={`block h-4 rounded-r ${y === ANIO_MAS ? "bg-brand-600" : "bg-stone-400"}`}
+                      style={{ width: `${(100 * v) / MAX_ESCRITURAS}%`, minWidth: 3 }}
+                    />
+                  </span>
+                  <span className="w-9 shrink-0 text-right font-medium tabular-nums text-stone-800">
+                    {v}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </figure>
+
+        <div className="mb-4 rounded-lg border border-stone-300 bg-stone-50 p-3.5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+            Ficha técnica de la base
+          </p>
+          <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-stone-700">
+            <li>
+              <strong>1938 a 1941:</strong> una transcripción antigua y parcial de los protocolos
+              de la Notaría Segunda.
+            </li>
+            <li>
+              <strong>1942 y 1944:</strong> dos tablas transcritas aparte.
+            </li>
+            <li>
+              <strong>{ANIO_MAS}:</strong> se volvió a transcribir completo. En la versión
+              anterior de esta misma base, {ANIO_MAS} tenía 66 escrituras.
+            </li>
+            <li>Todo viene de una sola notaría; Cali tenía otras.</li>
+          </ul>
+        </div>
+
+        <p className="mb-2 text-[15px] font-medium text-stone-800">
+          Con la gráfica y la ficha, ¿qué se puede afirmar?
+        </p>
+        <Opciones<string>
+          opciones={OPCIONES_ARCHIVO}
+          valor={r.a3_archivo_op}
+          onChange={(v) => set("a3_archivo_op", v)}
+          columnas
         />
-        <Revelable habilitado={r.a3_archivo.trim().length > 20} etiqueta="Ver lo que sabemos de la base">
-          <p className="text-sm leading-relaxed text-stone-700">
-            La base del curso se armó por partes. De 1938 a 1941 viene de una transcripción
-            vieja y parcial de los protocolos; 1942 y 1944, de otras dos tablas. {ANIO_MAS}, en
-            cambio, se volvió a transcribir completo: en la versión anterior de esta misma base,{" "}
-            {ANIO_MAS} tenía 66 escrituras, como los demás años. El salto a{" "}
-            {ESCRITURAS_POR_ANIO[ANIOS.indexOf(ANIO_MAS)]} lo produjo el archivo, no el mercado.
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-stone-700">
-            Eso no quiere decir que {ANIO_MAS} no sirva. Es el año que mejor conocemos, y por eso
-            ahí aparecen actores que en los otros años quizás estaban y no vemos. Lo que no se
-            puede hacer es comparar el número de escrituras entre años y llamarlo crecimiento.
-          </p>
-        </Revelable>
+        {r.a3_archivo_op && (
+          <Veredicto bien={r.a3_archivo_op === "mejor_conocido"}>
+            {r.a3_archivo_op === "mejor_conocido"
+              ? `Eso. El salto a ${ESCRITURAS_POR_ANIO[ANIOS.indexOf(ANIO_MAS)]} lo produjo la transcripción: con la base vieja, ${ANIO_MAS} tenía 66, como los demás años. Por eso no se puede llamar «crecimiento» a la diferencia entre años. Pero los datos sí sirven: ${ANIO_MAS} es el año que mejor conocemos.`
+              : r.a3_archivo_op === "exploto"
+                ? `Mira la ficha: en la versión anterior de la base, ${ANIO_MAS} tenía 66 escrituras. ¿Qué cambió, el mercado o la transcripción?`
+                : "Los datos no se vuelven inútiles por tener un límite. La pregunta es qué se puede afirmar con ellos y qué no."}
+          </Veredicto>
+        )}
+
+        <div className="mt-4">
+          <Texto
+            label="Si no se puede comparar cuántas escrituras hay cada año, ¿qué sí se puede comparar entre años? Da un ejemplo de una afirmación sobre la Cali de 1938 a 1944 que estos datos permiten hacer, y otra que no."
+            ayuda="Tres o cuatro frases. Piensa en quién compra y quién vende, más que en cuánto."
+            valor={r.a3_archivo}
+            onChange={(v) => set("a3_archivo", v)}
+            filas={5}
+            placeholder="Escribe aquí…"
+          />
+        </div>
       </Ejercicio>
 
       <Ejercicio numero="3.3" titulo="Un bazar, no una red">
