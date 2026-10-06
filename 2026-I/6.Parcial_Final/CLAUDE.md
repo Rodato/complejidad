@@ -107,6 +107,14 @@ selector de grupo). NO reintroducir un selector de grupo ni preguntas por grupo.
 - **Calificación**: se leen las respuestas **directo en el Google Sheet** (pestaña
   `parcial_final`). El `dashboard.py` existe pero **no se usa/despliega** (decisión
   jul 2026); si se reactivara, requiere `secrets["dashboard"]["password"]`.
+- **Notas del parcial (jul 2026)**: pestaña **`notas_parcial`** del mismo Sheet
+  (una fila por estudiante: nota ponderada, concepto, puntajes p1–p11 y
+  observación). Se generan con `build_notas_parcial.py` (Excel local
+  `Notas_Parcial.xlsx` con rúbrica) y se suben con `subir_notas_sheet.py`
+  (idempotente: limpia y reescribe la pestaña). Ambos scripts + el Excel están
+  **gitignoreados** (PII de estudiantes; el repo es público). Rúbrica ponderada:
+  p4 ×1 · p1/p5/p6 ×2 · p2/p3/p7/p8/p9/p11 ×3 · p10 ×4; se audita la
+  consistencia del razonamiento con teoría de redes, no solo el anclaje.
 
 ## Pitfalls (heredados del Taller 4 — respetar)
 

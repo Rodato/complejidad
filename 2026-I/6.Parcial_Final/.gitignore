@@ -4,3 +4,10 @@ __pycache__/
 .streamlit/secrets.toml
 respuestas_local.csv
 .DS_Store
+# Calificación (PII de estudiantes — el repo es público, NUNCA commitear)
+Notas_Parcial.xlsx
+build_notas_parcial.py
+subir_notas_sheet.py
+informe_boris.py
+Informe_Parcial_Final_revision.docx
+Parcial_Final_respuestas.docx

@@ -1,0 +1,1045 @@
+---
+title: "Introducción a las Redes Complejas"
+subtitle: "Introducción a la Complejidad 2026-I — Universidad del Valle"
+author: "Daniel Otero"
+date: "2026"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    number_sections: true
+    code_folding: show
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 8,
+  fig.height = 6,
+  fig.align = "center"
+)
+```
+
+# Preparación del Entorno {.tabset}
+
+## ¿Qué es RStudio?
+
+RStudio es el programa que usaremos para escribir y ejecutar código en R. Piensen en R como el motor de un carro y RStudio como el tablero de instrumentos: R hace los cálculos, RStudio nos permite ver lo que pasa de forma organizada.
+
+Cuando abran RStudio verán cuatro paneles:
+
+- **Editor** (arriba-izquierda): donde escriben código y este documento.
+- **Consola** (abajo-izquierda): donde R ejecuta los comandos.
+- **Entorno** (arriba-derecha): muestra los objetos que han creado.
+- **Gráficos/Archivos** (abajo-derecha): muestra gráficas y archivos.
+
+## ¿Qué es un paquete?
+
+Un **paquete** es una colección de funciones que alguien ya programó para resolver un tipo de problema. Nosotros usaremos `igraph`, el paquete más popular para análisis de redes en R.
+
+Para instalar un paquete solo hay que hacerlo **una vez**. Ejecuten la siguiente línea si nunca han instalado `igraph`:
+
+```{r instalar-igraph, eval=FALSE}
+# Solo ejecutar una vez — luego pueden comentar esta línea
+install.packages("igraph")
+```
+
+Para **cargar** el paquete (esto sí se hace cada vez que abren R):
+
+```{r cargar-igraph}
+library(igraph)
+```
+
+## Verificación
+
+Comprobemos que todo funciona:
+
+```{r verificar}
+# Esto debe imprimir la versión de igraph instalada
+cat("Versión de igraph:", as.character(packageVersion("igraph")), "\n")
+```
+
+Si ven un número de versión (por ejemplo, 2.0.3), todo está listo.
+
+---
+
+# ¿Qué es una Red? Del Mundo Real al Grafo
+
+Esta sección no tiene código. Solo conceptos fundamentales.
+
+## Los tres ingredientes
+
+Una **red** (o **grafo**) tiene tres ingredientes:
+
+1. **Nodos** (o vértices): las entidades. Personas, lugares, organizaciones, predios.
+2. **Vínculos** (o aristas): las relaciones entre entidades. Matrimonios, créditos, calles.
+3. **Atributos**: información adicional sobre nodos o vínculos (nombre, año, monto).
+
+## Tres ejemplos para Cali (1900–1980)
+
+### Red social: matrimonios entre familias
+
+Imaginemos cinco familias prominentes de Cali a principios del siglo XX: **Garcés**, **Caicedo**, **Borrero**, **Zawadsky** y **Lloreda**. Si dos familias se unieron por matrimonio, trazamos un vínculo entre ellas. Los *nodos* son las familias y los *vínculos* son los matrimonios.
+
+> **Grupo A:** esta es exactamente la red que ustedes van a construir a partir de registros civiles y crónicas sociales.
+
+### Red inmobiliaria: compraventas de predios
+
+Los mismos actores, pero ahora la relación es una transacción de compraventa de un predio. El vendedor transfiere al comprador. Los *nodos* son las personas (o sociedades) y los *vínculos* son las transacciones, con un atributo de **peso** que representa el valor.
+
+> **Grupo B:** su red conecta actores a través de transacciones en las notarías.
+
+### Red espacial: calles e intersecciones
+
+Pensemos en el centro de Cali: cada **intersección** es un nodo y cada **tramo de calle** es un vínculo. El peso puede ser la longitud del tramo o el volumen de tráfico.
+
+> **Grupo C:** su red convierte el mapa de Cali en un grafo donde pueden medir distancias y centralidades de cada esquina.
+
+---
+
+# Tu Primera Red en R — Grafos No Dirigidos
+
+Vamos a crear nuestra primera red: los matrimonios entre las cinco familias caleñas.
+
+## Crear la lista de vínculos
+
+Una **lista de aristas** (*edge list*) es simplemente una tabla de dos columnas: cada fila es un vínculo.
+
+```{r primera-red}
+# Definir los matrimonios como pares de familias
+matrimonios <- matrix(c(
+  "Garcés",   "Caicedo",
+  "Caicedo",  "Borrero",
+  "Borrero",  "Zawadsky",
+  "Garcés",   "Lloreda",
+  "Zawadsky", "Lloreda"
+), byrow = TRUE, ncol = 2)
+
+# Crear el grafo (no dirigido por defecto)
+g_matrimonios <- graph_from_edgelist(matrimonios, directed = FALSE)
+```
+
+## Explorar la red
+
+```{r explorar-primera}
+# ¿Cuántos nodos tiene?
+cat("Número de nodos:", vcount(g_matrimonios), "\n")
+
+# ¿Cuántos vínculos tiene?
+cat("Número de vínculos:", ecount(g_matrimonios), "\n")
+
+# Ver la estructura
+print(g_matrimonios)
+```
+
+## Visualizar la red
+
+```{r plot-primera, fig.width=8, fig.height=6}
+# Fijar semilla para que el gráfico sea reproducible
+set.seed(42)
+
+plot(g_matrimonios,
+     vertex.color = "steelblue",
+     vertex.size = 35,
+     vertex.label.color = "white",
+     vertex.label.cex = 0.9,
+     edge.color = "gray40",
+     edge.width = 2,
+     main = "Red de Matrimonios entre Familias Caleñas")
+```
+
+> **Para tu proyecto:** independientemente de su grupo, el flujo siempre es el mismo: definir nodos, definir vínculos, crear el grafo, visualizar. Lo que cambia es *qué* representan los nodos y los vínculos.
+
+---
+
+# Dirección Importa — Grafos Dirigidos
+
+No todas las relaciones son simétricas. Un matrimonio conecta a dos familias sin dirección, pero un crédito tiene dirección: alguien **presta** y alguien **recibe**.
+
+## Crear un grafo dirigido
+
+```{r red-dirigida}
+# Relaciones de crédito: prestamista -> prestatario
+creditos <- matrix(c(
+  "Garcés",   "Borrero",
+  "Caicedo",  "Zawadsky",
+  "Lloreda",  "Garcés",
+  "Borrero",  "Caicedo",
+  "Lloreda",  "Zawadsky"
+), byrow = TRUE, ncol = 2)
+
+# directed = TRUE indica que la dirección importa
+g_creditos <- graph_from_edgelist(creditos, directed = TRUE)
+```
+
+## Grado de entrada vs grado de salida
+
+En un grafo dirigido, cada nodo tiene dos tipos de grado:
+
+- **Grado de salida** (*out-degree*): ¿cuántos créditos otorga?
+- **Grado de entrada** (*in-degree*): ¿cuántos créditos recibe?
+
+```{r grados-dirigidos}
+# Grado de salida: ¿quién presta más?
+cat("Grado de salida (créditos otorgados):\n")
+print(degree(g_creditos, mode = "out"))
+
+# Grado de entrada: ¿quién recibe más?
+cat("\nGrado de entrada (créditos recibidos):\n")
+print(degree(g_creditos, mode = "in"))
+```
+
+## Comparación visual
+
+```{r comparar-dirigido, fig.width=12, fig.height=5}
+par(mfrow = c(1, 2))
+set.seed(42)
+
+# No dirigido (matrimonios)
+plot(g_matrimonios,
+     vertex.color = "steelblue",
+     vertex.size = 30,
+     vertex.label.color = "white",
+     vertex.label.cex = 0.8,
+     edge.width = 2,
+     main = "No dirigido: Matrimonios")
+
+# Dirigido (créditos)
+plot(g_creditos,
+     vertex.color = "tomato",
+     vertex.size = 30,
+     vertex.label.color = "white",
+     vertex.label.cex = 0.8,
+     edge.width = 2,
+     edge.arrow.size = 0.8,
+     main = "Dirigido: Créditos")
+
+par(mfrow = c(1, 1))
+```
+
+> **Para tu proyecto — Grupo A:** los matrimonios son no dirigidos; las relaciones padrino-ahijado son dirigidas. **Grupo B:** compraventa tiene dirección (vendedor → comprador). **Grupo C:** las calles pueden ser de un solo sentido (dirigidas) o doble vía (no dirigidas).
+
+---
+
+# El Peso de los Vínculos — Grafos Ponderados
+
+Hasta ahora todos los vínculos valían lo mismo. Pero en la vida real no es igual un crédito de $1,000 que uno de $50,000, ni es lo mismo una familia con 3 matrimonios cruzados que una con solo 1.
+
+## Crear un grafo ponderado con `graph_from_data_frame()`
+
+`graph_from_data_frame()` es más flexible que `graph_from_edgelist()` porque acepta columnas adicionales como atributos.
+
+```{r grafo-ponderado}
+# Crear un data frame con los vínculos y sus pesos
+vinculos_pond <- data.frame(
+  from = c("Garcés", "Caicedo", "Borrero", "Garcés", "Zawadsky",
+           "Lloreda", "Garcés", "Caicedo"),
+  to   = c("Caicedo", "Borrero", "Zawadsky", "Lloreda", "Lloreda",
+           "Borrero", "Zawadsky", "Lloreda"),
+  peso = c(3, 1, 2, 2, 1, 1, 4, 1),
+  tipo = c("matrimonio", "matrimonio", "matrimonio", "matrimonio",
+           "matrimonio", "crédito", "sociedad", "crédito")
+)
+
+# Crear el grafo no dirigido con atributos
+g_pond <- graph_from_data_frame(vinculos_pond, directed = FALSE)
+
+# Asignar la columna 'peso' como weight para igraph
+E(g_pond)$weight <- E(g_pond)$peso
+```
+
+## Verificar los pesos
+
+```{r verificar-pesos}
+# Ver los atributos de las aristas
+cat("Pesos de cada vínculo:\n")
+print(E(g_pond)$weight)
+
+# Ver el tipo de cada vínculo
+cat("\nTipo de cada vínculo:\n")
+print(E(g_pond)$tipo)
+```
+
+## Visualizar con grosor proporcional al peso
+
+```{r plot-ponderado, fig.width=8, fig.height=6}
+set.seed(42)
+
+plot(g_pond,
+     vertex.color = "steelblue",
+     vertex.size = 35,
+     vertex.label.color = "white",
+     vertex.label.cex = 0.9,
+     edge.width = E(g_pond)$weight * 2,
+     edge.color = "gray50",
+     main = "Red Ponderada: Grosor = Número de Alianzas")
+```
+
+## La fuerza de los lazos débiles
+
+Mark Granovetter (1973) demostró algo contraintuitivo: los vínculos **débiles** (con poco peso, poco frecuentes) a menudo son los más importantes para transmitir información nueva. ¿Por qué? Porque los lazos fuertes tienden a conectar personas que ya se conocen entre sí, mientras que los lazos débiles nos conectan con círculos sociales diferentes.
+
+> **Para tu proyecto:** cuando construyan su red ponderada, piensen: ¿un vínculo fuerte (muchas transacciones, matrimonios repetidos) significa más influencia? ¿O los vínculos débiles revelan puentes entre grupos que de otra forma estarían desconectados?
+
+---
+
+# La Red como Matriz — Matrices de Adyacencia
+
+Toda red se puede representar como una **matriz de adyacencia**: una tabla cuadrada donde las filas y columnas son los nodos, y cada celda indica si hay un vínculo (y con qué peso).
+
+## Matriz sin pesos
+
+```{r matriz-simple}
+# Matriz binaria (1 = hay vínculo, 0 = no hay)
+adj_bin <- as_adjacency_matrix(g_matrimonios, sparse = FALSE)
+print(adj_bin)
+```
+
+Noten que la matriz es **simétrica** porque el grafo es no dirigido.
+
+## Matriz con pesos
+
+```{r matriz-pesos}
+# Matriz ponderada
+adj_pond <- as_adjacency_matrix(g_pond, attr = "weight", sparse = FALSE)
+print(adj_pond)
+```
+
+## Redes bipartitas: personas y clubes
+
+Una red **bipartita** tiene dos tipos de nodos. Por ejemplo: **personas** y **clubes sociales**. Solo hay vínculos entre tipos (una persona pertenece a un club), nunca dentro del mismo tipo.
+
+```{r bipartita}
+# Definir membresías: persona -> club
+membresias <- data.frame(
+  persona = c("Garcés", "Garcés", "Caicedo", "Borrero", "Borrero",
+              "Zawadsky", "Lloreda", "Lloreda", "Caicedo"),
+  club = c("Club Colombia", "Club Campestre", "Club Colombia",
+           "Club Colombia", "Club Campestre", "Club Campestre",
+           "Club Colombia", "Club Campestre", "Club Campestre")
+)
+
+# Crear grafo bipartito
+g_bip <- graph_from_data_frame(membresias, directed = FALSE)
+
+# Marcar el tipo de cada nodo (TRUE = club, FALSE = persona)
+V(g_bip)$type <- V(g_bip)$name %in% c("Club Colombia", "Club Campestre")
+
+# Verificar
+cat("¿Es bipartito?", is_bipartite(g_bip), "\n")
+```
+
+## Proyección: de bipartito a persona-persona
+
+La **proyección** convierte la red bipartita en una red donde solo quedan las personas, conectadas si comparten al menos un club. Este es el procedimiento clásico de Breiger (1974): la **dualidad de personas y grupos**.
+
+```{r proyeccion, fig.width=12, fig.height=5}
+# Proyectar
+proyecciones <- bipartite_projection(g_bip)
+g_personas <- proyecciones$proj1  # proyección de personas
+g_clubes <- proyecciones$proj2    # proyección de clubes
+
+par(mfrow = c(1, 2))
+set.seed(42)
+
+# Red persona-persona (co-membresía)
+plot(g_personas,
+     vertex.color = "steelblue",
+     vertex.size = 30,
+     vertex.label.color = "white",
+     vertex.label.cex = 0.8,
+     edge.width = E(g_personas)$weight * 1.5,
+     main = "Proyección: Personas\n(vínculo = comparten club)")
+
+# Red club-club
+plot(g_clubes,
+     vertex.color = "forestgreen",
+     vertex.size = 40,
+     vertex.label.color = "white",
+     vertex.label.cex = 0.8,
+     edge.width = E(g_clubes)$weight,
+     main = "Proyección: Clubes\n(vínculo = comparten miembros)")
+
+par(mfrow = c(1, 1))
+```
+
+> **Para tu proyecto — Grupo A:** Breiger (1974) es su referencia metodológica central. Sus datos de membresías en clubes y juntas directivas son exactamente una red bipartita que deben proyectar para obtener la red social persona-persona.
+
+---
+
+# El Grado
+
+El **grado** de un nodo es simplemente cuántos vínculos tiene. Es la medida más básica pero ya nos dice mucho: un nodo con muchos vínculos es un actor muy conectado.
+
+## Red más grande para trabajar
+
+Vamos a crear una red sintética de ~20 actores caleños que usaremos también en las secciones siguientes.
+
+```{r red-grande}
+set.seed(123)
+
+# Actores ficticios (apellidos de familias caleñas)
+actores <- c("Garcés", "Caicedo", "Borrero", "Zawadsky", "Lloreda",
+             "Eder", "Sardi", "Carvajal", "Ochoa", "Valencia",
+             "Domínguez", "Guerrero", "Holguín", "Isaacs", "Lozano",
+             "Mercado", "Navia", "Orejuela", "Palau", "Quintero")
+
+# Generar vínculos aleatorios pero con estructura realista
+# Usamos un modelo donde las primeras 5 familias (élite) tienen más conexiones
+vinculos_red <- data.frame(from = character(), to = character(),
+                           stringsAsFactors = FALSE)
+
+# Las familias de élite se conectan mucho entre sí
+elite <- actores[1:5]
+for (i in 1:(length(elite)-1)) {
+  for (j in (i+1):length(elite)) {
+    vinculos_red <- rbind(vinculos_red,
+                          data.frame(from = elite[i], to = elite[j]))
+  }
+}
+
+# Conexiones entre élite y otros actores
+set.seed(42)
+for (e in elite) {
+  n_conexiones <- sample(2:4, 1)
+  otros <- sample(actores[6:20], n_conexiones)
+  for (o in otros) {
+    vinculos_red <- rbind(vinculos_red, data.frame(from = e, to = o))
+  }
+}
+
+# Algunas conexiones entre actores no-élite
+for (i in 1:8) {
+  par_nodos <- sample(actores[6:20], 2)
+  vinculos_red <- rbind(vinculos_red,
+                        data.frame(from = par_nodos[1], to = par_nodos[2]))
+}
+
+# Eliminar duplicados
+vinculos_red <- unique(vinculos_red)
+
+# Crear el grafo
+g_cali <- graph_from_data_frame(vinculos_red, directed = FALSE, vertices = data.frame(name = actores))
+g_cali <- simplify(g_cali)
+
+cat("Red de Cali:", vcount(g_cali), "nodos,", ecount(g_cali), "vínculos\n")
+```
+
+## Calcular el grado
+
+```{r calcular-grado}
+# Grado de cada nodo
+grados <- degree(g_cali)
+
+# Ordenar de mayor a menor
+grados_ord <- sort(grados, decreasing = TRUE)
+print(grados_ord)
+```
+
+## Distribución de grado
+
+```{r dist-grado, fig.width=8, fig.height=5}
+hist(grados,
+     breaks = seq(min(grados) - 0.5, max(grados) + 0.5, by = 1),
+     col = "steelblue",
+     border = "white",
+     main = "Distribución de Grado — Red de Cali",
+     xlab = "Grado (número de vínculos)",
+     ylab = "Frecuencia")
+abline(v = mean(grados), col = "tomato", lwd = 2, lty = 2)
+legend("topright", legend = paste("Media =", round(mean(grados), 1)),
+       col = "tomato", lwd = 2, lty = 2)
+```
+
+```{r plot-grado, fig.width=8, fig.height=6}
+# Visualizar la red con tamaño proporcional al grado
+set.seed(42)
+
+plot(g_cali,
+     vertex.size = grados * 3 + 5,
+     vertex.color = "steelblue",
+     vertex.label.cex = 0.6,
+     vertex.label.color = "black",
+     edge.color = "gray70",
+     main = "Red de Cali — Tamaño = Grado")
+```
+
+> **Para tu proyecto:** el grado es su primera medida de importancia. ¿Qué familia tiene más matrimonios (Grupo A)? ¿Qué actor participa en más transacciones (Grupo B)? ¿Qué intersección conecta más calles (Grupo C)?
+
+---
+
+# Caminos, Distancias y Diámetro
+
+## Caminos más cortos
+
+Un **camino** es una secuencia de nodos conectados por vínculos. El **camino más corto** entre dos nodos es el que usa menos vínculos (o menor peso total).
+
+```{r caminos}
+# Camino más corto entre Quintero y Garcés
+camino <- shortest_paths(g_cali, from = "Quintero", to = "Garcés")$vpath[[1]]
+cat("Camino más corto de Quintero a Garcés:\n")
+cat(paste(V(g_cali)$name[camino], collapse = " → "), "\n")
+cat("Longitud:", length(camino) - 1, "pasos\n")
+```
+
+## Matriz de distancias
+
+```{r distancias}
+# Distancias entre todos los pares de nodos
+dist_matrix <- distances(g_cali)
+
+# Mostrar solo las primeras 6 familias
+print(dist_matrix[1:6, 1:6])
+```
+
+## Diámetro y distancia media
+
+```{r diametro}
+# Diámetro: el camino más corto más largo
+cat("Diámetro de la red:", diameter(g_cali), "\n")
+
+# Distancia media
+cat("Distancia media:", round(mean_distance(g_cali), 2), "\n")
+
+# ¿La red es conexa? (todos los nodos se pueden alcanzar entre sí)
+cat("¿Es conexa?", is_connected(g_cali), "\n")
+```
+
+## Visualizar el camino más corto
+
+```{r plot-camino, fig.width=8, fig.height=6}
+set.seed(42)
+
+# Colores: resaltar nodos y aristas del camino
+colores_nodos <- rep("gray80", vcount(g_cali))
+colores_nodos[camino] <- "tomato"
+colores_nodos[camino[1]] <- "darkred"
+colores_nodos[camino[length(camino)]] <- "darkred"
+
+# Identificar aristas del camino
+aristas_camino <- rep("gray80", ecount(g_cali))
+anchos_aristas <- rep(1, ecount(g_cali))
+for (k in 1:(length(camino) - 1)) {
+  eid <- get.edge.ids(g_cali, c(camino[k], camino[k + 1]))
+  if (eid > 0) {
+    aristas_camino[eid] <- "tomato"
+    anchos_aristas[eid] <- 4
+  }
+}
+
+plot(g_cali,
+     vertex.size = 15,
+     vertex.color = colores_nodos,
+     vertex.label.cex = 0.6,
+     vertex.label.color = "black",
+     edge.color = aristas_camino,
+     edge.width = anchos_aristas,
+     main = "Camino más corto: Quintero → Garcés")
+```
+
+> **Para tu proyecto:** la distancia entre dos actores mide cuántos intermediarios necesitan para conectarse. Si la red no es conexa, hay grupos completamente aislados — eso también es un hallazgo importante.
+
+---
+
+# Centralidad
+
+No todos los nodos son igualmente "importantes". Hay varias formas de medir la importancia, y cada una captura algo diferente.
+
+## Centralidad de Grado
+
+Ya la conocemos: ¿cuántos vínculos tiene un nodo? La versión **normalizada** divide por el máximo posible (n-1).
+
+```{r centralidad-grado}
+cent_grado <- degree(g_cali, normalized = TRUE)
+cat("Centralidad de grado (normalizada):\n")
+print(round(sort(cent_grado, decreasing = TRUE), 3))
+```
+
+## Centralidad de Intermediación (*Betweenness*)
+
+¿Cuántos caminos más cortos pasan por un nodo? Un nodo con alta intermediación es un **broker** o **gatekeeper**: controla el flujo de información o recursos entre partes de la red.
+
+Padgett & McLean (2006) mostraron que los Medici en la Florencia del siglo XV tenían una posición de intermediación excepcional: no eran la familia con más vínculos, pero eran el puente entre facciones rivales. Esta es la misma lógica que pueden aplicar a las familias caleñas.
+
+```{r centralidad-intermediacion}
+cent_betw <- betweenness(g_cali, normalized = TRUE)
+cat("Centralidad de intermediación (normalizada):\n")
+print(round(sort(cent_betw, decreasing = TRUE), 3))
+```
+
+```{r plot-betweenness, fig.width=8, fig.height=6}
+set.seed(42)
+
+plot(g_cali,
+     vertex.size = cent_betw * 80 + 5,
+     vertex.color = "tomato",
+     vertex.label.cex = 0.6,
+     vertex.label.color = "black",
+     edge.color = "gray70",
+     main = "Centralidad de Intermediación\n(tamaño = betweenness)")
+```
+
+## Centralidad de Vector Propio (*Eigenvector Centrality*)
+
+"No importa solo cuántas conexiones tienes, sino **a quién** estás conectado." Un nodo tiene alta centralidad de vector propio si está conectado a nodos que a su vez están muy conectados.
+
+```{r centralidad-eigen}
+cent_eigen <- eigen_centrality(g_cali)$vector
+cat("Centralidad de vector propio:\n")
+print(round(sort(cent_eigen, decreasing = TRUE), 3))
+```
+
+## Tabla comparativa
+
+```{r tabla-centralidades}
+# Crear tabla comparativa
+tabla_cent <- data.frame(
+  Nodo = V(g_cali)$name,
+  Grado = round(cent_grado, 3),
+  Intermediación = round(cent_betw, 3),
+  Vector_Propio = round(cent_eigen, 3)
+)
+
+# Ordenar por grado
+tabla_cent <- tabla_cent[order(-tabla_cent$Grado), ]
+rownames(tabla_cent) <- NULL
+
+knitr::kable(tabla_cent,
+             col.names = c("Nodo", "Grado", "Intermediación", "Vector Propio"),
+             caption = "Comparación de centralidades — Red de Cali")
+```
+
+Observen: el nodo con mayor grado no necesariamente es el de mayor intermediación. Cada métrica cuenta una historia diferente.
+
+> **Para tu proyecto:** usen al menos dos medidas de centralidad y comparen los rankings. ¿El actor más conectado (grado) es también el mejor broker (intermediación)? Si no, ¿qué significa eso para su pregunta de investigación?
+
+---
+
+# Clustering y Comunidades
+
+## Coeficiente de Clustering (Transitividad)
+
+El **coeficiente de clustering** mide qué tan conectados están los vecinos de un nodo entre sí. Si yo conozco a A y a B, ¿A y B se conocen? Un clustering alto indica que la red tiene muchos triángulos (grupos cerrados).
+
+```{r clustering}
+# Clustering global (proporción de triángulos cerrados en toda la red)
+cat("Clustering global:", round(transitivity(g_cali, type = "global"), 3), "\n")
+
+# Clustering local de cada nodo
+clust_local <- transitivity(g_cali, type = "local")
+names(clust_local) <- V(g_cali)$name
+
+cat("\nClustering local (primeros 10):\n")
+print(round(sort(clust_local, decreasing = TRUE, na.last = TRUE)[1:10], 3))
+```
+
+## Detección de Comunidades
+
+Una **comunidad** es un grupo de nodos que están más densamente conectados entre sí que con el resto de la red. El algoritmo de Louvain encuentra estas comunidades maximizando la **modularidad**.
+
+```{r comunidades}
+# Detectar comunidades con el algoritmo de Louvain
+set.seed(42)
+comunidades <- cluster_louvain(g_cali)
+
+# Resultados
+cat("Número de comunidades encontradas:", length(comunidades), "\n")
+cat("Modularidad:", round(modularity(comunidades), 3), "\n")
+
+# ¿Quién pertenece a cada comunidad?
+for (i in 1:length(comunidades)) {
+  cat(paste0("\nComunidad ", i, ": "))
+  cat(paste(V(g_cali)$name[membership(comunidades) == i], collapse = ", "), "\n")
+}
+```
+
+## Visualizar comunidades
+
+```{r plot-comunidades, fig.width=8, fig.height=6}
+set.seed(42)
+
+# Colores por comunidad
+colores_com <- c("steelblue", "tomato", "forestgreen", "gold",
+                 "purple", "orange", "pink", "cyan")[membership(comunidades)]
+
+plot(g_cali,
+     vertex.size = 18,
+     vertex.color = colores_com,
+     vertex.label.cex = 0.6,
+     vertex.label.color = "black",
+     edge.color = "gray70",
+     main = paste("Comunidades (Louvain) — Modularidad:",
+                  round(modularity(comunidades), 3)))
+
+legend("bottomleft",
+       legend = paste("Comunidad", 1:length(comunidades)),
+       fill = c("steelblue", "tomato", "forestgreen", "gold",
+                "purple", "orange", "pink", "cyan")[1:length(comunidades)],
+       cex = 0.8)
+```
+
+> **Para tu proyecto:** la detección de comunidades les permitirá identificar facciones, barrios o clusters económicos en Cali. ¿Las comunidades detectadas coinciden con lo que saben de la historia? Si no, ¿qué les dice el algoritmo que la historiografía no había visto?
+
+---
+
+# Mundos Pequeños y Redes de Escala Libre
+
+Ahora pasamos de redes empíricas a **modelos teóricos**: estructuras idealizadas que nos ayudan a entender las propiedades de las redes reales.
+
+## Mundos Pequeños (Watts-Strogatz)
+
+En 1998, Watts y Strogatz descubrieron que muchas redes reales tienen dos propiedades simultáneas:
+
+1. **Clustering alto:** mis amigos tienden a ser amigos entre sí.
+2. **Distancia media baja:** puedo llegar a cualquiera en pocos pasos.
+
+Esto es el fenómeno de los "seis grados de separación".
+
+```{r small-world}
+set.seed(42)
+
+# Parámetros
+n <- 50         # número de nodos
+nei <- 4        # vecinos iniciales (a cada lado)
+p_rewire <- 0.1 # probabilidad de reconexión
+
+# Crear red de mundo pequeño
+g_sw <- sample_smallworld(dim = 1, size = n, nei = nei, p = p_rewire)
+
+# Crear red aleatoria Erdős-Rényi con la misma densidad para comparar
+g_er <- sample_gnm(n = n, m = ecount(g_sw))
+
+# Comparar propiedades
+comparacion <- data.frame(
+  Propiedad = c("Clustering global", "Distancia media"),
+  Watts_Strogatz = c(
+    round(transitivity(g_sw, type = "global"), 3),
+    round(mean_distance(g_sw), 3)
+  ),
+  Erdos_Renyi = c(
+    round(transitivity(g_er, type = "global"), 3),
+    round(mean_distance(g_er), 3)
+  )
+)
+
+knitr::kable(comparacion,
+             caption = "Comparación: Mundo Pequeño vs Red Aleatoria")
+```
+
+```{r plot-sw, fig.width=12, fig.height=5}
+par(mfrow = c(1, 2))
+
+plot(g_sw, vertex.size = 5, vertex.label = NA,
+     vertex.color = "steelblue",
+     layout = layout_in_circle,
+     main = paste("Watts-Strogatz\nClustering:",
+                  round(transitivity(g_sw, type = "global"), 3)))
+
+plot(g_er, vertex.size = 5, vertex.label = NA,
+     vertex.color = "tomato",
+     layout = layout_in_circle,
+     main = paste("Erdős-Rényi\nClustering:",
+                  round(transitivity(g_er, type = "global"), 3)))
+
+par(mfrow = c(1, 1))
+```
+
+## Redes de Escala Libre (Barabási-Albert)
+
+En 1999, Barabási y Albert descubrieron que muchas redes reales siguen un principio de **conexión preferencial** (*preferential attachment*): los nodos que ya tienen muchos vínculos tienden a atraer aún más vínculos. "Los ricos se hacen más ricos."
+
+Esto produce una **distribución de grado de ley de potencia**: la mayoría de nodos tiene pocas conexiones, pero unos pocos *hubs* tienen muchísimas.
+
+```{r scale-free}
+set.seed(42)
+
+# Crear red de Barabási-Albert
+g_ba <- sample_pa(n = 200, m = 2, directed = FALSE)
+
+# Distribución de grado
+grados_ba <- degree(g_ba)
+
+cat("Grado máximo:", max(grados_ba), "\n")
+cat("Grado medio:", round(mean(grados_ba), 2), "\n")
+cat("Grado mediano:", median(grados_ba), "\n")
+```
+
+```{r plot-loglog, fig.width=12, fig.height=5}
+par(mfrow = c(1, 2))
+
+# Distribución de grado (histograma normal)
+hist(grados_ba, breaks = 30, col = "steelblue", border = "white",
+     main = "Distribución de Grado\n(Barabási-Albert, n=200)",
+     xlab = "Grado", ylab = "Frecuencia")
+
+# Distribución de grado en escala log-log
+grado_tabla <- table(grados_ba)
+plot(as.numeric(names(grado_tabla)), as.numeric(grado_tabla),
+     log = "xy", pch = 19, col = "steelblue",
+     xlab = "Grado (log)", ylab = "Frecuencia (log)",
+     main = "Distribución Log-Log\n(¿recta = ley de potencia?)")
+
+par(mfrow = c(1, 1))
+```
+
+```{r ajuste-potencia}
+# Ajustar ley de potencia
+ajuste <- fit_power_law(grados_ba)
+cat("Exponente estimado (alpha):", round(ajuste$alpha, 2), "\n")
+cat("Grado mínimo (xmin):", ajuste$xmin, "\n")
+```
+
+> **Para tu proyecto:** ¿la red que están construyendo se parece más a un mundo pequeño o a una red de escala libre? Calculen clustering, distancia media y vean la distribución de grado. La respuesta les dirá algo sobre cómo se organizaba la sociedad caleña.
+
+---
+
+# De los Datos Reales a la Red
+
+Esta es la sección más práctica: cómo pasar de archivos de datos a una red lista para analizar.
+
+## Estructura de datos recomendada
+
+Necesitan **dos archivos CSV**:
+
+### Edge list (lista de vínculos)
+
+| Columna | Descripción | Ejemplo (Grupo A) | Ejemplo (Grupo B) | Ejemplo (Grupo C) |
+|---------|-------------|-------------------|-------------------|-------------------|
+| `origen` | Nodo de origen | Garcés | Garcés | Calle 5/Cra 1 |
+| `destino` | Nodo de destino | Caicedo | Caicedo | Calle 5/Cra 2 |
+| `tipo_vinculo` | Tipo de relación | matrimonio | compraventa | calle |
+| `peso` | Intensidad | 1 | 12000 | 150 (metros) |
+| `año` | Fecha | 1912 | 1920 | 1930 |
+| `fuente` | Archivo/documento | Registro Civil | Notaría Primera | Plano 1930 |
+
+### Node list (lista de actores)
+
+| Columna | Descripción | Ejemplo |
+|---------|-------------|---------|
+| `id` | Identificador único | 1 |
+| `nombre` | Nombre del actor | Jorge |
+| `apellido` | Apellido | Garcés |
+| `tipo` | Categoría | familia_elite |
+| `fuente` | Documento fuente | Registro Civil |
+
+## Leer los CSV y crear la red
+
+Vamos a leer los archivos de ejemplo que acompañan esta clase.
+
+```{r leer-datos}
+# Leer los CSV con encoding UTF-8 (importante para acentos y ñ)
+vinculos <- read.csv("vinculos_ejemplo.csv", fileEncoding = "UTF-8",
+                     stringsAsFactors = FALSE)
+actores <- read.csv("actores_ejemplo.csv", fileEncoding = "UTF-8",
+                    stringsAsFactors = FALSE)
+
+# Revisar las primeras filas
+cat("=== Vínculos ===\n")
+print(head(vinculos))
+
+cat("\n=== Actores ===\n")
+print(head(actores))
+```
+
+```{r crear-red-datos}
+# Crear el grafo desde los data frames
+# Usamos las columnas 'origen' y 'destino' del edge list
+# y la columna 'apellido' del node list como identificador
+g_datos <- graph_from_data_frame(
+  d = vinculos[, c("origen", "destino", "tipo_vinculo", "peso", "año", "fuente")],
+  directed = FALSE,
+  vertices = actores[, c("apellido", "nombre", "tipo", "fuente")]
+)
+
+cat("Red creada:", vcount(g_datos), "nodos,", ecount(g_datos), "vínculos\n")
+```
+
+## Validación
+
+Antes de analizar, siempre hay que validar los datos.
+
+```{r validar}
+# ¿El grafo es simple? (sin lazos ni aristas múltiples)
+cat("¿Es simple?", is_simple(g_datos), "\n")
+
+# Si no es simple, ¿cuántas aristas múltiples hay?
+cat("Aristas múltiples:", sum(which_multiple(g_datos)), "\n")
+cat("Lazos (self-loops):", sum(which_loop(g_datos)), "\n")
+
+# ¿Hay nodos aislados (sin vínculos)?
+grados_datos <- degree(g_datos)
+aislados <- V(g_datos)$name[grados_datos == 0]
+if (length(aislados) > 0) {
+  cat("Nodos aislados:", paste(aislados, collapse = ", "), "\n")
+  cat("(Revisen: ¿son errores de transcripción o actores realmente aislados?)\n")
+} else {
+  cat("No hay nodos aislados.\n")
+}
+
+# Componentes conexas
+cat("Número de componentes:", components(g_datos)$no, "\n")
+```
+
+```{r plot-datos, fig.width=8, fig.height=6}
+# Visualizar la red construida desde los CSV
+set.seed(42)
+
+# Colores por tipo de vínculo
+colores_vinc <- ifelse(E(g_datos)$tipo_vinculo == "matrimonio", "steelblue",
+                ifelse(E(g_datos)$tipo_vinculo == "crédito", "tomato",
+                ifelse(E(g_datos)$tipo_vinculo == "transacción_inmobiliaria", "forestgreen",
+                ifelse(E(g_datos)$tipo_vinculo == "sociedad_comercial", "gold", "purple"))))
+
+plot(g_datos,
+     vertex.size = 25,
+     vertex.color = "gray90",
+     vertex.label.cex = 0.7,
+     vertex.label.color = "black",
+     edge.color = colores_vinc,
+     edge.width = 2,
+     main = "Red desde Datos CSV")
+
+legend("bottomleft",
+       legend = c("Matrimonio", "Crédito", "Transacción inmob.", "Sociedad comercial", "Membresía club"),
+       fill = c("steelblue", "tomato", "forestgreen", "gold", "purple"),
+       cex = 0.7)
+```
+
+## Exportar a Gephi
+
+Gephi es un programa de visualización de redes. Para abrir su red en Gephi, expórtenla en formato GraphML.
+
+```{r exportar-gephi, eval=FALSE}
+# Exportar a formato GraphML (compatible con Gephi)
+write_graph(g_datos, "red_cali.graphml", format = "graphml")
+cat("Archivo exportado: red_cali.graphml\n")
+cat("Abrir en Gephi: File > Open > seleccionar red_cali.graphml\n")
+```
+
+> **Para tu proyecto:** usen exactamente esta estructura de CSV. Cuando tengan dudas sobre cómo codificar un dato, recuerden: cada fila del edge list es **un vínculo**, cada fila del node list es **un actor**. Mantengan la columna `fuente` siempre llena — es su trazabilidad.
+
+---
+
+# Resumen y Próximos Pasos
+
+## Tabla resumen
+
+```{r tabla-resumen}
+resumen <- data.frame(
+  Concepto = c(
+    "Nodo / Vértice",
+    "Vínculo / Arista",
+    "Grafo no dirigido",
+    "Grafo dirigido",
+    "Peso",
+    "Matriz de adyacencia",
+    "Red bipartita",
+    "Grado",
+    "Distancia / Camino más corto",
+    "Diámetro",
+    "Centralidad de grado",
+    "Centralidad de intermediación",
+    "Centralidad de vector propio",
+    "Clustering",
+    "Comunidades",
+    "Mundo pequeño",
+    "Escala libre"
+  ),
+  Función_igraph = c(
+    "vcount(), V()",
+    "ecount(), E()",
+    "graph_from_edgelist(directed=FALSE)",
+    "graph_from_edgelist(directed=TRUE)",
+    "E(g)$weight",
+    "as_adjacency_matrix()",
+    "bipartite_projection()",
+    "degree()",
+    "shortest_paths(), distances()",
+    "diameter()",
+    "degree(normalized=TRUE)",
+    "betweenness()",
+    "eigen_centrality()",
+    "transitivity()",
+    "cluster_louvain()",
+    "sample_smallworld()",
+    "sample_pa()"
+  ),
+  Pregunta_Cali = c(
+    "¿Quiénes son los actores relevantes?",
+    "¿Qué relaciones los conectan?",
+    "¿Quiénes se casaron entre sí?",
+    "¿Quién le prestó a quién?",
+    "¿Cuántas transacciones hubo?",
+    "¿Cómo se ve la red completa en una tabla?",
+    "¿Quiénes comparten membresía en clubes?",
+    "¿Quién tiene más conexiones?",
+    "¿Cuántos pasos hay entre dos actores?",
+    "¿Qué tan 'grande' es la red?",
+    "¿Quién es el más conectado (normalizado)?",
+    "¿Quién es el broker/intermediario clave?",
+    "¿Quién está conectado a los poderosos?",
+    "¿Los amigos de mis amigos son amigos?",
+    "¿Hay facciones o grupos diferenciados?",
+    "¿Se puede llegar rápido a cualquiera?",
+    "¿Hay unos pocos hubs muy conectados?"
+  )
+)
+
+knitr::kable(resumen,
+             col.names = c("Concepto", "Función igraph", "Pregunta para Cali"),
+             caption = "Resumen: conceptos, funciones y preguntas de investigación")
+```
+
+## Checklist por grupo — Hito 1 (Semana 4)
+
+### Grupo A: Red Social
+- [ ] Edge list con al menos 30 vínculos (matrimonios, parentesco, compadrazgo)
+- [ ] Node list con todos los actores y su tipo (familia élite, comerciante, etc.)
+- [ ] Grafo construido en igraph y visualizado
+- [ ] Grado y al menos una centralidad calculada
+- [ ] Archivo exportado a Gephi (.graphml)
+
+### Grupo B: Red Inmobiliaria
+- [ ] Edge list con al menos 30 transacciones (compraventa, arriendo, hipoteca)
+- [ ] Node list con actores (personas, sociedades) y tipo
+- [ ] Grafo ponderado (peso = valor de transacción)
+- [ ] Distribución de grado y centralidades
+- [ ] Archivo exportado a Gephi (.graphml)
+
+### Grupo C: Red Espacial
+- [ ] Edge list con tramos de calle (intersección_origen, intersección_destino)
+- [ ] Node list con intersecciones y coordenadas si las tienen
+- [ ] Grafo construido y visualizado
+- [ ] Distancia media, diámetro, componentes conexas
+- [ ] Archivo exportado a Gephi (.graphml)
+
+## Glosario español–inglés
+
+```{r glosario}
+glosario <- data.frame(
+  Español = c("Red", "Nodo / Vértice", "Vínculo / Arista", "Grado",
+              "Camino", "Distancia", "Diámetro", "Centralidad",
+              "Intermediación", "Clustering", "Comunidad", "Modularidad",
+              "Grafo dirigido", "Grafo ponderado", "Matriz de adyacencia",
+              "Red bipartita", "Mundo pequeño", "Escala libre",
+              "Lista de aristas", "Vector propio"),
+  Inglés = c("Network", "Node / Vertex", "Edge / Link / Tie", "Degree",
+             "Path", "Distance", "Diameter", "Centrality",
+             "Betweenness", "Clustering", "Community", "Modularity",
+             "Directed graph", "Weighted graph", "Adjacency matrix",
+             "Bipartite network", "Small world", "Scale-free",
+             "Edge list", "Eigenvector")
+)
+
+knitr::kable(glosario,
+             caption = "Glosario de términos técnicos")
+```
+
+---
+
+*Documento preparado para el curso Introducción a la Complejidad 2026-I, Universidad del Valle.*

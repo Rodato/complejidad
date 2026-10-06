@@ -1,0 +1,12 @@
+id,nombre,apellido,tipo,fuente
+1,Jorge,Garcés,familia_elite,Registro Civil
+2,Roberto,Caicedo,familia_elite,Registro Civil
+3,Ernesto,Borrero,familia_elite,Registro Civil
+4,Alfredo,Zawadsky,familia_elite,Registro Civil
+5,Álvaro,Lloreda,familia_elite,Registro Civil
+6,Hernando,Eder,hacendado,Notaría Primera
+7,Carlos,Sardi,comerciante,Cámara de Comercio
+8,Manuel,Carvajal,industrial,Cámara de Comercio
+9,Luis,Ochoa,comerciante,Notaría Segunda
+10,Pedro,Valencia,hacendado,Registro Civil
+11,Antonio,Domínguez,comerciante,Cámara de Comercio

@@ -1,0 +1,35 @@
+# Investigación: no es material del curso (6 GB de escaneos y claves de API)
+investigacion/
+
+# Copias de los .git de los repos que existían antes de unirlos aquí
+.repos_viejos/
+
+# Entornos, dependencias y builds
+node_modules/
+.next/
+.venv/
+__pycache__/
+*.pyc
+.vercel
+.DS_Store
+.claude/settings.local.json
+
+# Secretos — NUNCA commitear
+.env
+.env*.local
+.streamlit/secrets.toml
+*-service-account*.json
+complejidad-*.json
+
+# Calificación (PII de estudiantes — el repo es público, NUNCA commitear)
+Notas_*.xlsx
+build_notas*.py
+calificaciones_*.md
+respuestas_taller*.csv
+respuestas_taller*.md
+leer_respuestas_taller*.py
+respuestas_local.csv
+
+# Insumos con derechos de terceros que no son nuestros para publicar
+2026-II/0.Insumos/Cali ante el espejo del terremoto.docx
+2026-II/0.Insumos/castaneda_cali_ante_el_espejo.txt

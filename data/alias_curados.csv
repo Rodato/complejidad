@@ -1,0 +1,49 @@
+variante,canonico
+# Tabla de alias CURADA A MANO para la red del parcial (modo 'curada').
+# variante  = forma normalizada que aparece en los datos (se compara plegando
+#             acentos y signos, así que no hay que ser exacto con tildes/puntos)
+# canonico  = a qué actor se unifica (en minúscula; el app lo pone en bonito)
+# Regla de oro: SOLO unir cuando es claramente el MISMO actor. Cada banco/
+# empresa/persona distinta se deja aparte aunque el nombre se parezca.
+#
+# --- Sebastián Caicedo (acumulador-broker protagonista) ---
+sebastian caicedo,sebastián caicedo
+# --- Susana Caicedo de Vaccari (vendedora) [REVISAR: ¿'susana caicedo' es ella?] ---
+susana caicedo,susana caicedo de vaccari
+susana caicedo de raccari,susana caicedo de vaccari
+# --- The Royal Bank of Canada ---
+the royal bank of canada,the royal bank of canadá
+the royal bank de canadá,the royal bank of canadá
+the royal bank of canada de bogotá,the royal bank of canadá
+# --- Bancos: se MANTIENEN SEPARADOS Central / Agrario / Agrícola / de Bogotá ---
+banco cental hipotecario,banco central hipotecario
+gerente de la sucursal en cali del banco agrícola hipotecario,banco agrícola hipotecario
+banco de bogota,banco de bogotá
+banco de bogotá sucursal cali,banco de bogotá
+banco de bogotá – sucursal cali,banco de bogotá
+banco comercial antioqueño sucursal cali,banco comercial antioqueño
+# --- Municipio de Cali ---
+municipío de cali,municipio de cali
+# --- Compañía Central de Construcciones (misma empresa, varias grafías) ---
+compañía central de construcciones s.a,compañía central de construcciones
+compañía central de construcciones s.a. –,compañía central de construcciones
+compañía central de construcciones sa,compañía central de construcciones
+compañía central de construcciones –,compañía central de construcciones
+compañía central de construcciones en liquidación,compañía central de construcciones
+# --- Colombian Holding Corporation (gran vendedor; typos de OCR) ---
+colombia corporation,colombian holding corporation s.a
+colombian italding corporation s.a,colombian holding corporation s.a
+colombian holding corporation,colombian holding corporation s.a
+# --- Guillermo González ---
+guillermo gonzalez,guillermo gonzález
+guillermo gonzález g,guillermo gonzález
+guillermo gonazles g,guillermo gonzález
+# --- Otras entidades / typos de OCR claros ---
+sociedad "cementos del valle s.a.",cementos del valle s.a
+rosa lowid de arboleda,rosa lourido de arboleda
+fejaies san fernando,tejares san fernando s.a
+fyares san fernando s.a,tejares san fernando s.a
+josefina sardi viuda de firmat,josefina sardi v. de firmat
+jorge e. garcés m,jorge enrique garcés mercado
+# --- Compañía Croydon del Pacífico (typo OCR: "Proydon" = Croydon) ---
+compañía proydon del pacífico s.a,compañía croydon del pacífico s.a

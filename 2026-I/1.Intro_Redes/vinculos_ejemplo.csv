@@ -1,0 +1,19 @@
+origen,destino,tipo_vinculo,peso,año,fuente
+Garcés,Caicedo,matrimonio,1,1912,Registro Civil
+Caicedo,Borrero,matrimonio,1,1918,Registro Civil
+Borrero,Zawadsky,matrimonio,1,1925,Registro Civil
+Garcés,Lloreda,matrimonio,1,1930,Registro Civil
+Zawadsky,Lloreda,matrimonio,1,1935,Registro Civil
+Garcés,Borrero,crédito,5000,1920,Notaría Primera
+Caicedo,Zawadsky,crédito,3000,1922,Notaría Primera
+Lloreda,Garcés,crédito,7000,1928,Notaría Segunda
+Borrero,Caicedo,crédito,2000,1932,Notaría Primera
+Zawadsky,Garcés,transacción_inmobiliaria,12000,1915,Notaría Segunda
+Garcés,Caicedo,transacción_inmobiliaria,8000,1921,Notaría Primera
+Caicedo,Lloreda,transacción_inmobiliaria,15000,1926,Notaría Segunda
+Borrero,Lloreda,transacción_inmobiliaria,6000,1933,Notaría Primera
+Lloreda,Zawadsky,transacción_inmobiliaria,9000,1938,Notaría Segunda
+Garcés,Zawadsky,sociedad_comercial,1,1919,Cámara de Comercio
+Caicedo,Borrero,sociedad_comercial,1,1927,Cámara de Comercio
+Borrero,Garcés,membresía_club,1,1910,Archivo Club Colombia
+Lloreda,Caicedo,membresía_club,1,1914,Archivo Club Colombia

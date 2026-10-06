@@ -1,0 +1,609 @@
+---
+title: "Red Inmobiliaria de Cali"
+subtitle: "Ejercicio Notaría 2 — Introducción a la Complejidad 2026-I — Universidad del Valle"
+author: "Daniel Otero"
+date: "2026"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    number_sections: true
+    code_folding: show
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 8,
+  fig.height = 6,
+  fig.align = "center"
+)
+```
+
+# Paquetes
+
+```{r paquetes, warning=FALSE}
+library(igraph)
+library(dplyr)
+library(stringr)
+```
+
+---
+
+# Carga y Exploración Inicial
+
+## Leer el archivo
+
+```{r cargar-datos}
+# Leer el CSV con encoding UTF-8
+datos_raw <- read.csv("Base de datos notaria 2.csv",
+                      fileEncoding = "UTF-8",
+                      stringsAsFactors = FALSE)
+
+cat("Dimensiones:", nrow(datos_raw), "filas ×", ncol(datos_raw), "columnas\n")
+cat("Columnas:", paste(names(datos_raw), collapse = ", "), "\n")
+```
+
+## Primera mirada
+
+```{r explorar-raw}
+# Ver las primeras filas
+head(datos_raw, 10)
+```
+
+```{r resumen-raw}
+# Distribución de registros por año
+table(datos_raw$fecha)
+```
+
+Ya vemos los problemas principales de calidad de datos que hay que resolver antes de construir la red:
+
+- **Espacios extra** en nombres (`"ana borrero "`, `"mercedes villegas "`)
+- **Mayúsculas inconsistentes**: 1938 en minúsculas, 1939 en Title Case, 1940 de nuevo en minúsculas
+- **Valores `N/A` y `NA`** en vendedor o comprador
+- **Formato del valor monetario inconsistente**: `"700,00"` (coma como decimal), `"3050$"` (dólar al final)
+- **Campos vacíos** en comprador (fila de Lizcano Hermanos)
+
+---
+
+# Limpieza de Datos
+
+## Limpiar nombres de actores
+
+```{r limpiar-nombres}
+limpiar_nombre <- function(x) {
+  x %>%
+    str_trim() %>%                        # eliminar espacios al inicio y al final
+    str_squish() %>%                      # colapsar espacios internos múltiples
+    str_to_title() %>%                    # Title Case uniforme
+    str_replace_all("\\bDe\\b", "de") %>% # "de" en minúsculas (preposición)
+    str_replace_all("\\bDel\\b", "del") %>%
+    str_replace_all("\\bY\\b", "y") %>%
+    str_replace_all("\\bV\\b", "v") %>%
+    str_replace_all("\\bS\\.A\\b", "S.A") %>%
+    na_if("N/A") %>%                      # convertir "N/A" texto a NA real
+    na_if("NA") %>%
+    na_if("")
+}
+
+datos_raw$vendedor  <- limpiar_nombre(datos_raw$vendedor)
+datos_raw$comprador <- limpiar_nombre(datos_raw$comprador)
+```
+
+## Limpiar valores monetarios
+
+```{r limpiar-valores}
+limpiar_valor <- function(x) {
+  x %>%
+    str_replace_all("\\$", "") %>%   # eliminar símbolo $
+    str_replace_all("\\.", "") %>%   # eliminar puntos de miles
+    str_replace_all(",", ".") %>%    # coma decimal → punto decimal
+    str_trim() %>%
+    as.numeric()
+}
+
+datos_raw$Valor <- limpiar_valor(datos_raw$Valor)
+
+cat("Rango de valores (en pesos):\n")
+cat("  Mínimo :", min(datos_raw$Valor, na.rm = TRUE), "\n")
+cat("  Mediana:", median(datos_raw$Valor, na.rm = TRUE), "\n")
+cat("  Máximo :", max(datos_raw$Valor, na.rm = TRUE), "\n")
+cat("  Con NA :", sum(is.na(datos_raw$Valor)), "registros\n")
+```
+
+## Filtrar registros incompletos
+
+Para construir la red necesitamos que **ambos** extremos del vínculo (vendedor y comprador) estén presentes.
+
+```{r filtrar-incompletos}
+datos_raw$fecha <- as.integer(datos_raw$fecha)
+
+datos <- datos_raw %>%
+  filter(!is.na(vendedor), !is.na(comprador)) %>%  # eliminar N/A en actores
+  filter(vendedor != comprador)                     # eliminar auto-transacciones
+
+cat("Registros originales :", nrow(datos_raw), "\n")
+cat("Registros usables    :", nrow(datos),     "\n")
+cat("Registros eliminados :", nrow(datos_raw) - nrow(datos), "\n")
+```
+
+## Tabla de datos limpios
+
+```{r tabla-limpia}
+head(datos, 15)
+```
+
+---
+
+# Exploración de Actores
+
+## ¿Quiénes aparecen más veces?
+
+Antes de construir la red, conviene saber quiénes son los actores más activos en el mercado inmobiliario.
+
+```{r actores-frecuentes}
+# Contar apariciones totales (como vendedor + como comprador)
+vendedores  <- datos %>% count(vendedor,  name = "veces_vendedor")  %>% rename(actor = vendedor)
+compradores <- datos %>% count(comprador, name = "veces_comprador") %>% rename(actor = comprador)
+
+actividad <- full_join(vendedores, compradores, by = "actor") %>%
+  replace(is.na(.), 0) %>%
+  mutate(total = veces_vendedor + veces_comprador) %>%
+  arrange(desc(total))
+
+cat("Top 20 actores más activos:\n")
+head(actividad, 20)
+```
+
+```{r barplot-actores, fig.width=10, fig.height=6}
+top15 <- head(actividad, 15)
+
+par(mar = c(10, 4, 3, 1))
+barplot(
+  top15$total,
+  names.arg = top15$actor,
+  las = 2,
+  col = "steelblue",
+  border = "white",
+  main = "Top 15 actores — Total de transacciones (1938–1943)",
+  ylab = "Número de transacciones"
+)
+```
+
+## Distribución de transacciones por año
+
+```{r transacciones-año}
+table(datos$fecha)
+```
+
+```{r barplot-año}
+conteo_año <- table(datos$fecha)
+barplot(
+  conteo_año,
+  col = c("steelblue", "tomato", "forestgreen", "gold", "purple", "orange")[
+    seq_along(conteo_año)
+  ],
+  border = "white",
+  main = "Transacciones por año",
+  xlab = "Año",
+  ylab = "Número de transacciones"
+)
+```
+
+---
+
+# Construcción de la Red
+
+## Crear el grafo dirigido y ponderado
+
+Las transacciones inmobiliarias tienen **dirección**: el vendedor transfiere al comprador. Por eso construimos un **grafo dirigido** (`directed = TRUE`).
+
+El **peso** de cada arista es el valor de la transacción en pesos. Cuando hay múltiples transacciones entre los mismos actores, las agregamos sumando los valores.
+
+```{r construir-red}
+# Crear la lista de aristas: una fila = una transacción
+aristas <- datos %>%
+  select(from = vendedor, to = comprador, peso = Valor, fecha) %>%
+  filter(!is.na(peso))  # solo transacciones con valor conocido
+
+# Crear el grafo dirigido desde el data frame
+g <- graph_from_data_frame(aristas, directed = TRUE)
+
+cat("=== Red Inmobiliaria de Cali (1938–1943) ===\n")
+cat("Nodos (actores)      :", vcount(g), "\n")
+cat("Aristas (transac.)   :", ecount(g), "\n")
+cat("¿Es simple?          :", is_simple(g), "\n")
+cat("Aristas múltiples    :", sum(which_multiple(g)), "\n")
+```
+
+## Simplificar: agregar transacciones múltiples
+
+Cuando dos actores realizaron más de una transacción, las colapsamos en **una sola arista** cuyo peso es la **suma de los valores**.
+
+```{r simplificar-red}
+# Agregar transacciones múltiples entre mismos actores
+aristas_agregadas <- aristas %>%
+  group_by(from, to) %>%
+  summarise(
+    peso     = sum(peso, na.rm = TRUE),
+    n_transac = n(),
+    .groups  = "drop"
+  )
+
+# Reconstruir el grafo con aristas agregadas
+g <- graph_from_data_frame(aristas_agregadas, directed = TRUE)
+
+cat("=== Después de agregar transacciones múltiples ===\n")
+cat("Nodos (actores)      :", vcount(g), "\n")
+cat("Aristas (vínculos)   :", ecount(g), "\n")
+cat("¿Es simple?          :", is_simple(g), "\n")
+```
+
+## Estructura general
+
+```{r estructura-general}
+# ¿La red es conexa como grafo no dirigido?
+cat("¿Es débilmente conexa?", is_connected(g, mode = "weak"), "\n")
+
+# Componentes débilmente conexas
+comp <- components(g, mode = "weak")
+cat("Número de componentes:", comp$no, "\n")
+cat("Tamaño del componente gigante:", max(comp$csize), "nodos\n")
+
+# Densidad
+cat("Densidad de la red:", round(edge_density(g), 4), "\n")
+
+# Reciprocidad: ¿hay actores que compraron Y vendieron entre sí?
+cat("Reciprocidad:", round(reciprocity(g), 3), "\n")
+```
+
+---
+
+# Visualización de la Red
+
+## Visualización completa
+
+```{r plot-red-completa, fig.width=10, fig.height=8}
+set.seed(42)
+
+# Tamaño de nodo proporcional al grado total (in + out)
+grado_total <- degree(g, mode = "all")
+
+# Escalar los pesos para el grosor de aristas
+pesos_norm <- log1p(E(g)$peso) / max(log1p(E(g)$peso)) * 4 + 0.5
+
+plot(g,
+     layout          = layout_with_fr(g),
+     vertex.size     = sqrt(grado_total) * 3 + 2,
+     vertex.color    = "steelblue",
+     vertex.label    = ifelse(grado_total >= quantile(grado_total, 0.85),
+                              V(g)$name, NA),
+     vertex.label.cex   = 0.55,
+     vertex.label.color = "black",
+     edge.width      = pesos_norm,
+     edge.color      = adjustcolor("gray40", alpha.f = 0.6),
+     edge.arrow.size = 0.25,
+     main            = "Red Inmobiliaria de Cali (1938–1943)\nTamaño = grado total · Grosor = valor (log)"
+)
+```
+
+> **Nota:** las etiquetas solo aparecen para el 15% de actores con mayor grado. Los nodos sin etiqueta participaron en pocas transacciones.
+
+## Subred: solo el componente gigante
+
+```{r subred-gigante, fig.width=10, fig.height=8}
+# Extraer el componente gigante
+nodos_gigante <- V(g)[comp$membership == which.max(comp$csize)]
+g_gigante <- induced_subgraph(g, nodos_gigante)
+
+set.seed(42)
+grado_g <- degree(g_gigante, mode = "all")
+pesos_g  <- log1p(E(g_gigante)$peso) / max(log1p(E(g_gigante)$peso)) * 4 + 0.5
+
+plot(g_gigante,
+     layout          = layout_with_fr(g_gigante),
+     vertex.size     = sqrt(grado_g) * 3 + 2,
+     vertex.color    = "steelblue",
+     vertex.label    = ifelse(grado_g >= quantile(grado_g, 0.85),
+                              V(g_gigante)$name, NA),
+     vertex.label.cex   = 0.55,
+     vertex.label.color = "black",
+     edge.width      = pesos_g,
+     edge.color      = adjustcolor("gray40", alpha.f = 0.6),
+     edge.arrow.size = 0.25,
+     main            = paste0("Componente Gigante — ",
+                              vcount(g_gigante), " actores, ",
+                              ecount(g_gigante), " vínculos")
+)
+```
+
+---
+
+# Análisis de Centralidad
+
+## Grado de entrada y de salida
+
+En una red de compraventas:
+
+- **Grado de salida** (*out-degree*): número de veces que el actor **vendió** (a distintos compradores).
+- **Grado de entrada** (*in-degree*): número de veces que el actor **compró** (a distintos vendedores).
+
+```{r grado-entrada-salida}
+grado_out <- degree(g, mode = "out")
+grado_in  <- degree(g, mode = "in")
+
+tabla_grado <- data.frame(
+  Actor        = V(g)$name,
+  Vendió_a     = grado_out,
+  Compró_a     = grado_in,
+  Total        = grado_out + grado_in
+) %>%
+  arrange(desc(Total))
+
+rownames(tabla_grado) <- NULL
+
+cat("Top 20 actores por grado total:\n")
+head(tabla_grado, 20)
+```
+
+```{r plot-grado-comparado, fig.width=10, fig.height=5}
+top10 <- head(tabla_grado, 10)
+
+par(mfrow = c(1, 2), mar = c(10, 4, 3, 1))
+
+barplot(top10$Vendió_a,
+        names.arg = top10$Actor, las = 2,
+        col = "tomato", border = "white",
+        main = "Top 10: Grado de Salida\n(número de compradores distintos)",
+        ylab = "Grado de salida")
+
+barplot(top10$Compró_a,
+        names.arg = top10$Actor, las = 2,
+        col = "steelblue", border = "white",
+        main = "Top 10: Grado de Entrada\n(número de vendedores distintos)",
+        ylab = "Grado de entrada")
+
+par(mfrow = c(1, 1))
+```
+
+## Distribución de grado
+
+```{r dist-grado, fig.width=10, fig.height=5}
+par(mfrow = c(1, 2))
+
+hist(grado_out,
+     col = "tomato", border = "white", breaks = 20,
+     main = "Distribución de Grado de Salida",
+     xlab = "Grado de salida", ylab = "Frecuencia")
+abline(v = mean(grado_out), col = "black", lwd = 2, lty = 2)
+
+hist(grado_in,
+     col = "steelblue", border = "white", breaks = 20,
+     main = "Distribución de Grado de Entrada",
+     xlab = "Grado de entrada", ylab = "Frecuencia")
+abline(v = mean(grado_in), col = "black", lwd = 2, lty = 2)
+
+par(mfrow = c(1, 1))
+```
+
+## Centralidad de Intermediación (*Betweenness*)
+
+¿Qué actores actúan como **puentes** en el mercado inmobiliario? Un broker con alta intermediación conecta vendedores con compradores que de otra forma no se encontrarían.
+
+```{r betweenness}
+betw <- betweenness(g, directed = TRUE, normalized = TRUE)
+
+tabla_betw <- data.frame(
+  Actor          = V(g)$name,
+  Intermediación = round(betw, 4)
+) %>%
+  arrange(desc(Intermediación))
+
+rownames(tabla_betw) <- NULL
+
+cat("Top 20 actores por intermediación:\n")
+head(tabla_betw, 20)
+```
+
+```{r plot-betweenness, fig.width=10, fig.height=8}
+set.seed(42)
+
+# Escalar betweenness para el tamaño de los nodos
+betw_norm <- (betw - min(betw)) / (max(betw) - min(betw))
+
+plot(g,
+     layout          = layout_with_fr(g),
+     vertex.size     = betw_norm * 20 + 3,
+     vertex.color    = colorRampPalette(c("lightblue", "tomato"))(100)[
+                         ceiling(betw_norm * 99) + 1
+                       ],
+     vertex.label    = ifelse(betw >= quantile(betw, 0.90),
+                              V(g)$name, NA),
+     vertex.label.cex   = 0.55,
+     vertex.label.color = "black",
+     edge.width      = 0.5,
+     edge.color      = adjustcolor("gray50", alpha.f = 0.4),
+     edge.arrow.size = 0.2,
+     main            = "Centralidad de Intermediación\n(tamaño y color = betweenness)"
+)
+```
+
+## Fuerza de nodo: volumen total transado
+
+Además del grado, podemos medir el **volumen total** de pesos que fluye por cada actor (la suma de los valores de todas sus transacciones).
+
+```{r fuerza-nodo}
+# Fuerza de salida: total vendido
+fuerza_out <- strength(g, mode = "out", weights = E(g)$peso)
+
+# Fuerza de entrada: total comprado
+fuerza_in  <- strength(g, mode = "in",  weights = E(g)$peso)
+
+tabla_fuerza <- data.frame(
+  Actor         = V(g)$name,
+  Total_vendido = round(fuerza_out),
+  Total_comprado = round(fuerza_in),
+  Total_transado = round(fuerza_out + fuerza_in)
+) %>%
+  arrange(desc(Total_transado))
+
+rownames(tabla_fuerza) <- NULL
+
+cat("Top 20 actores por volumen total transado (en pesos):\n")
+head(tabla_fuerza, 20)
+```
+
+## Tabla comparativa de centralidades
+
+```{r tabla-centralidades}
+# Construir tabla unificada para los 20 actores más activos
+top_actores <- head(tabla_grado$Actor, 20)
+
+tabla_cent <- data.frame(
+  Actor          = top_actores,
+  Grado_total    = (grado_out + grado_in)[top_actores],
+  Grado_salida   = grado_out[top_actores],
+  Grado_entrada  = grado_in[top_actores],
+  Intermediación = round(betw[top_actores], 3),
+  Vol_transado   = round((fuerza_out + fuerza_in)[top_actores])
+)
+
+rownames(tabla_cent) <- NULL
+
+knitr::kable(tabla_cent,
+             col.names = c("Actor", "Grado total", "Salida (vendió)",
+                           "Entrada (compró)", "Intermediación", "Vol. transado ($)"),
+             caption = "Centralidades — Red Inmobiliaria Cali (1938–1943)",
+             format.args = list(big.mark = "."))
+```
+
+---
+
+# Detección de Comunidades
+
+Para detectar comunidades en un grafo dirigido, convertimos temporalmente a no dirigido.
+
+```{r comunidades}
+set.seed(42)
+
+# Convertir a no dirigido para la detección de comunidades
+g_nodir <- as.undirected(g, mode = "collapse",
+                          edge.attr.comb = list(peso = "sum", n_transac = "sum"))
+
+# Algoritmo de Louvain
+comunidades <- cluster_louvain(g_nodir, weights = E(g_nodir)$peso)
+
+cat("Número de comunidades:", length(comunidades), "\n")
+cat("Modularidad          :", round(modularity(comunidades), 3), "\n")
+
+# Composición de cada comunidad (solo las más grandes)
+membresia <- membership(comunidades)
+for (i in seq_along(comunidades)) {
+  miembros <- V(g_nodir)$name[membresia == i]
+  if (length(miembros) >= 3) {
+    cat(sprintf("\nComunidad %d (%d actores): %s%s\n",
+                i, length(miembros),
+                paste(head(miembros, 8), collapse = ", "),
+                if (length(miembros) > 8) ", ..." else ""))
+  }
+}
+```
+
+```{r plot-comunidades, fig.width=10, fig.height=8}
+set.seed(42)
+
+# Paleta de colores para comunidades
+paleta <- c("steelblue", "tomato", "forestgreen", "gold",
+            "purple", "orange", "hotpink", "cyan3",
+            "brown", "darkgreen", "navy", "coral")
+
+n_com <- length(comunidades)
+colores_com <- paleta[membresia %% length(paleta) + 1]
+
+grado_nd <- degree(g_nodir)
+
+plot(g_nodir,
+     layout          = layout_with_fr(g_nodir),
+     vertex.size     = sqrt(grado_nd) * 2.5 + 2,
+     vertex.color    = colores_com,
+     vertex.label    = ifelse(grado_nd >= quantile(grado_nd, 0.85),
+                              V(g_nodir)$name, NA),
+     vertex.label.cex   = 0.55,
+     vertex.label.color = "black",
+     edge.width      = 0.5,
+     edge.color      = adjustcolor("gray60", alpha.f = 0.4),
+     main            = paste0("Comunidades (Louvain) — Modularidad: ",
+                              round(modularity(comunidades), 3))
+)
+
+legend("bottomleft",
+       legend = paste("Comunidad", 1:min(n_com, 8)),
+       fill   = paleta[1:min(n_com, 8)],
+       cex    = 0.75,
+       bty    = "n")
+```
+
+---
+
+# Evolución Temporal
+
+¿Cómo cambia la red año a año?
+
+```{r evolucion-temporal}
+años <- sort(unique(datos$fecha))
+
+stats_año <- lapply(años, function(a) {
+  aristas_a <- datos %>%
+    filter(fecha == a, !is.na(Valor)) %>%
+    select(from = vendedor, to = comprador, peso = Valor)
+
+  if (nrow(aristas_a) == 0) return(NULL)
+
+  g_a <- graph_from_data_frame(aristas_a, directed = TRUE)
+
+  data.frame(
+    Año        = a,
+    Nodos      = vcount(g_a),
+    Aristas    = ecount(g_a),
+    Vol_total  = round(sum(aristas_a$peso)),
+    Densidad   = round(edge_density(g_a), 4)
+  )
+}) %>%
+  bind_rows()
+
+knitr::kable(stats_año,
+             col.names = c("Año", "Actores", "Transacciones",
+                           "Volumen total ($)", "Densidad"),
+             caption = "Estadísticas de la red por año",
+             format.args = list(big.mark = "."))
+```
+
+---
+
+# Exportación
+
+## Exportar a Gephi
+
+```{r exportar-gephi, eval=FALSE}
+# Exportar el grafo completo en formato GraphML para Gephi
+write_graph(g, "red_notaria2.graphml", format = "graphml")
+cat("Exportado: red_notaria2.graphml\n")
+cat("Abrir en Gephi: File > Open > red_notaria2.graphml\n")
+```
+
+## Exportar tablas de centralidad
+
+```{r exportar-tablas, eval=FALSE}
+# Guardar tabla de centralidades como CSV
+write.csv(tabla_cent, "centralidades_notaria2.csv", row.names = FALSE)
+cat("Exportado: centralidades_notaria2.csv\n")
+```
+
+---
+
+*Documento preparado para el curso Introducción a la Complejidad 2026-I, Universidad del Valle.*

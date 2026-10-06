@@ -1,0 +1,778 @@
+---
+title: "Detectives del Mercado Inmobiliario"
+subtitle: "Taller — Notaría 2 de Cali, 1938–1943"
+author: "Nombre: _________________________ &nbsp;&nbsp;|&nbsp;&nbsp; Grupo: ___"
+date: "Introducción a la Complejidad 2026-I — Universidad del Valle"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    number_sections: true
+    code_folding: show
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width  = 8,
+  fig.height = 6,
+  fig.align  = "center"
+)
+```
+
+---
+
+## La misión {-}
+
+En 1984, el sociólogo John Padgett estudiaba la Florencia del siglo XV con una pregunta incómoda: ¿cómo logró una familia de banqueros de segunda categoría, los Medici, controlar la república más sofisticada de Europa? Su respuesta fue una red. Los Medici no eran los más ricos ni los más poderosos en ninguna dimensión por separado. Pero ocupaban una posición única: eran el nodo que conectaba grupos que de otra forma no se hablaban.
+
+Este taller propone la misma operación, pero en Cali, entre 1938 y 1943. Los registros de la Notaría 2 nos dejaron un expediente de transacciones inmobiliarias: compraventas de casas y lotes, hipotecas, cancelaciones de deuda, constituciones de sociedades. Detrás de cada registro hay personas reales que están construyendo —literalmente— la ciudad que habitamos hoy.
+
+Tu misión como detective histórico es analizar esa red para responder:
+
+> **¿Quién controlaba el mercado inmobiliario de Cali entre 1938 y 1943? ¿Cómo se relacionaban entre sí? ¿Qué dice eso sobre el proceso de urbanización de la ciudad?**
+
+Trabaja los siete actos en orden. Al final de cada uno hay un **Ejercicio** con preguntas que debes responder en texto, basándote en los resultados del código.
+
+---
+
+# Paquetes
+
+```{r paquetes, warning=FALSE}
+library(igraph)
+library(dplyr)
+library(stringr)
+```
+
+---
+
+# Acto 1: Conocer el expediente
+
+Antes de analizar cualquier fuente histórica hay que leerla con cuidado. ¿Qué contiene? ¿Qué período cubre? ¿Qué operaciones registra?
+
+## Cargar y explorar
+
+```{r cargar}
+datos_raw <- read.csv("Base de datos notaria 2.csv",
+                      fileEncoding = "UTF-8",
+                      stringsAsFactors = FALSE)
+
+cat("Total de registros:", nrow(datos_raw), "\n")
+cat("Columnas:", paste(names(datos_raw), collapse = ", "), "\n")
+```
+
+```{r primeras-filas}
+head(datos_raw, 15)
+```
+
+```{r por-año}
+cat("Registros por año:\n")
+table(datos_raw$fecha)
+```
+
+## Tipos de transacción
+
+No todas las operaciones son iguales. Clasificamos el contenido de la columna `Negocio` para ver qué tipo de actos jurídicos predominan.
+
+```{r tipos}
+datos_raw <- datos_raw %>%
+  mutate(tipo = case_when(
+    str_detect(str_to_lower(coalesce(Negocio, "")),
+               "vende|venta|reventa|revende") ~ "Compraventa",
+    str_detect(str_to_lower(coalesce(Negocio, "")),
+               "hipoteca|aseguro de deuda|garantia") ~ "Hipoteca",
+    str_detect(str_to_lower(coalesce(Negocio, "")),
+               "cancelac") ~ "Cancelación",
+    str_detect(str_to_lower(coalesce(Negocio, "")),
+               "constituye|sociedad|modific") ~ "Sociedad / Constitución",
+    str_detect(str_to_lower(coalesce(Negocio, "")),
+               "donac") ~ "Donación",
+    TRUE ~ "Otro / Sin clasificar"
+  ))
+
+cat("Distribución por tipo de transacción:\n")
+sort(table(datos_raw$tipo), decreasing = TRUE)
+```
+
+## Rango de valores
+
+```{r rango}
+vals_temp <- datos_raw$Valor %>%
+  str_replace_all("\\$", "") %>%
+  str_replace_all("\\.", "") %>%
+  str_replace_all(",", ".") %>%
+  str_trim() %>%
+  as.numeric()
+
+cat(sprintf("Valor mínimo  : $%s pesos\n", format(min(vals_temp, na.rm=TRUE), big.mark=".")))
+cat(sprintf("Valor mediana : $%s pesos\n", format(median(vals_temp, na.rm=TRUE), big.mark=".")))
+cat(sprintf("Valor máximo  : $%s pesos\n", format(max(vals_temp, na.rm=TRUE), big.mark=".")))
+cat(sprintf("Sin valor     : %d registros\n", sum(is.na(vals_temp))))
+```
+
+---
+
+<div class="alert alert-info">
+**Ejercicio 1 — El expediente**
+
+a. ¿Cuántos registros tiene el expediente? ¿Qué años cubre? ¿Hay algún año que destaque por volumen?
+
+b. ¿Cuál es el tipo de transacción más frecuente? ¿Qué dice eso sobre qué tipo de actividad captura esta notaría?
+
+c. La transacción más grande supera en mucho a la mediana. ¿Qué hipótesis tienes sobre quiénes hacen las transacciones de mayor valor?
+
+*Escribe tus respuestas aquí (reemplaza el guion):*
+
+> a. —
+>
+> b. —
+>
+> c. —
+</div>
+
+---
+
+# Acto 2: Depurar las pistas
+
+Los archivos históricos son imperfectos. Una misma persona puede aparecer escrita de tres formas distintas: `"ana borrero"`, `"Ana Borrero"` y `"ana borrero "` (con espacio al final) serían tres nodos separados si no limpiamos. Antes de construir la red, estandarizamos.
+
+## Estandarizar nombres
+
+```{r limpiar-nombres}
+# Cargamos stringi para limpieza avanzada de texto
+if(!require(stringi)) install.packages("stringi")
+library(stringi)
+
+limpiar_nombre <- function(x) {
+  x %>%
+    stri_trans_general("Latin-ASCII") %>% # Elimina tildes y caracteres especiales
+    str_trim() %>%
+    str_squish() %>%
+    str_to_lower() %>%                    # Todo a minúscula para comparar mejor
+    str_to_title() %>%                    # Luego a Formato Nombre Propio
+    str_replace_all("\\bDe\\b",  "de")  %>%
+    str_replace_all("\\bDel\\b", "del") %>%
+    str_replace_all("\\bY\\b",   "y")   %>%
+    na_if("N/A") %>%
+    na_if("NA")  %>%
+    na_if("")
+}
+
+datos_raw$vendedor  <- limpiar_nombre(datos_raw$vendedor)
+datos_raw$comprador <- limpiar_nombre(datos_raw$comprador)
+
+cat("Nombres estandarizados: tildes eliminadas y espacios corregidos.\n")
+```
+
+## Limpiar valores monetarios
+
+```{r limpiar-valores}
+limpiar_valor <- function(x) {
+  x %>%
+    str_replace_all("\\$", "") %>%
+    str_replace_all("\\.", "") %>%
+    str_replace_all(",", ".") %>%
+    str_trim() %>%
+    as.numeric()
+}
+
+datos_raw$Valor <- limpiar_valor(datos_raw$Valor)
+datos_raw$fecha <- as.integer(datos_raw$fecha)
+```
+
+## Filtrar registros incompletos
+
+Para construir la red necesitamos que **ambos extremos** del vínculo estén presentes: sin vendedor o sin comprador, no hay arista.
+
+```{r filtrar}
+datos <- datos_raw %>%
+  filter(!is.na(vendedor), !is.na(comprador)) %>%
+  filter(vendedor != comprador)   # eliminamos auto-transacciones
+
+cat("Registros originales  :", nrow(datos_raw), "\n")
+cat("Registros usables     :", nrow(datos), "\n")
+cat("Registros eliminados  :", nrow(datos_raw) - nrow(datos), "\n")
+```
+
+```{r tabla-limpia}
+head(datos %>% select(vendedor, comprador, Valor, tipo, fecha), 12)
+```
+
+---
+
+<div class="alert alert-info">
+**Ejercicio 2 — Las imperfecciones del archivo**
+
+a. ¿Cuántos registros se eliminaron por estar incompletos? ¿Por qué ese filtro es necesario para construir una red?
+
+b. El expediente cubre 1938, 1939, 1940, 1941 y 1943 — **falta 1942**. Formula al menos dos hipótesis sobre esa ausencia. ¿Qué fuentes consultarías para confirmar o descartar cada una?
+
+c. Los errores de codificación (mayúsculas, espacios, formatos) son comunes en fuentes digitalizadas. ¿Qué consecuencia tendría analizar la red *sin* limpiar los datos? ¿Inflaría o reduciría el número de nodos?
+
+*Escribe tus respuestas aquí:*
+
+> a. —
+>
+> b. —
+>
+> c. —
+</div>
+
+---
+
+# Acto 3: Los sospechosos
+
+Antes de construir la red completa, identifiquemos a los actores más relevantes. ¿Quiénes participan más en el mercado?
+
+## Los más activos
+
+```{r actores-activos}
+vendedores  <- datos %>% count(vendedor,  name = "veces_vendedor")  %>% rename(actor = vendedor)
+compradores <- datos %>% count(comprador, name = "veces_comprador") %>% rename(actor = comprador)
+
+actividad <- full_join(vendedores, compradores, by = "actor") %>%
+  replace(is.na(.), 0) %>%
+  mutate(total = veces_vendedor + veces_comprador) %>%
+  arrange(desc(total))
+
+cat("Top 20 actores por total de apariciones:\n")
+head(actividad, 20)
+```
+
+## ¿Quiénes son: personas o instituciones?
+
+No todos los actores son individuos. Clasificamos el top de actores detectando palabras clave como "Banco", "Sociedad", "Compania" o "Cia".
+
+```{r tipo-actor}
+identificar_tipo <- function(nombre) {
+  n <- str_to_lower(nombre)
+  case_when(
+    str_detect(n, "banco|caja|credito|hipotecario") ~ "Institución Financiera",
+    str_detect(n, "sociedad|cia|compania|hijos|hermanos|ltda|sucesores") ~ "Empresa / Familia",
+    TRUE ~ "Persona Natural"
+  )
+}
+
+actividad <- actividad %>%
+  mutate(tipo_actor = identificar_tipo(actor))
+
+cat("Clasificación de los 15 más activos:\n")
+head(actividad %>% select(actor, total, tipo_actor), 15)
+```
+
+```{r barplot-activos, fig.width=10, fig.height=6}
+top15 <- head(actividad, 15)
+
+# Definimos colores por tipo
+colores <- case_when(
+  top15$tipo_actor == "Institución Financiera" ~ "darkblue",
+  top15$tipo_actor == "Empresa / Familia" ~ "forestgreen",
+  TRUE ~ "steelblue"
+)
+
+par(mar = c(11, 4, 3, 1))
+barplot(
+  top15$total,
+  names.arg = top15$actor,
+  las = 2,
+  col = colores,
+  border = "white",
+  main = "Top 15 actores (Azul oscuro = Banco, Verde = Empresa, Celeste = Persona)",
+  ylab = "N° de apariciones"
+)
+```
+
+## ¿Compran o venden más?
+
+```{r compra-o-vende, fig.width=10, fig.height=6}
+top10 <- head(actividad, 10)
+
+par(mfrow = c(1, 2), mar = c(11, 4, 3, 1))
+
+barplot(top10$veces_vendedor,
+        names.arg = top10$actor, las = 2,
+        col = "tomato", border = "white",
+        main = "Veces que vendió\n(grado de salida)",
+        ylab = "Veces")
+
+barplot(top10$veces_comprador,
+        names.arg = top10$actor, las = 2,
+        col = "steelblue", border = "white",
+        main = "Veces que compró\n(grado de entrada)",
+        ylab = "Veces")
+
+par(mfrow = c(1, 1))
+```
+
+---
+
+<div class="alert alert-success">
+**Pista del historiador**
+
+Jorge Garcés Borrero (1899–1944) fue una figura central en la élite caleña de este período. Jaime Londoño (2019) le dedicó una biografía titulada *Optimismo, tesón y labor*. Búscalo en los datos: ¿aparece como vendedor, como comprador, o como ambos? La Sociedad Urbanizadora Colombiana también aparece: es una empresa que parcelaba y vendía terrenos en los nuevos barrios de expansión (Versalles, Granada, Centenario). Su presencia dice mucho sobre la lógica del negocio inmobiliario de la época.
+</div>
+
+<div class="alert alert-info">
+**Ejercicio 3 — Los sospechosos**
+
+a. ¿Quiénes son los 5 actores más activos? ¿Son personas naturales, familias, empresas o instituciones financieras? ¿Qué patrón observas?
+
+b. Sebastián Caicedo aparece repetidamente. Observa si compra o vende más. ¿Qué rol histórico podría estar cumpliendo? (Piensa en: especulador de suelo, intermediario, constructor de barrio popular)
+
+c. Los bancos (Banco Agrario, Banco Central Hipotecario) aparecen en ambos roles. ¿Cuándo actúan como vendedores y cuándo como compradores? ¿Qué función cumplen en el mercado inmobiliario?
+
+*Escribe tus respuestas aquí:*
+
+> a. —
+>
+> b. —
+>
+> c. —
+</div>
+
+---
+
+# Acto 4: El mapa de relaciones
+
+Construimos la red. Cada actor es un nodo. Cada transacción es un vínculo **dirigido** (vendedor → comprador) con un **peso** igual al valor en pesos.
+
+## Construir el grafo
+
+```{r construir-red}
+aristas <- datos %>%
+  select(from = vendedor, to = comprador, peso = Valor, tipo, fecha) %>%
+  filter(!is.na(peso))
+
+# Cuando hay múltiples transacciones entre los mismos actores, las agregamos
+aristas_ag <- aristas %>%
+  group_by(from, to) %>%
+  summarise(
+    peso      = sum(peso, na.rm = TRUE),
+    n_transac = n(),
+    .groups   = "drop"
+  )
+
+g <- graph_from_data_frame(aristas_ag, directed = TRUE)
+
+cat("=== Red Inmobiliaria de Cali (1938–1943) ===\n")
+cat("Nodos (actores)    :", vcount(g), "\n")
+cat("Aristas (vínculos) :", ecount(g), "\n")
+```
+
+## Estructura general
+
+```{r estructura}
+comp <- components(g, mode = "weak")
+
+cat("¿Es débilmente conexa?           :", is_connected(g, mode = "weak"), "\n")
+cat("Número de componentes            :", comp$no, "\n")
+cat("Tamaño del componente gigante    :", max(comp$csize), "nodos\n")
+cat("Actores fuera del componente     :", vcount(g) - max(comp$csize), "nodos\n")
+cat("Densidad de la red               :", round(edge_density(g), 4), "\n")
+cat("Reciprocidad (A→B y B→A)        :", round(reciprocity(g), 3), "\n")
+```
+
+## Visualización: Los puentes del mercado
+
+El tamaño de cada nodo es proporcional a su grado total. Pero aquí el color importa: los nodos **naranjas** son aquellos con alta **intermediación** (están en el top 10% de puentes). El grosor de cada arista es proporcional al valor de la transacción.
+
+```{r visualizar-red, fig.width=10, fig.height=8}
+set.seed(42)
+
+grado_total <- degree(g, mode = "all")
+betw_val    <- betweenness(g, normalized = TRUE)
+umbral_betw <- quantile(betw_val, 0.90)
+
+# Color: Naranja si es puente importante, Celeste si no
+colores_nodos <- ifelse(betw_val >= umbral_betw, "tomato", "skyblue")
+pesos_norm    <- log1p(E(g)$peso) / max(log1p(E(g)$peso)) * 4 + 0.5
+
+plot(g,
+     layout          = layout_with_fr(g),
+     vertex.size     = sqrt(grado_total) * 3 + 2,
+     vertex.color    = colores_nodos,
+     vertex.frame.color = "white",
+     vertex.label    = ifelse(grado_total >= quantile(grado_total, 0.85) | 
+                              betw_val >= umbral_betw, 
+                              V(g)$name, NA),
+     vertex.label.cex   = 0.55,
+     vertex.label.color = "black",
+     edge.width      = pesos_norm,
+     edge.color      = adjustcolor("gray40", alpha.f = 0.5),
+     edge.arrow.size = 0.2,
+     main = "Red Inmobiliaria — Cali 1938–1943\n(Nodos naranjas = Top 10% en Intermediación/Puentes)"
+)
+```
+
+---
+
+<div class="alert alert-info">
+**Ejercicio 4 — El mapa**
+
+a. La red tiene varios **componentes desconectados**. ¿Qué significa eso históricamente? ¿El mercado inmobiliario de Cali era unificado o estaba fragmentado en circuitos separados?
+
+b. La **densidad** es muy baja (cercana a 0). ¿Qué implica: que todos comerciaban con todos, o que las transacciones seguían patrones muy selectivos? ¿Cuál es más plausible para una ciudad de ese tamaño en esa época?
+
+c. La **reciprocidad** indica qué proporción de vínculos va en ambas direcciones (A vendió a B *y* B vendió a A). ¿Es alta o baja? ¿Qué dice sobre el mercado: los actores alternan roles de comprador y vendedor, o tienden a especializarse?
+
+*Escribe tus respuestas aquí:*
+
+> a. —
+>
+> b. —
+>
+> c. —
+</div>
+
+---
+
+# Acto 5: ¿Quién manda?
+
+Las medidas de centralidad revelan distintas formas de poder en la red. No es lo mismo tener muchas transacciones que ser el puente entre actores que de otra forma no se encontrarían.
+
+## Grado de entrada y salida
+
+```{r grado}
+grado_out <- degree(g, mode = "out")
+grado_in  <- degree(g, mode = "in")
+
+tabla_grado <- data.frame(
+  Actor    = V(g)$name,
+  Vendió_a = grado_out,
+  Compró_a = grado_in,
+  Total    = grado_out + grado_in
+) %>% arrange(desc(Total))
+
+rownames(tabla_grado) <- NULL
+
+cat("Top 20 actores por grado total:\n")
+head(tabla_grado, 20)
+```
+
+## Intermediación (*betweenness*)
+
+¿Quién actúa como **puente** entre partes del mercado que de otra forma no se conectarían? Un actor con alta intermediación puede controlar flujos de información, crédito o tierra sin ser necesariamente el más rico.
+
+```{r betweenness}
+betw <- betweenness(g, directed = TRUE, normalized = TRUE)
+
+tabla_betw <- data.frame(
+  Actor          = V(g)$name,
+  Intermediación = round(betw, 4)
+) %>% arrange(desc(Intermediación))
+
+rownames(tabla_betw) <- NULL
+
+cat("Top 15 actores por intermediación:\n")
+head(tabla_betw, 15)
+```
+
+## Volumen transado
+
+El grado cuenta el *número* de socios distintos; la **fuerza** suma el *valor en pesos* de todas las transacciones. Son dimensiones distintas del poder.
+
+```{r fuerza}
+fuerza_out <- strength(g, mode = "out", weights = E(g)$peso)
+fuerza_in  <- strength(g, mode = "in",  weights = E(g)$peso)
+
+tabla_fuerza <- data.frame(
+  Actor         = V(g)$name,
+  Vendió_pesos  = round(fuerza_out),
+  Compró_pesos  = round(fuerza_in),
+  Total_pesos   = round(fuerza_out + fuerza_in)
+) %>% arrange(desc(Total_pesos))
+
+rownames(tabla_fuerza) <- NULL
+
+cat("Top 15 actores por volumen total transado (pesos):\n")
+head(tabla_fuerza, 15)
+```
+
+## Tabla comparativa de centralidades
+
+```{r tabla-centralidades}
+top20 <- head(tabla_grado$Actor, 20)
+
+tabla_cent <- data.frame(
+  Actor          = top20,
+  Grado_total    = (grado_out + grado_in)[top20],
+  Salida         = grado_out[top20],
+  Entrada        = grado_in[top20],
+  Intermediación = round(betw[top20], 3),
+  Vol_pesos      = round((fuerza_out + fuerza_in)[top20])
+) %>% arrange(desc(Grado_total))
+
+rownames(tabla_cent) <- NULL
+
+knitr::kable(tabla_cent,
+             col.names = c("Actor", "Grado total", "Vendió a",
+                           "Compró a", "Intermediación", "Vol. ($)"),
+             caption   = "Centralidades — Red Inmobiliaria Cali 1938–1943",
+             format.args = list(big.mark = "."))
+```
+
+---
+
+<div class="alert alert-success">
+**Pista del historiador**
+
+Padgett & McLean (2006) muestran que los Medici no dominaban Florencia por ser los más ricos ni los que más transacciones hacían: dominaban porque ocupaban la posición de **intermediación** más alta. Eran el nodo que conectaba grupos que de otra forma no se hablaban, lo que les daba un poder de tipo estructural — independiente de su riqueza o estatus formal. ¿Hay algún actor en esta red que reproduzca esa lógica?
+</div>
+
+<div class="alert alert-info">
+**Ejercicio 5 — ¿Quién manda?**
+
+a. Identifica al actor con mayor **grado de salida** y al de mayor **grado de entrada**. ¿Qué roles históricos concretos representan? (Por ejemplo: loteador que vende a muchos compradores distintos, comprador activo que acumula propiedades, intermediario financiero)
+
+b. El actor con mayor **intermediación** es un puente entre partes de la red. ¿Es una persona, una familia, una empresa o un banco? ¿Qué tipo de poder le otorga esa posición? ¿Cómo podría aprovecharlo históricamente?
+
+c. Compara el ranking por **grado total** con el de **volumen transado**. ¿Hay actores que hacen pocas transacciones pero de mucho valor? ¿Y actores que hacen muchas transacciones de poco valor? ¿Qué diferencia histórica hay entre esas dos estrategias?
+
+*Escribe tus respuestas aquí:*
+
+> a. —
+>
+> b. —
+>
+> c. —
+</div>
+
+---
+
+# Acto 6: Las camarillas
+
+¿Hay grupos de actores que transaccionan principalmente entre sí? El algoritmo de Louvain detecta estas comunidades maximizando la **modularidad**: qué tan separados están los grupos entre sí.
+
+## Detectar comunidades
+
+```{r comunidades}
+set.seed(42)
+
+# Para detección de comunidades trabajamos con la versión no dirigida
+g_nodir <- as.undirected(g, mode = "collapse",
+                          edge.attr.comb = list(peso = "sum", n_transac = "sum"))
+
+comunidades <- cluster_louvain(g_nodir, weights = E(g_nodir)$peso)
+
+cat("Número de comunidades:", length(comunidades), "\n")
+cat("Modularidad          :", round(modularity(comunidades), 3), "\n\n")
+
+membresia <- membership(comunidades)
+
+for (i in seq_along(comunidades)) {
+  miembros <- V(g_nodir)$name[membresia == i]
+  if (length(miembros) >= 3) {
+    cat(sprintf("Comunidad %d (%d actores): %s%s\n",
+                i, length(miembros),
+                paste(head(miembros, 8), collapse = ", "),
+                if (length(miembros) > 8) ", ..." else ""))
+  }
+}
+```
+
+## Visualización
+
+```{r plot-comunidades, fig.width=10, fig.height=8}
+set.seed(42)
+
+paleta     <- c("steelblue","tomato","forestgreen","gold",
+                "purple","orange","hotpink","cyan3")
+colores_com <- paleta[membresia %% length(paleta) + 1]
+grado_nd    <- degree(g_nodir)
+
+plot(g_nodir,
+     layout          = layout_with_fr(g_nodir),
+     vertex.size     = sqrt(grado_nd) * 2.5 + 2,
+     vertex.color    = colores_com,
+     vertex.label    = ifelse(grado_nd >= quantile(grado_nd, 0.85),
+                              V(g_nodir)$name, NA),
+     vertex.label.cex   = 0.55,
+     vertex.label.color = "black",
+     edge.width      = 0.5,
+     edge.color      = adjustcolor("gray60", alpha.f = 0.4),
+     main            = paste0("Comunidades (Louvain) — Modularidad: ",
+                              round(modularity(comunidades), 3))
+)
+
+legend("bottomleft",
+       legend = paste("Comunidad", 1:min(length(comunidades), 8)),
+       fill   = paleta[1:min(length(comunidades), 8)],
+       cex    = 0.7, bty = "n")
+```
+
+---
+
+<div class="alert alert-info">
+**Ejercicio 6 — Las camarillas**
+
+a. ¿Cuántas comunidades detecta el algoritmo? La modularidad va de 0 a 1: valores cercanos a 0.3 o más indican estructura de comunidades clara. ¿La red tiene comunidades bien definidas o es relativamente homogénea?
+
+b. Observa los apellidos dentro de cada comunidad. ¿Reconoces familias que aparecen agrupadas? (Borrero, Caicedo, Garces, Zawadzky, Sinisterra, Eder) ¿Están en la misma comunidad o en comunidades distintas?
+
+c. Louvain agrupa actores que transaccionan frecuentemente entre sí. Formula una hipótesis histórica sobre **por qué** un grupo específico forma una camarilla. ¿Podría ser un barrio, una red familiar, un tipo de negocio, una relación de crédito?
+
+*Escribe tus respuestas aquí:*
+
+> a. —
+>
+> b. —
+>
+> c. —
+</div>
+
+---
+
+# Acto 7: El factor tiempo
+
+¿Cómo evoluciona el mercado año a año? La Segunda Guerra Mundial comenzó en septiembre de 1939. ¿Dejó alguna huella en el mercado inmobiliario de Cali?
+
+## Estadísticas anuales
+
+```{r evolucion}
+años <- sort(unique(datos$fecha))
+
+stats_año <- lapply(años, function(a) {
+  ar <- datos %>%
+    filter(fecha == a, !is.na(Valor)) %>%
+    select(from = vendedor, to = comprador, peso = Valor)
+
+  if (nrow(ar) == 0) return(NULL)
+
+  g_a <- graph_from_data_frame(ar, directed = TRUE)
+
+  data.frame(
+    Año      = a,
+    Actores  = vcount(g_a),
+    Transac  = ecount(g_a),
+    Vol_pesos = round(sum(ar$peso)),
+    Densidad = round(edge_density(g_a), 4)
+  )
+}) %>% bind_rows()
+
+knitr::kable(stats_año,
+             col.names = c("Año", "Actores", "Transacciones",
+                           "Volumen ($)", "Densidad"),
+             caption   = "Estadísticas de la red por año",
+             format.args = list(big.mark = "."))
+```
+
+## Comparación gráfica
+
+```{r plot-temporal, fig.width=10, fig.height=5}
+par(mfrow = c(1, 3), mar = c(4, 4, 3, 1))
+
+barplot(stats_año$Actores,
+        names.arg = stats_año$Año,
+        col = "steelblue", border = "white",
+        main = "Actores por año",
+        ylab = "N° actores")
+
+barplot(stats_año$Transac,
+        names.arg = stats_año$Año,
+        col = "tomato", border = "white",
+        main = "Transacciones por año",
+        ylab = "N° transacciones")
+
+barplot(stats_año$Vol_pesos / 1000,
+        names.arg = stats_año$Año,
+        col = "forestgreen", border = "white",
+        main = "Volumen (miles de $)",
+        ylab = "Miles de pesos")
+
+par(mfrow = c(1, 1))
+```
+
+## Exploración libre: elige un año
+
+<div class="alert alert-success">
+**Pista:** Cambia el número en `año_elegido <- 1940` por cualquier otro año del expediente (1938, 1939, 1941 o 1943) para ver los actores más activos en ese momento específico.
+</div>
+
+```{r explorar-año}
+# ── Cambia este valor para explorar otro año ──
+año_elegido <- 1940
+
+datos_año <- datos %>% filter(fecha == año_elegido)
+
+vend <- datos_año %>% count(vendedor,  name = "v") %>% rename(actor = vendedor)
+comp <- datos_año %>% count(comprador, name = "c") %>% rename(actor = comprador)
+
+top_año <- full_join(vend, comp, by = "actor") %>%
+  replace(is.na(.), 0) %>%
+  mutate(total = v + c) %>%
+  arrange(desc(total))
+
+cat("Top 10 actores en", año_elegido, ":\n")
+head(top_año, 10)
+```
+
+---
+
+<div class="alert alert-info">
+**Ejercicio 7 — El factor tiempo**
+
+a. ¿En qué año hay más transacciones? ¿Y mayor volumen de dinero? ¿Coinciden los dos picos? Si no coinciden, ¿qué puede explicar la diferencia?
+
+b. La Segunda Guerra Mundial cortó las importaciones europeas y generó inflación en América Latina a partir de 1940. ¿Ves algún cambio notable en el mercado inmobiliario entre 1938–1939 y 1940–1941? ¿Sube o baja la actividad? Formula una hipótesis.
+
+c. Explora **al menos dos años distintos** con el bloque de exploración libre. ¿Hay actores que solo aparecen en un año? ¿Hay actores que aparecen en todos los años? ¿Qué dice eso sobre quiénes son los actores estructurales del mercado y quiénes son oportunistas o transitorios?
+
+*Escribe tus respuestas aquí:*
+
+> a. —
+>
+> b. —
+>
+> c. —
+</div>
+
+---
+
+# Veredicto {-}
+
+Ya tienes todas las pistas. Es hora de resolver el caso.
+
+<div class="alert alert-warning">
+**Veredicto final**
+
+Escribe un párrafo de **6 a 10 oraciones** respondiendo:
+
+*¿Quién controlaba el mercado inmobiliario de Cali entre 1938 y 1943? ¿Cómo se relacionaban entre sí los actores más poderosos? ¿Qué tipo de poder ejercían — volumen de transacciones, posición de puente, pertenencia a una comunidad? ¿Qué dice esto sobre el proceso de urbanización de Cali en esa época?*
+
+Usa evidencia concreta de los análisis anteriores: nombres de actores, cifras, estructuras de red. No generalices sin datos.
+
+*Escribe tu veredicto aquí:*
+
+> —
+</div>
+
+---
+
+# Para tu proyecto {-}
+
+<div class="alert alert-warning">
+**Grupo A — Red Social**
+
+Los métodos de hoy aplican directamente a tu red de relaciones sociales entre familias de élite. Identifica quiénes tienen la mayor **intermediación** en tu red: ¿son los mismos que tienen mayor grado? ¿Las comunidades detectadas coinciden con clanes familiares reales o con asociaciones conocidas (Club Colombia, Club Campestre, juntas directivas)? La pregunta de fondo es la misma que para los Medici: ¿quién conecta círculos que de otra forma no se conectarían?
+</div>
+
+<div class="alert alert-warning">
+**Grupo B — Red Inmobiliaria**
+
+Este es tu conjunto de datos. Profundiza más allá del taller: ¿Puedes rastrear una misma propiedad en varias transacciones sucesivas? ¿Hay actores que compran barato y revenden caro? ¿Los tipos de negocio (compraventa, hipoteca, cancelación) se concentran en actores distintos? ¿Qué barrios concentran más actividad, y cómo cambia eso con el tiempo?
+</div>
+
+<div class="alert alert-warning">
+**Grupo C — Red Espacial**
+
+Tu red conecta lugares, no personas — pero los métodos son exactamente los mismos. ¿Qué lugares tienen mayor grado (más conexiones con otros lugares)? ¿Qué calles o nodos son puentes entre zonas de la ciudad (alta intermediación)? ¿Las comunidades espaciales detectadas coinciden con barrios históricos o con zonas funcionales (comercial, residencial, industrial)? Además, cruza con los grupos A y B: ¿los actores más poderosos de la red inmobiliaria concentran propiedades en los mismos barrios?
+</div>
+
+---
+
+*Taller preparado para el curso Introducción a la Complejidad 2026-I — Universidad del Valle.*
