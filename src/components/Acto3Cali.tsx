@@ -1,0 +1,388 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import {
+  ACTORES,
+  ANIOS,
+  CANDIDATOS_ROL,
+  ETIQUETA_ACTOR,
+  FUENTE_NOTARIA,
+  MUNICIPIO,
+  NEGOCIOS,
+  SEBASTIAN,
+} from "@/lib/contenido";
+import {
+  ANIO_MAS,
+  ESCRITURAS_POR_ANIO,
+  PCT_GIGANTE,
+  PCT_GIGANTE_T8,
+  TOTAL,
+  flechasDe,
+  inactivos,
+  periodo,
+  porAnio,
+  top,
+  type Modo,
+} from "@/lib/notaria";
+import { fmt, miles } from "@/lib/red";
+import type { Respuestas } from "@/lib/tipos";
+import Red from "./Red";
+import {
+  CabezaActo,
+  Campo,
+  Cifra,
+  Definicion,
+  Ejercicio,
+  Lienzo,
+  Opciones,
+  Revelable,
+  Texto,
+  Veredicto,
+} from "./ui";
+
+type Props = {
+  r: Respuestas;
+  set: <K extends keyof Respuestas>(k: K, v: Respuestas[K]) => void;
+  actor: string;
+};
+
+const NODOS = ACTORES.map((a) => ({ id: a.id, etiqueta: a.etiqueta, x: a.x, y: a.y }));
+const nombre = (id: string) => ETIQUETA_ACTOR[id] ?? id;
+
+const OPCIONES_ANIO = ANIOS.map((y) => ({ clave: String(y), nombre: String(y) }));
+const MODOS: { clave: Modo; nombre: string }[] = [
+  { clave: "anio", nombre: "Solo ese año" },
+  { clave: "acumulado", nombre: "Acumulado desde 1938" },
+];
+
+const ACUMULA = top(TOTAL.entrada, 1)[0][0];
+const REPARTE = top(TOTAL.salida, 1)[0][0];
+const COMPRAS_SEB = porAnio(SEBASTIAN).filter((x) => x.compras > 0);
+
+const leerPct = (s: string) => Number(s.replace("%", "").replace(",", ".").trim());
+
+export default function Acto3Cali({ r, set, actor }: Props) {
+  const [anio, setAnio] = useState(1938);
+  const [modo, setModo] = useState<Modo>("anio");
+  const [tocado, setTocado] = useState<string | null>(null);
+  const [ampliada, setAmpliada] = useState(false);
+
+  const p = periodo(anio, modo);
+  const ocultos = useMemo(() => inactivos(p), [p]);
+  const compradores = top(p.entrada, 5);
+  const vendedores = top(p.salida, 5);
+  const marcados = [
+    ...compradores.slice(0, 3).map(([id]) => id),
+    ...vendedores.slice(0, 1).map(([id]) => id),
+    ...(p.actores.has(actor) ? [actor] : []),
+    ...(tocado && p.actores.has(tocado) ? [tocado] : []),
+  ];
+
+  const tuyo = porAnio(actor);
+  const tusFlechas = flechasDe(actor);
+  const comprasTuyas = tusFlechas.filter((f) => f[1] === actor).length;
+  const ventasTuyas = tusFlechas.length - comprasTuyas;
+
+  const pct = leerPct(r.a3_gigante);
+  const pctBien = r.a3_gigante.trim() !== "" && Math.abs(pct - PCT_GIGANTE) < 0.6;
+
+  return (
+    <div>
+      <CabezaActo
+        numero={3}
+        titulo="Cali, año por año"
+        bajada={`Las seis escrituras eran un pedazo. La red completa de la Notaría Segunda entre 1938 y 1944 tiene ${miles(TOTAL.actores.size)} actores y ${miles(TOTAL.escrituras)} escrituras. Vas a recorrerla como recorriste Poniente: en el tiempo, buscando patrones, quiebres y protagonistas.`}
+      />
+
+      <Definicion titulo="Cómo leer esta red">
+        <p>
+          Cada punto es un actor: una persona, una familia, una empresa, un banco o el Municipio.
+          Cada flecha es una escritura en la que la tierra pasa de una parte a otra, de quien
+          vende a quien compra. Como en Poniente, cada actor está siempre en el mismo lugar del
+          dibujo; los que no firman nada en el periodo elegido desaparecen.
+        </p>
+        <p>
+          El tamaño de cada punto es su <strong>grado de entrada</strong>: cuántas compras hace.
+          Es la medida de acumulación de tierra.
+        </p>
+      </Definicion>
+
+      <Ejercicio numero="3.1" titulo="Recorrer los siete años">
+        <div className="mb-2">
+          <Opciones<string>
+            opciones={OPCIONES_ANIO}
+            valor={String(anio)}
+            onChange={(v) => {
+              setAnio(Number(v));
+              setTocado(null);
+            }}
+          />
+        </div>
+        <div className="mb-3">
+          <Opciones<Modo> opciones={MODOS} valor={modo} onChange={setModo} />
+        </div>
+
+        <div className="mb-3 grid grid-cols-3 gap-2 text-center">
+          <Cifra valor={miles(p.escrituras)} etiqueta="escrituras" />
+          <Cifra valor={miles(p.actores.size)} etiqueta="actores" />
+          <Cifra
+            valor={`${fmt((100 * p.gigante) / Math.max(p.actores.size, 1), 1)} %`}
+            etiqueta="en el grupo más grande"
+          />
+        </div>
+        <p className="mb-3 text-sm leading-relaxed text-stone-500">
+          {modo === "anio" ? `Solo ${anio}.` : `De 1938 a ${anio}.`} «En el grupo más grande» es
+          el porcentaje de actores que están en el componente más grande: los que se pueden
+          alcanzar unos a otros siguiendo flechas, sin importar su sentido.
+        </p>
+
+        <Lienzo pie={FUENTE_NOTARIA}>
+          <div className={ampliada ? "overflow-auto" : ""}>
+            <div className={ampliada ? "w-[260%]" : ""}>
+              <Red
+                nodos={NODOS}
+                aristas={p.flechas.map(([a, b]) => [a, b] as [string, string])}
+                ocultos={ocultos}
+                dirigida
+                tamanos={tamanosEntrada(p.entrada)}
+                marcados={marcados}
+                etiquetas="marcados"
+                radioBase={0.75}
+                densa
+                onToque={(id) => setTocado((x) => (x === id ? null : id))}
+                titulo={`Red de compraventas de la Notaría Segunda, ${modo === "anio" ? anio : `1938 a ${anio}`}`}
+              />
+            </div>
+          </div>
+        </Lienzo>
+        <button onClick={() => setAmpliada((v) => !v)} className="btn btn-secondary mb-3 w-full">
+          {ampliada ? "Ver la red completa" : "Ampliar (y deslizar para recorrerla)"}
+        </button>
+
+        {tocado && p.actores.has(tocado) && (
+          <div className="mb-3 rounded-lg border border-brand-200 bg-brand-50 p-3 text-sm text-stone-700">
+            <p className="text-[15px] font-semibold text-stone-900">{nombre(tocado)}</p>
+            <p className="mt-1">
+              {modo === "anio" ? `En ${anio}` : `De 1938 a ${anio}`}: compra {p.entrada[tocado] ?? 0}{" "}
+              · vende {p.salida[tocado] ?? 0}.
+            </p>
+          </div>
+        )}
+
+        <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <TablaTop titulo="Los que más compran (entrada)" filas={compradores} actor={actor} onToque={setTocado} />
+          <TablaTop titulo="Los que más venden (salida)" filas={vendedores} actor={actor} onToque={setTocado} />
+        </div>
+
+        <p className="mb-2 text-[15px] font-medium text-stone-800">
+          ¿En qué año hay más escrituras?
+        </p>
+        <Opciones<string>
+          opciones={OPCIONES_ANIO}
+          valor={r.a3_anio_mas}
+          onChange={(v) => set("a3_anio_mas", v)}
+        />
+        {r.a3_anio_mas && (
+          <Veredicto bien={r.a3_anio_mas === String(ANIO_MAS)}>
+            {r.a3_anio_mas === String(ANIO_MAS)
+              ? `Sí: ${ANIO_MAS}, con ${ESCRITURAS_POR_ANIO[ANIOS.indexOf(ANIO_MAS)]} de las ${TOTAL.escrituras} escrituras. Más de la mitad de toda la base cae en un solo año.`
+              : `${r.a3_anio_mas} tiene ${ESCRITURAS_POR_ANIO[ANIOS.indexOf(Number(r.a3_anio_mas))]}. Recorre los siete años en «Solo ese año».`}
+          </Veredicto>
+        )}
+      </Ejercicio>
+
+      <Ejercicio numero="3.2" titulo="¿Creció Cali o creció el archivo?">
+        <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
+          Escrituras por año en la base del curso:{" "}
+          {ANIOS.map((y, i) => `${y}: ${ESCRITURAS_POR_ANIO[i]}`).join(" · ")}.
+        </p>
+        <Texto
+          label={`Un relato fácil sería «en ${ANIO_MAS} el mercado de tierras de Cali explotó». Antes de escribirlo, ¿qué otras explicaciones hay para ese salto? ¿Qué tendrías que saber para decidir entre ellas?`}
+          ayuda="Piensa en Ned Stark: antes de contar la historia, pregúntate cómo se construyó el dato."
+          valor={r.a3_archivo}
+          onChange={(v) => set("a3_archivo", v)}
+          filas={5}
+          placeholder="Escribe aquí…"
+        />
+        <Revelable habilitado={r.a3_archivo.trim().length > 20} etiqueta="Ver lo que sabemos de la base">
+          <p className="text-sm leading-relaxed text-stone-700">
+            La base del curso se armó por partes. De 1938 a 1941 viene de una transcripción
+            vieja y parcial de los protocolos; 1942 y 1944, de otras dos tablas. {ANIO_MAS}, en
+            cambio, se volvió a transcribir completo: en la versión anterior de esta misma base,{" "}
+            {ANIO_MAS} tenía 66 escrituras, como los demás años. El salto a{" "}
+            {ESCRITURAS_POR_ANIO[ANIOS.indexOf(ANIO_MAS)]} lo produjo el archivo, no el mercado.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-stone-700">
+            Eso no quiere decir que {ANIO_MAS} no sirva. Es el año que mejor conocemos, y por eso
+            ahí aparecen actores que en los otros años quizás estaban y no vemos. Lo que no se
+            puede hacer es comparar el número de escrituras entre años y llamarlo crecimiento.
+          </p>
+        </Revelable>
+      </Ejercicio>
+
+      <Ejercicio numero="3.3" titulo="Un bazar, no una red">
+        <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
+          Elige «Acumulado desde 1938» y el año 1944: es la red completa.
+        </p>
+        <Campo
+          label="¿Qué porcentaje de los actores está en el grupo más grande?"
+          valor={r.a3_gigante}
+          onChange={(v) => set("a3_gigante", v)}
+          placeholder="Por ejemplo: 12,5"
+          numerico
+        />
+        {r.a3_gigante.trim() !== "" && (
+          <Veredicto bien={pctBien}>
+            {pctBien
+              ? `Eso: ${fmt(PCT_GIGANTE, 1)} %. En la T8 de Poniente, el grupo más grande tenía al ${fmt(PCT_GIGANTE_T8, 0)} % de los personajes.`
+              : "Revisa que estés en «Acumulado desde 1938» con el año 1944, y lee la tercera cifra."}
+          </Veredicto>
+        )}
+        <div className="mt-4">
+          <Texto
+            label="Casi todos los actores de Cali están en grupos pequeños y sueltos: parejas que firman una sola escritura y no vuelven a aparecer. ¿Por qué crees que la red está tan partida? Da una explicación sobre la Cali de esos años y otra sobre los datos."
+            ayuda="Tres o cuatro frases. Pista para la segunda: ¿cuántas notarías había en Cali? ¿Cuántos años cubre la base?"
+            valor={r.a3_bazar}
+            onChange={(v) => set("a3_bazar", v)}
+            filas={5}
+            placeholder="Escribe aquí…"
+          />
+        </div>
+      </Ejercicio>
+
+      <Ejercicio numero="3.4" titulo="Quién acumula, quién reparte">
+        <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
+          Sigue en la red completa (acumulado hasta 1944) y mira las dos tablas.
+        </p>
+        <p className="mb-2 text-[15px] font-medium text-stone-800">¿Quién acumula más tierra?</p>
+        <Opciones<string>
+          opciones={CANDIDATOS_ROL.map((id) => ({ clave: id, nombre: nombre(id) }))}
+          valor={r.a3_acumula}
+          onChange={(v) => set("a3_acumula", v)}
+          columnas
+        />
+        {r.a3_acumula && (
+          <Veredicto bien={r.a3_acumula === ACUMULA}>
+            {nombre(r.a3_acumula)}: {TOTAL.entrada[r.a3_acumula] ?? 0} compras y{" "}
+            {TOTAL.salida[r.a3_acumula] ?? 0} ventas.{" "}
+            {r.a3_acumula === ACUMULA
+              ? `Es el de mayor grado de entrada. Y compra en varios años: ${COMPRAS_SEB.map((x) => `${x.anio} (${x.compras})`).join(", ")}. No depende del salto de ${ANIO_MAS}.`
+              : "Acumular es comprar: busca el mayor grado de entrada."}
+          </Veredicto>
+        )}
+
+        <p className="mb-2 mt-5 text-[15px] font-medium text-stone-800">¿Quién reparte más tierra?</p>
+        <Opciones<string>
+          opciones={CANDIDATOS_ROL.map((id) => ({ clave: id, nombre: nombre(id) }))}
+          valor={r.a3_reparte}
+          onChange={(v) => set("a3_reparte", v)}
+          columnas
+        />
+        {r.a3_reparte && (
+          <Veredicto bien={r.a3_reparte === REPARTE}>
+            {nombre(r.a3_reparte)}: {TOTAL.salida[r.a3_reparte] ?? 0} ventas y{" "}
+            {TOTAL.entrada[r.a3_reparte] ?? 0} compras.{" "}
+            {r.a3_reparte === REPARTE
+              ? `El Municipio es el gran distribuidor de suelo de la ciudad: vende ${TOTAL.salida[MUNICIPIO]} veces y casi no compra.`
+              : "Repartir es vender: busca el mayor grado de salida."}
+          </Veredicto>
+        )}
+      </Ejercicio>
+
+      <Ejercicio numero="3.5" titulo={`Las escrituras de ${nombre(actor)}`}>
+        <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
+          A tu pareja le tocó <strong>{nombre(actor)}</strong>: {comprasTuyas} compra
+          {comprasTuyas === 1 ? "" : "s"} y {ventasTuyas} venta{ventasTuyas === 1 ? "" : "s"} entre
+          1938 y 1944. Así se reparten en el tiempo:
+        </p>
+        <div className="mb-4 overflow-x-auto">
+          <table className="w-full text-sm tabular-nums">
+            <thead>
+              <tr className="border-b border-stone-300 text-xs uppercase tracking-wide text-stone-500">
+                <th className="py-1 text-left font-semibold">Año</th>
+                <th className="py-1 text-right font-semibold">Compras</th>
+                <th className="py-1 text-right font-semibold">Ventas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tuyo.map((x) => (
+                <tr key={x.anio} className="border-b border-stone-200">
+                  <td className="py-1 text-stone-700">{x.anio}</td>
+                  <td className="py-1 text-right text-stone-900">{x.compras || "·"}</td>
+                  <td className="py-1 text-right text-stone-900">{x.ventas || "·"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <details className="mb-4 rounded-lg border border-stone-200 bg-white">
+          <summary className="cursor-pointer px-3 py-2.5 text-[15px] font-medium text-stone-800">
+            Leer sus {tusFlechas.length} escrituras
+          </summary>
+          <ol className="max-h-96 space-y-2.5 overflow-y-auto border-t border-stone-100 px-3 py-3 text-sm">
+            {tusFlechas.map(([de, a, y, reg], i) => (
+              <li key={`${reg}-${i}`}>
+                <p className="font-semibold text-stone-800">
+                  {y} · {de === actor ? `vende a ${nombre(a)}` : `compra a ${nombre(de)}`}
+                </p>
+                {NEGOCIOS[String(reg)] && (
+                  <p className="mt-0.5 leading-relaxed text-stone-600">«{NEGOCIOS[String(reg)]}»</p>
+                )}
+              </li>
+            ))}
+          </ol>
+        </details>
+
+        <Texto
+          label={`¿Qué papel juega ${nombre(actor)} en la red? ¿Acumula, reparte, liquida un patrimonio, financia? ¿Cuándo actúa? ¿Qué dicen sus escrituras que los números no dicen?`}
+          ayuda="Cuatro o cinco frases. Usa al menos una cifra de la tabla y una escritura concreta."
+          valor={r.a3_actor_lectura}
+          onChange={(v) => set("a3_actor_lectura", v)}
+          filas={6}
+          placeholder="Escribe aquí…"
+        />
+      </Ejercicio>
+    </div>
+  );
+}
+
+/** Tamaño relativo por grado de entrada: los que no compran quedan como puntos mínimos. */
+function tamanosEntrada(entrada: Record<string, number>): Record<string, number> {
+  const max = Math.max(1, ...Object.values(entrada));
+  return Object.fromEntries(Object.entries(entrada).map(([k, v]) => [k, v / max]));
+}
+
+function TablaTop({
+  titulo,
+  filas,
+  actor,
+  onToque,
+}: {
+  titulo: string;
+  filas: [string, number][];
+  actor: string;
+  onToque: (id: string) => void;
+}) {
+  return (
+    <div>
+      <p className="mb-1 text-sm font-semibold text-stone-800">{titulo}</p>
+      <ol className="text-sm">
+        {filas.map(([id, v], i) => (
+          <li key={id} className="flex items-center gap-2 border-b border-stone-200 py-1">
+            <span className="w-4 text-right tabular-nums text-stone-400">{i + 1}</span>
+            <button
+              onClick={() => onToque(id)}
+              className={`min-w-0 flex-1 truncate text-left underline decoration-stone-300 underline-offset-2 ${
+                id === actor ? "font-semibold text-brand-700" : "text-stone-800"
+              }`}
+            >
+              {nombre(id)}
+            </button>
+            <span className="tabular-nums text-stone-600">{v}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
