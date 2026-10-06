@@ -9,6 +9,7 @@ import {
   FUENTE_NOTARIA,
   MUNICIPIO,
   NEGOCIOS,
+  PROPORCION_NOTARIA,
   SEBASTIAN,
 } from "@/lib/contenido";
 import {
@@ -99,7 +100,9 @@ export default function Acto3Cali({ r, set, actor }: Props) {
           Cada punto es un actor: una persona, una familia, una empresa, un banco o el Municipio.
           Cada flecha es una escritura en la que la tierra pasa de una parte a otra, de quien
           vende a quien compra. Como en Poniente, cada actor está siempre en el mismo lugar del
-          dibujo; los que no firman nada en el periodo elegido desaparecen.
+          dibujo; los que no firman nada en el periodo elegido desaparecen. Arriba va el grupo
+          conectado más grande; abajo, cada vez más pequeños, los demás, hasta las parejas que
+          firmaron una sola escritura.
         </p>
         <p>
           El tamaño de cada punto es su <strong>grado de entrada</strong>: cuántas compras hace.
@@ -144,6 +147,7 @@ export default function Acto3Cali({ r, set, actor }: Props) {
                 aristas={p.flechas.map(([a, b]) => [a, b] as [string, string])}
                 ocultos={ocultos}
                 dirigida
+                proporcion={PROPORCION_NOTARIA}
                 tamanos={tamanosEntrada(p.entrada)}
                 marcados={marcados}
                 etiquetas="marcados"

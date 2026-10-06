@@ -93,6 +93,66 @@ export default function Red({
     return hayFoco ? "apagado" : "normal";
   }
 
+  const rotulos = colocarEtiquetas();
+
+  /**
+   * Dónde va cada etiqueta, sin que se pisen. Se reparten por prioridad (el nodo tocado,
+   * el camino, los marcados en su orden, los vecinos, el resto) y cada una prueba cuatro
+   * lugares alrededor de su nodo: abajo, arriba, a la derecha, a la izquierda. Si no cabe
+   * en ninguno se omite, salvo las dos primeras, que siempre se escriben.
+   */
+  function colocarEtiquetas() {
+    const conEtiqueta = (id: string) => {
+      const e = estadoNodo(id);
+      return etiquetas === "todas" || e === "foco" || e === "vecino";
+    };
+    const vivos = new Set(visibles.map((n) => n.id));
+    const orden = [
+      ...(seleccionado ? [seleccionado] : []),
+      ...camino,
+      ...marcados,
+      ...vecinos,
+      ...visibles.map((n) => n.id),
+    ].filter((id, i, xs) => vivos.has(id) && conEtiqueta(id) && xs.indexOf(id) === i);
+
+    const cajas: { x0: number; y0: number; x1: number; y1: number }[] = [];
+    const res = new Map<string, { x: number; y: number; anclaje: "start" | "middle" | "end"; texto: string; foco: boolean }>();
+    const etiquetaDe = new Map(visibles.map((n) => [n.id, n.etiqueta]));
+    orden.forEach((id, k) => {
+      const p = pos.get(id)!;
+      const r = radio(id);
+      const foco = estadoNodo(id) === "foco";
+      const f = foco ? 3.4 : 3;
+      const crudo = etiquetaDe.get(id)!;
+      const texto = crudo.length > 26 ? `${crudo.slice(0, 24)}…` : crudo;
+      const ancho = texto.length * f * 0.56;
+      // Cerca de los bordes la etiqueta crece hacia adentro, para que no se corte.
+      const centrada: "start" | "middle" | "end" = p.x < 15 ? "start" : p.x > W - 15 ? "end" : "middle";
+      const candidatos: { x: number; y: number; anclaje: "start" | "middle" | "end" }[] = [
+        { x: p.x, y: p.y + r + f * 0.95, anclaje: centrada },
+        { x: p.x, y: p.y - r - f * 0.3, anclaje: centrada },
+        { x: p.x + r + 0.8, y: p.y + f * 0.35, anclaje: "start" },
+        { x: p.x - r - 0.8, y: p.y + f * 0.35, anclaje: "end" },
+      ];
+      const caja = (c: (typeof candidatos)[number]) => {
+        const x0 = c.anclaje === "start" ? c.x : c.anclaje === "end" ? c.x - ancho : c.x - ancho / 2;
+        return { x0, y0: c.y - f * 0.85, x1: x0 + ancho, y1: c.y + f * 0.2 };
+      };
+      const choca = (b: ReturnType<typeof caja>) =>
+        b.x0 < -M ||
+        b.x1 > W + M ||
+        cajas.some((o) => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0);
+      const libre = candidatos.find((c) => !choca(caja(c)));
+      // Las dos primeras siempre se escriben: si no hay hueco, abajo y hacia adentro.
+      const elegido =
+        libre ?? (k < 2 ? { ...candidatos[0], anclaje: p.x < W / 2 ? "start" : "end" } : null);
+      if (!elegido) return;
+      cajas.push(caja(elegido));
+      res.set(id, { ...elegido, texto, foco });
+    });
+    return res;
+  }
+
   return (
     <svg
       viewBox={`${-M} ${-M / 2} ${W + 2 * M} ${H + 2 * M}`}
@@ -110,8 +170,12 @@ export default function Red({
               viewBox="0 0 10 10"
               refX="9"
               refY="5"
-              markerWidth={densa ? 9 : 5}
-              markerHeight={densa ? 9 : 5}
+              // En la red densa la punta va en unidades del dibujo: con el trazo tan
+              // fino, una punta proporcional al trazo no se ve, y una fija en
+              // múltiplos del trazo tapa a los nodos chicos.
+              markerUnits={densa ? "userSpaceOnUse" : "strokeWidth"}
+              markerWidth={densa ? 1.1 : 5}
+              markerHeight={densa ? 1.1 : 5}
               orient="auto-start-reverse"
             >
               <path d="M0,0 L10,5 L0,10 z" className={COLOR_FLECHA[e]} />
@@ -172,7 +236,6 @@ export default function Red({
         const p = pos.get(n.id)!;
         const e = estadoNodo(n.id);
         const r = radio(n.id);
-        const conEtiqueta = etiquetas === "todas" || e === "foco" || e === "vecino";
         return (
           <g
             key={n.id}
@@ -185,24 +248,26 @@ export default function Red({
               <circle cx={p.x} cy={p.y} r={Math.max(r, densa ? 2.2 : 5)} fill="transparent" />
             )}
             <circle cx={p.x} cy={p.y} r={r} className={COLOR_NODO[e]} strokeWidth={densa ? 0.25 : 0.5} />
-            {conEtiqueta && (
-              <text
-                x={p.x}
-                y={p.y + r + 3.2}
-                // Cerca de los bordes la etiqueta crece hacia adentro, para que no se corte.
-                textAnchor={p.x < 15 ? "start" : p.x > W - 15 ? "end" : "middle"}
-                className={`${COLOR_TEXTO[e]} pointer-events-none`}
-                style={{ fontSize: e === "foco" ? 3.4 : 3, fontWeight: e === "foco" ? 700 : 500 }}
-                paintOrder="stroke"
-                stroke="white"
-                strokeWidth={0.9}
-              >
-                {n.etiqueta.length > 26 ? `${n.etiqueta.slice(0, 24)}…` : n.etiqueta}
-              </text>
-            )}
           </g>
         );
       })}
+
+      {/* Las etiquetas van en una capa propia, encima de todos los nodos. */}
+      {[...rotulos].map(([id, t]) => (
+        <text
+          key={`t-${id}`}
+          x={t.x}
+          y={t.y}
+          textAnchor={t.anclaje}
+          className={`${COLOR_TEXTO[estadoNodo(id)]} pointer-events-none`}
+          style={{ fontSize: t.foco ? 3.4 : 3, fontWeight: t.foco ? 700 : 500 }}
+          paintOrder="stroke"
+          stroke="white"
+          strokeWidth={0.9}
+        >
+          {t.texto}
+        </text>
+      ))}
     </svg>
   );
 }

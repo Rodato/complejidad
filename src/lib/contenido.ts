@@ -166,6 +166,8 @@ export type Flecha = [string, string, number, number];
 
 export const ACTORES: ActorNotaria[] = notaria.actores;
 export const FLECHAS: Flecha[] = notaria.aristas as Flecha[];
+/** Alto / ancho del dibujo de la red de Cali (sale del layout por bandas). */
+export const PROPORCION_NOTARIA: number = notaria.proporcion;
 export const NEGOCIOS: Record<string, string> = notaria.negocios;
 export const ETIQUETA_ACTOR: Record<string, string> = Object.fromEntries(
   ACTORES.map((a) => [a.id, a.etiqueta]),

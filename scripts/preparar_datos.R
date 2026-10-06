@@ -56,7 +56,15 @@ apodos <- c(
 union_got <- do.call(rbind, temporadas)
 g_union <- simplify(graph_from_data_frame(union_got[, 1:2], directed = FALSE))
 set.seed(11)
-lay <- normalizar(layout_with_stress(g_union), recorte = 0.015)
+lay <- layout_with_stress(g_union)
+# Lupa en el centro: el núcleo de la serie (los que salen en todas las temporadas) queda
+# amontonado. Se estira la distancia al centro con una potencia < 1: el centro se abre y
+# la periferia, donde hay poco que leer, se comprime.
+centro <- apply(lay, 2, median)
+d <- sweep(lay, 2, centro)
+radio <- sqrt(rowSums(d^2))
+lay <- d * (radio^0.55 / pmax(radio, 1e-9))
+lay <- normalizar(lay, recorte = 0.015)
 ids <- V(g_union)$name
 etq <- etiquetas$Label[match(ids, etiquetas$Id)]
 etq[is.na(etq)] <- ids[is.na(etq)]
@@ -98,8 +106,54 @@ legible <- function(x) {
 
 g_not <- simplify(graph_from_data_frame(a[, c("source", "target")], directed = TRUE),
                   remove.multiple = TRUE, remove.loops = TRUE)
+# Layout por bandas. La red de Cali es un bazar: un componente de 89 actores, unas
+# decenas de racimos medianos y cientos de parejas que firman una sola escritura. Un
+# layout de fuerzas sobre todo junto le da el mismo espacio a cada pareja que al núcleo,
+# y el núcleo queda ilegible. Aquí cada componente se dibuja por separado y se empaca en
+# estantes, de mayor a menor, con un lado proporcional a la raíz de su tamaño (el más
+# grande, ampliado). Así se ve las dos cosas: quién está en el centro y cuánto polvo hay.
+g_u <- as_undirected(g_not)
+comp <- components(g_u)
+orden <- order(comp$csize, decreasing = TRUE)
+lado <- function(n) {
+  if (n >= 50) 0.72 else if (n >= 5) 0.045 * sqrt(n) else if (n >= 3) 0.05 else 0.033
+}
+# Empaque «skyline»: el ancho se parte en columnas y cada componente va al hueco más
+# bajo donde cabe. Aprovecha el espacio bajo los vecinos más chicos, que un empaque por
+# estantes desperdicia.
+COLS <- 400
+techo <- numeric(COLS)
+pos <- matrix(NA_real_, vcount(g_u), 2)
 set.seed(11)
-lay_n <- normalizar(layout_with_stress(as_undirected(g_not)))
+for (k in orden) {
+  idx <- which(comp$membership == k)
+  n <- length(idx)
+  L <- lado(n)
+  w <- ceiling(L * COLS)
+  inicios <- 1:(COLS - w + 1)
+  alturas <- vapply(inicios, function(i) max(techo[i:(i + w - 1)]), 0)
+  i <- inicios[which.min(alturas)]
+  x0 <- (i - 1) / COLS
+  y0 <- min(alturas)
+  techo[i:(i + w - 1)] <- y0 + L
+  sub <- induced_subgraph(g_u, idx)
+  if (n == 2) {
+    # Una pareja: juntos en el centro de su caja, para que se lea como pareja y no
+    # como eslabón de una cadena con la de al lado.
+    l <- cbind(c(0.28, 0.72), c(0.5, 0.5))
+  } else {
+    l <- layout_with_stress(sub)
+    # A su caja, sin deformarlo y con un margen para que no se toquen los vecinos.
+    r <- apply(l, 2, function(v) diff(range(v)))
+    esc <- (1 - 0.3) / max(r, 1e-9)
+    l <- sweep(l, 2, apply(l, 2, min)) * esc
+    l <- sweep(l, 2, (1 - r * esc) / 2, "+")
+  }
+  pos[idx, ] <- cbind(x0 + l[, 1] * L, y0 + l[, 2] * L)
+}
+alto <- max(techo)
+lay_n <- round(cbind(pos[, 1], pos[, 2] / alto), 4)
+proporcion_n <- round(alto, 3)
 nombres <- V(g_not)$name
 cod <- setNames(sprintf("c%d", seq_along(nombres)), nombres)
 
@@ -109,6 +163,8 @@ write_json(
       id = unname(cod), etiqueta = unname(vapply(nombres, legible, "")),
       x = lay_n[, 1], y = lay_n[, 2]
     ),
+    # Alto / ancho del dibujo (las y van de 0 a 1 sobre ese alto).
+    proporcion = proporcion_n,
     # [vendedor, comprador, año, escritura]
     aristas = unname(lapply(seq_len(nrow(a)), function(i) {
       list(cod[[a$source[i]]], cod[[a$target[i]]], a$anio[i], a$registro[i])

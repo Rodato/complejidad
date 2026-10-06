@@ -84,8 +84,16 @@ Rscript scripts/preparar_datos.R     # igraph, jsonlite, graphlayouts
 - `datos/notaria_aristas.csv` — sale de `data/consolidado_notaria2.csv` de la raíz del
   repo Complejidad (cuarto script que depende de esa ruta: no mover `data/`).
 - `src/data/got.json`, `src/data/notaria.json` — generados. Las posiciones se calculan una
-  vez (stress layout, semilla 11) sobre la unión de todas las temporadas o todos los años.
-  Así cada nodo está siempre en el mismo sitio y lo que cambia son los vínculos.
+  vez (semilla 11) sobre la unión de todas las temporadas o todos los años. Así cada nodo
+  está siempre en el mismo sitio y lo que cambia son los vínculos.
+  - **Poniente**: stress layout de la unión con una «lupa» (distancia al centro elevada a
+    0,55) para que el núcleo no quede amontonado.
+  - **Cali**: layout **por bandas**. Cada componente se dibuja por separado y se empaca
+    (skyline) de mayor a menor: el de 89 actores arriba y grande, los racimos medianos,
+    y al final las 243 parejas sueltas. Un layout de fuerzas sobre todo junto le daba el
+    mismo espacio a cada pareja que al núcleo y lo dejaba ilegible.
+  - `Red.tsx` reparte las etiquetas para que no se pisen (prueba cuatro posiciones por
+    nodo, por prioridad) y en modo denso usa puntas de flecha de tamaño fijo.
 
 ## Stack
 
