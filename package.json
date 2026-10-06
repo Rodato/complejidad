@@ -9,6 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "d3-force": "^3.0.0",
+    "d3-selection": "^3.0.0",
+    "d3-transition": "^3.0.1",
+    "d3-zoom": "^3.0.0",
     "googleapis": "^173.0.0",
     "next": "16.2.7",
     "react": "19.2.4",
@@ -16,6 +20,10 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/d3-force": "^3.0.10",
+    "@types/d3-selection": "^3.0.12",
+    "@types/d3-transition": "^3.0.9",
+    "@types/d3-zoom": "^3.0.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -19,7 +19,7 @@ function hashCodigo(codigo: string, sal: number): number {
 // ACTO 1 — Juego de tronos, temporadas 1 a 8 (Beveridge, serie de HBO)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type Personaje = { id: string; etiqueta: string; x: number; y: number };
+export type Personaje = { id: string; etiqueta: string };
 
 export const PERSONAJES: Personaje[] = got.personajes;
 export const ETIQUETA_PERSONAJE: Record<string, string> = Object.fromEntries(
@@ -160,14 +160,12 @@ export const FICHAS: Ficha[] = [
 // ACTOS 3 y 4 — La red de la Notaría 2 de Cali, 1938–1944
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type ActorNotaria = { id: string; etiqueta: string; x: number; y: number };
+export type ActorNotaria = { id: string; etiqueta: string };
 /** Una flecha: [vendedor, comprador, año, escritura]. */
 export type Flecha = [string, string, number, number];
 
 export const ACTORES: ActorNotaria[] = notaria.actores;
 export const FLECHAS: Flecha[] = notaria.aristas as Flecha[];
-/** Alto / ancho del dibujo de la red de Cali (sale del layout por bandas). */
-export const PROPORCION_NOTARIA: number = notaria.proporcion;
 export const NEGOCIOS: Record<string, string> = notaria.negocios;
 export const ETIQUETA_ACTOR: Record<string, string> = Object.fromEntries(
   ACTORES.map((a) => [a.id, a.etiqueta]),

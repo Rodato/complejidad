@@ -1,6 +1,6 @@
 // Cálculos sobre la red de la Notaría que comparten los actos 3 y 4.
 
-import { ACTORES, ANIOS, FLECHAS, TEMPORADAS, type Flecha } from "./contenido";
+import { ANIOS, FLECHAS, TEMPORADAS, type Flecha } from "./contenido";
 import { componentes, crearRed, gradoEntrada, gradoSalida, type Arista } from "./red";
 
 export type Modo = "anio" | "acumulado";
@@ -11,11 +11,11 @@ export type Periodo = {
   actores: Set<string>;
   /** Actores del componente (débil) más grande. */
   gigante: number;
+  /** Tamaño del componente de cada actor: sirve para filtrar parejas sueltas. */
+  tamComp: Map<string, number>;
   entrada: Record<string, number>;
   salida: Record<string, number>;
 };
-
-const TODOS = ACTORES.map((a) => a.id);
 
 function calcular(flechas: Flecha[]): Periodo {
   const aristas: Arista[] = flechas.map(([a, b]) => [a, b]);
@@ -26,6 +26,7 @@ function calcular(flechas: Flecha[]): Periodo {
     escrituras: new Set(flechas.map((f) => f[3])).size,
     actores,
     gigante: comps[0]?.length ?? 0,
+    tamComp: new Map(comps.flatMap((c) => c.map((id) => [id, c.length] as [string, number]))),
     entrada: gradoEntrada(aristas),
     salida: gradoSalida(aristas),
   };
@@ -50,11 +51,6 @@ export const PCT_GIGANTE = (100 * TOTAL.gigante) / TOTAL.actores.size;
 
 export const ESCRITURAS_POR_ANIO = ANIOS.map((y) => periodo(y, "anio").escrituras);
 export const ANIO_MAS = ANIOS[ESCRITURAS_POR_ANIO.indexOf(Math.max(...ESCRITURAS_POR_ANIO))];
-
-/** Los que no están activos en el periodo: se esconden del dibujo. */
-export function inactivos(p: Periodo): string[] {
-  return TODOS.filter((id) => !p.actores.has(id));
-}
 
 export function top(valores: Record<string, number>, k: number): [string, number][] {
   return Object.entries(valores)

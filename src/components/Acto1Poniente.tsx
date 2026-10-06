@@ -6,7 +6,6 @@ import {
   ETIQUETA_PERSONAJE,
   FUENTE_GOT,
   N_TEMPORADAS,
-  PERSONAJES,
   REFERENCIA_GOT,
   TEMPORADAS,
 } from "@/lib/contenido";
@@ -20,7 +19,7 @@ import {
   type Arista,
 } from "@/lib/red";
 import type { Respuestas } from "@/lib/tipos";
-import Red from "./Red";
+import RedCanvas, { LeyendaCalor, colorCalor, tamanoNodo, type NodoCanvas } from "./RedCanvas";
 import Trayectoria from "./Trayectoria";
 import {
   CabezaActo,
@@ -67,8 +66,6 @@ const POR_TEMPORADA = TEMPORADAS.map((t) => {
   };
 });
 
-const NODOS = PERSONAJES.map((p) => ({ id: p.id, etiqueta: p.etiqueta, x: p.x, y: p.y }));
-const TODOS = PERSONAJES.map((p) => p.id);
 const nombre = (id: string) => ETIQUETA_PERSONAJE[id] ?? id;
 
 /** Puesto en grado de un personaje en cada temporada (null si no aparece). */
@@ -101,24 +98,31 @@ export default function Acto1Poniente({ r, set, personaje }: Props) {
   const [t, setT] = useState(0);
   const [medida, setMedida] = useState<MedidaGot>("grado");
   const [tocado, setTocado] = useState<string | null>(null);
-  const [ampliada, setAmpliada] = useState(false);
 
   const temp = POR_TEMPORADA[t];
-  const ocultos = useMemo(() => TODOS.filter((id) => !temp.nodos.has(id)), [temp]);
-  const tamanos = useMemo(() => {
+  // Solo los personajes de la temporada; tamaño y color según la medida elegida.
+  const nodos: NodoCanvas[] = useMemo(() => {
     const v = temp.valores[medida];
     const max = Math.max(...Object.values(v)) || 1;
-    return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, x / max]));
+    return [...temp.nodos].map((id) => ({
+      id,
+      etiqueta: nombre(id),
+      size: tamanoNodo(v[id], max, 6, 18),
+      color: colorCalor(v[id], max),
+    }));
   }, [temp, medida]);
+  const aristas = useMemo(
+    () => temp.aristas.map(([a, b]) => ({ source: a, target: b })),
+    [temp],
+  );
   const top = useMemo(
     () => Object.entries(temp.valores[medida]).sort((a, b) => b[1] - a[1]).slice(0, 10),
     [temp, medida],
   );
-  const marcados = [
-    ...top.slice(0, 5).map(([id]) => id),
-    ...(temp.nodos.has(personaje) ? [personaje] : []),
-    ...(tocado && temp.nodos.has(tocado) ? [tocado] : []),
-  ];
+  const marcados = useMemo(
+    () => [personaje, ...top.slice(0, 5).map(([id]) => id)],
+    [personaje, top],
+  );
 
   const curvaTuyo = curva(personaje);
   const mejor = Math.min(...curvaTuyo.filter((v): v is number => v !== null));
@@ -168,9 +172,10 @@ export default function Acto1Poniente({ r, set, personaje }: Props) {
 
       <Ejercicio numero="1.1" titulo="Recorrer las ocho temporadas">
         <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
-          Elige una temporada. Cada personaje está siempre en el mismo lugar del dibujo: lo que
-          cambia son los vínculos y quién aparece. Se nombran los cinco primeros y tu personaje,{" "}
-          <strong>{nombre(personaje)}</strong>.
+          Elige una temporada y mira cómo se reacomoda la red: los que siguen conservan su lugar
+          y los nuevos llegan desde el centro. Se nombran los cinco primeros y tu personaje,{" "}
+          <strong>{nombre(personaje)}</strong>. Toca a cualquiera para saber quién es; con dos
+          dedos (o con + y −) acercas la red.
         </p>
         <div className="mb-3">
           <Opciones<string>
@@ -198,26 +203,24 @@ export default function Acto1Poniente({ r, set, personaje }: Props) {
           <Opciones<MedidaGot> opciones={MEDIDAS_GOT} valor={medida} onChange={setMedida} />
         </div>
         <Lienzo pie={FUENTE_GOT}>
-          <div className={ampliada ? "overflow-auto" : ""}>
-            <div className={ampliada ? "w-[240%]" : ""}>
-              <Red
-                nodos={NODOS}
-                aristas={temp.aristas}
-                ocultos={ocultos}
-                tamanos={tamanos}
-                marcados={marcados}
-                etiquetas="marcados"
-                radioBase={0.85}
-                densa
-                onToque={(id) => setTocado((x) => (x === id ? null : id))}
-                titulo={`Red de la temporada ${t + 1} de Juego de tronos, tamaño según ${medida}`}
+          <RedCanvas
+            nodos={nodos}
+            aristas={aristas}
+            marcados={marcados}
+            seleccionado={tocado && temp.nodos.has(tocado) ? tocado : null}
+            onToque={setTocado}
+            detalle={(id) => `puesto ${temp.puestos[medida][id]}`}
+            distancia={45}
+            carga={-90}
+            leyenda={
+              <LeyendaCalor
+                que={`${medida === "grado" ? "grado" : "intermediación"}: poco → mucho`}
+                nota="borde naranja = nombrados"
               />
-            </div>
-          </div>
+            }
+            titulo={`Red de la temporada ${t + 1} de Juego de tronos, tamaño según ${medida}`}
+          />
         </Lienzo>
-        <button onClick={() => setAmpliada((v) => !v)} className="btn btn-secondary mb-3 w-full">
-          {ampliada ? "Ver la red completa" : "Ampliar (y deslizar para recorrerla)"}
-        </button>
 
         {tocado && temp.nodos.has(tocado) && (
           <div className="mb-3 rounded-lg border border-brand-200 bg-brand-50 p-3 text-sm text-stone-700">

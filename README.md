@@ -76,29 +76,38 @@ mundo). Las dos asignaciones salen del hash del código de quien registra
 
 ```bash
 python3 scripts/notaria_aristas.py   # necesita networkx (lo importa data/limpiar_red.py)
-Rscript scripts/preparar_datos.R     # igraph, jsonlite, graphlayouts
+Rscript scripts/preparar_datos.R     # igraph, jsonlite
 ```
 
 - `datos/got/` — Beveridge, «Network of Thrones», redes de la serie de HBO
   (github.com/mathbeveridge/gameofthrones), **CC BY-NC-SA 4.0**. La atribución está en la app.
 - `datos/notaria_aristas.csv` — sale de `data/consolidado_notaria2.csv` de la raíz del
   repo Complejidad (cuarto script que depende de esa ruta: no mover `data/`).
-- `src/data/got.json`, `src/data/notaria.json` — generados. Las posiciones se calculan una
-  vez (semilla 11) sobre la unión de todas las temporadas o todos los años. Así cada nodo
-  está siempre en el mismo sitio y lo que cambia son los vínculos.
-  - **Poniente**: stress layout de la unión con una «lupa» (distancia al centro elevada a
-    0,55) para que el núcleo no quede amontonado.
-  - **Cali**: layout **por bandas**. Cada componente se dibuja por separado y se empaca
-    (skyline) de mayor a menor: el de 89 actores arriba y grande, los racimos medianos,
-    y al final las 243 parejas sueltas. Un layout de fuerzas sobre todo junto le daba el
-    mismo espacio a cada pareja que al núcleo y lo dejaba ilegible.
-  - `Red.tsx` reparte las etiquetas para que no se pisen (prueba cuatro posiciones por
-    nodo, por prioridad) y en modo denso usa puntas de flecha de tamaño fijo.
+- `src/data/got.json`, `src/data/notaria.json` — generados: nombres, vínculos y, para la
+  Notaría, el texto de cada escritura. Sin posiciones.
+
+## Cómo se dibujan las redes
+
+Igual que en el Taller 5 y el parcial de 2026-I: `src/components/RedCanvas.tsx` es un
+port de `RedRealCanvas.tsx` (D3 force en canvas, mismas fuerzas, flecha vendedor →
+comprador con la punta en el comprador, rampa de calor azul claro → rojo, tamaño y color
+por compras o por la medida elegida). Al cambiar de año o de temporada se reutilizan las
+posiciones: la red evoluciona en vez de saltar, y se vuelve a encuadrar sola.
+
+En Cali está el filtro estructural del Taller 5 (por tamaño de componente):
+**Conectados** (3+, por defecto), **Toda la red**, **Núcleos** (4+).
+
+Ajustes para el celular: tocar un actor lo selecciona y muestra su etiqueta; un dedo
+desplaza la página y dos dedos mueven y acercan la red (si no, el estudiante queda
+atrapado en el canvas); botones + / − / centrar; nombres fijos para el personaje o actor
+asignado y los primeros del ranking, sin que se pisen.
+
+`Red.tsx` (SVG) queda solo para la red de seis escrituras del Acto 2.
 
 ## Stack
 
-Next.js 16 + Tailwind 4 + `googleapis`, copiado del Taller 2. `Red.tsx` dibuja en SVG (con
-un modo denso dirigido para los 1.235 actores) y `Trayectoria.tsx` es la curva de puestos.
+Next.js 16 + Tailwind 4 + `googleapis`, copiado del Taller 2, más `d3-force`, `d3-zoom`,
+`d3-selection` y `d3-transition` (los del Taller 5). `Trayectoria.tsx` es la curva de puestos.
 
 ## Almacenamiento
 

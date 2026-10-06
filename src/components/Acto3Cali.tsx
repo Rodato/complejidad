@@ -2,14 +2,12 @@
 
 import { useMemo, useState } from "react";
 import {
-  ACTORES,
   ANIOS,
   CANDIDATOS_ROL,
   ETIQUETA_ACTOR,
   FUENTE_NOTARIA,
   MUNICIPIO,
   NEGOCIOS,
-  PROPORCION_NOTARIA,
   SEBASTIAN,
 } from "@/lib/contenido";
 import {
@@ -19,7 +17,6 @@ import {
   PCT_GIGANTE_T8,
   TOTAL,
   flechasDe,
-  inactivos,
   periodo,
   porAnio,
   top,
@@ -27,7 +24,7 @@ import {
 } from "@/lib/notaria";
 import { fmt, miles } from "@/lib/red";
 import type { Respuestas } from "@/lib/tipos";
-import Red from "./Red";
+import RedCanvas, { LeyendaCalor, colorCalor, tamanoNodo, type NodoCanvas } from "./RedCanvas";
 import {
   CabezaActo,
   Campo,
@@ -47,13 +44,36 @@ type Props = {
   actor: string;
 };
 
-const NODOS = ACTORES.map((a) => ({ id: a.id, etiqueta: a.etiqueta, x: a.x, y: a.y }));
 const nombre = (id: string) => ETIQUETA_ACTOR[id] ?? id;
 
 const OPCIONES_ANIO = ANIOS.map((y) => ({ clave: String(y), nombre: String(y) }));
 const MODOS: { clave: Modo; nombre: string }[] = [
-  { clave: "anio", nombre: "Solo ese año" },
   { clave: "acumulado", nombre: "Acumulado desde 1938" },
+  { clave: "anio", nombre: "Solo ese año" },
+];
+
+// Filtro estructural del Taller 5 y del parcial: por tamaño de componente, no por grado,
+// para que los grupos se vean completos y ningún actor quede visible pero suelto.
+type Filtro = "conectados" | "todos" | "nucleos";
+const FILTROS: { clave: Filtro; nombre: string; desc: string; min: number }[] = [
+  {
+    clave: "conectados",
+    nombre: "Conectados",
+    desc: "Grupos de 3 o más actores. Se ocultan las parejas que firmaron una sola escritura entre ellas.",
+    min: 3,
+  },
+  {
+    clave: "todos",
+    nombre: "Toda la red",
+    desc: "Todos los actores, incluidas las parejas sueltas.",
+    min: 1,
+  },
+  {
+    clave: "nucleos",
+    nombre: "Núcleos",
+    desc: "Solo grupos de 4 o más actores conectados entre sí: los racimos más densos.",
+    min: 4,
+  },
 ];
 
 const ACUMULA = top(TOTAL.entrada, 1)[0][0];
@@ -64,20 +84,32 @@ const leerPct = (s: string) => Number(s.replace("%", "").replace(",", ".").trim(
 
 export default function Acto3Cali({ r, set, actor }: Props) {
   const [anio, setAnio] = useState(1938);
-  const [modo, setModo] = useState<Modo>("anio");
+  const [modo, setModo] = useState<Modo>("acumulado");
+  const [filtro, setFiltro] = useState<Filtro>("conectados");
   const [tocado, setTocado] = useState<string | null>(null);
-  const [ampliada, setAmpliada] = useState(false);
 
   const p = periodo(anio, modo);
-  const ocultos = useMemo(() => inactivos(p), [p]);
+  const filtroActivo = FILTROS.find((f) => f.clave === filtro)!;
+  // Lo que se dibuja: tamaño y color por compras (rampa del Taller 5).
+  const { nodos, aristas, visibles } = useMemo(() => {
+    const min = FILTROS.find((f) => f.clave === filtro)!.min;
+    const vis = new Set([...p.actores].filter((id) => (p.tamComp.get(id) ?? 1) >= min));
+    const max = Math.max(1, ...Object.values(p.entrada));
+    const nodos: NodoCanvas[] = [...vis].map((id) => {
+      const c = p.entrada[id] ?? 0;
+      return { id, etiqueta: nombre(id), size: tamanoNodo(c, max, 7, 26), color: colorCalor(c, max) };
+    });
+    const aristas = p.flechas
+      .filter(([a, b]) => vis.has(a) && vis.has(b))
+      .map(([a, b]) => ({ source: a, target: b }));
+    return { nodos, aristas, visibles: vis };
+  }, [p, filtro]);
   const compradores = top(p.entrada, 5);
   const vendedores = top(p.salida, 5);
-  const marcados = [
-    ...compradores.slice(0, 3).map(([id]) => id),
-    ...vendedores.slice(0, 1).map(([id]) => id),
-    ...(p.actores.has(actor) ? [actor] : []),
-    ...(tocado && p.actores.has(tocado) ? [tocado] : []),
-  ];
+  const marcados = useMemo(
+    () => [actor, ...compradores.slice(0, 3).map(([id]) => id), ...vendedores.slice(0, 1).map(([id]) => id)],
+    [actor, compradores, vendedores],
+  );
 
   const tuyo = porAnio(actor);
   const tusFlechas = flechasDe(actor);
@@ -99,14 +131,12 @@ export default function Acto3Cali({ r, set, actor }: Props) {
         <p>
           Cada punto es un actor: una persona, una familia, una empresa, un banco o el Municipio.
           Cada flecha es una escritura en la que la tierra pasa de una parte a otra, de quien
-          vende a quien compra. Como en Poniente, cada actor está siempre en el mismo lugar del
-          dibujo; los que no firman nada en el periodo elegido desaparecen. Arriba va el grupo
-          conectado más grande; abajo, cada vez más pequeños, los demás, hasta las parejas que
-          firmaron una sola escritura.
+          vende a quien compra: la flecha sigue a la tierra, no al dinero.
         </p>
         <p>
-          El tamaño de cada punto es su <strong>grado de entrada</strong>: cuántas compras hace.
-          Es la medida de acumulación de tierra.
+          El <strong>tamaño y el color</strong> de cada punto son sus compras, su{" "}
+          <strong>grado de entrada</strong>. Un punto grande y rojo acumuló tierra; uno azul
+          claro compró poco o solo vendió. Toca a cualquiera para ver quién es.
         </p>
       </Definicion>
 
@@ -139,29 +169,37 @@ export default function Acto3Cali({ r, set, actor }: Props) {
           alcanzar unos a otros siguiendo flechas, sin importar su sentido.
         </p>
 
+        <div className="mb-2">
+          <Opciones<Filtro>
+            opciones={FILTROS.map((f) => ({ clave: f.clave, nombre: f.nombre }))}
+            valor={filtro}
+            onChange={setFiltro}
+          />
+        </div>
+        <p className="mb-3 text-sm leading-relaxed text-stone-500">
+          <span className="font-medium text-stone-600">{filtroActivo.nombre}:</span>{" "}
+          {filtroActivo.desc} Se ven {miles(visibles.size)} de {miles(p.actores.size)} actores.
+        </p>
+
         <Lienzo pie={FUENTE_NOTARIA}>
-          <div className={ampliada ? "overflow-auto" : ""}>
-            <div className={ampliada ? "w-[260%]" : ""}>
-              <Red
-                nodos={NODOS}
-                aristas={p.flechas.map(([a, b]) => [a, b] as [string, string])}
-                ocultos={ocultos}
-                dirigida
-                proporcion={PROPORCION_NOTARIA}
-                tamanos={tamanosEntrada(p.entrada)}
-                marcados={marcados}
-                etiquetas="marcados"
-                radioBase={0.75}
-                densa
-                onToque={(id) => setTocado((x) => (x === id ? null : id))}
-                titulo={`Red de compraventas de la Notaría Segunda, ${modo === "anio" ? anio : `1938 a ${anio}`}`}
+          <RedCanvas
+            nodos={nodos}
+            aristas={aristas}
+            dirigida
+            marcados={marcados}
+            seleccionado={tocado && visibles.has(tocado) ? tocado : null}
+            onToque={setTocado}
+            detalle={(id) => `${p.entrada[id] ?? 0} compras · ${p.salida[id] ?? 0} ventas`}
+            alto={460}
+            leyenda={
+              <LeyendaCalor
+                que="compras: pocas → muchas"
+                nota="la flecha va del vendedor al comprador"
               />
-            </div>
-          </div>
+            }
+            titulo={`Red de compraventas de la Notaría Segunda, ${modo === "anio" ? anio : `1938 a ${anio}`}`}
+          />
         </Lienzo>
-        <button onClick={() => setAmpliada((v) => !v)} className="btn btn-secondary mb-3 w-full">
-          {ampliada ? "Ver la red completa" : "Ampliar (y deslizar para recorrerla)"}
-        </button>
 
         {tocado && p.actores.has(tocado) && (
           <div className="mb-3 rounded-lg border border-brand-200 bg-brand-50 p-3 text-sm text-stone-700">
@@ -226,7 +264,8 @@ export default function Acto3Cali({ r, set, actor }: Props) {
 
       <Ejercicio numero="3.3" titulo="Un bazar, no una red">
         <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
-          Elige «Acumulado desde 1938» y el año 1944: es la red completa.
+          Elige «Acumulado desde 1938», el año 1944 y «Toda la red»: es la red completa, con
+          las parejas sueltas incluidas.
         </p>
         <Campo
           label="¿Qué porcentaje de los actores está en el grupo más grande?"
@@ -349,12 +388,6 @@ export default function Acto3Cali({ r, set, actor }: Props) {
       </Ejercicio>
     </div>
   );
-}
-
-/** Tamaño relativo por grado de entrada: los que no compran quedan como puntos mínimos. */
-function tamanosEntrada(entrada: Record<string, number>): Record<string, number> {
-  const max = Math.max(1, ...Object.values(entrada));
-  return Object.fromEntries(Object.entries(entrada).map(([k, v]) => [k, v / max]));
 }
 
 function TablaTop({
