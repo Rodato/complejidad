@@ -45,8 +45,8 @@ export function fichaCorrecta(id: string, x: RespuestaFicha | undefined): boolea
 }
 
 const OPCIONES_CAICEDO = [
-  { clave: "acumula", nombre: "Acumula: es el que más vínculos tiene." },
-  { clave: "reparte", nombre: "Reparte: la mayoría de sus flechas salen de él." },
+  { clave: "acumula", nombre: "Acumula: le llegan más flechas de las que salen de él (compra más de lo que vende)." },
+  { clave: "reparte", nombre: "Reparte: salen de él más flechas de las que le llegan (vende más de lo que compra)." },
   { clave: "no_se", nombre: "No se puede saber sin los precios." },
 ];
 
@@ -77,7 +77,7 @@ export default function Acto2Escrituras({ r, set }: Props) {
           <strong>dirigida</strong>, la misma decisión que tomamos en el Taller 2.
         </p>
         <p>
-          Y otra vez, <em>qué cuenta como vínculo lo decide quien investiga</em>, antes de
+          Y otra vez, <em>lo que cuenta como vínculo lo decide quien investiga</em>, antes de
           dibujar: aquí, una escritura en la que la tierra pasa de una parte a otra.
         </p>
       </Definicion>
@@ -186,7 +186,8 @@ export default function Acto2Escrituras({ r, set }: Props) {
         <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
           En la red correcta, Francisco Caicedo B. es el nodo con más vínculos: cuatro. En el
           Taller 2 eso lo habría hecho el más central. Pero ahora las flechas tienen dirección.
-          Mira hacia dónde apuntan las suyas.
+          Mira hacia dónde apuntan las suyas. Aquí acumular no es tener más vínculos: es
+          quedarse con más tierra, recibir más flechas de las que entrega.
         </p>
         <p className="mb-2 text-[15px] font-medium text-stone-800">
           En estas seis escrituras, ¿Francisco Caicedo B. acumula tierra o la reparte?
@@ -200,7 +201,7 @@ export default function Acto2Escrituras({ r, set }: Props) {
         {r.a2_caicedo && (
           <Veredicto bien={r.a2_caicedo === "reparte"}>
             {r.a2_caicedo === "reparte"
-              ? "Eso. De sus cuatro flechas, tres salen (le vende a Hoyos, a Fernando Caicedo y a Rebolledo) y una sola llega (la de Hoyos en la permuta). Reparte más de lo que acumula."
+              ? "Eso. De sus cuatro flechas, tres salen (le vende a Hoyos, a Fernando Caicedo y a Rebolledo) y una sola llega (la de Hoyos en la permuta). Reparte más de lo que acumula. Tener más escrituras no lo hace acumulador: vende lo que compra, y una de sus escrituras ni siquiera mueve tierra: es la sociedad con su hermano Pedro."
               : "Cuenta las flechas por dirección: cuántas salen de Caicedo y cuántas llegan a él."}
           </Veredicto>
         )}

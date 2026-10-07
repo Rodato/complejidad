@@ -147,10 +147,12 @@ export default function Acto1Poniente({ r, set, personaje }: Props) {
         </p>
         <ol className="mb-3 list-decimal space-y-1 pl-5">
           <li>
-            <strong>Un patrón</strong>: algo que se repite o una forma que tiene la red.
+            <strong>Un patrón</strong>: algo que se repite, una estructura que se repite o una
+            forma que tiene la red.
           </li>
           <li>
-            <strong>Un quiebre</strong>: el momento en que el patrón cambia.
+            <strong>Un quiebre</strong>: un evento que cambia el relato, como una ruptura entre
+            personajes o un choque armado, y que se nota en la red.
           </li>
           <li>
             <strong>Protagonistas</strong> con nombre propio, y cifras que los ubican.

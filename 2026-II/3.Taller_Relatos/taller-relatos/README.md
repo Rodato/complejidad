@@ -51,7 +51,7 @@ T7–T8. Cersei cae al 27 en la T8.
 
 **Notaría 2** (red curada, dirigida vendedor → comprador)
 
-- 1.235 actores, 916 flechas, 703 escrituras, 381 componentes; el más grande tiene 89
+- 1.232 actores, 916 flechas, 703 escrituras, 378 componentes; el más grande tiene 89
   actores (**7,2 %**). En la T8 de Poniente el grupo más grande tiene 72 de 74 personajes (97 %).
 - Escrituras por año: 1938: 39 · 1939: 72 · 1940: 62 · 1941: 18 · 1942: 39 · **1943: 424** · 1944: 49.
 - Más compran: Sebastián Caicedo 14 (1939: 2 · 1940: 6 · 1942: 4 · 1943: 2), Daniel Caicedo Gutiérrez 12,
@@ -62,7 +62,7 @@ T7–T8. Cersei cae al 27 en la T8.
 limpieza curada (`data/limpiar_red.py` + `alias_curados.csv`), pero además quita las notas
 que la transcripción dejó pegadas al nombre tras «;» y los prefijos «Acreedor:» /
 «celebrado con la señora…». Sin eso el mismo actor quedaba partido en dos nodos. Por eso
-el Municipio vende 42 (no 41) y hay 1.235 actores (no 1.240).
+el Municipio vende 42 (no 41) y hay 1.232 actores (no 1.240). Ciro Velasco García (que en 1938 venía transcrito como «Gero») se unió en `alias_curados.csv`: estaba partido en cuatro nodos.
 
 ## Asignación
 

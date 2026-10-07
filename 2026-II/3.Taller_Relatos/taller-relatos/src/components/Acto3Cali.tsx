@@ -276,18 +276,28 @@ export default function Acto3Cali({ r, set, actor }: Props) {
           </p>
           <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-stone-700">
             <li>
-              <strong>1938 a 1941:</strong> una transcripción antigua y parcial de los protocolos
-              de la Notaría Segunda.
+              Los libros de la notaría no se pasaron a la base de una sola vez ni con el mismo
+              cuidado. Cada año se transcribió en un momento distinto.
             </li>
             <li>
-              <strong>1942 y 1944:</strong> dos tablas transcritas aparte.
+              <strong>1938 a 1941:</strong> salen de una primera transcripción que solo copió
+              una parte de las escrituras de cada año.
             </li>
             <li>
-              <strong>{ANIO_MAS}:</strong> se volvió a transcribir completo. En la versión
-              anterior de esta misma base, {ANIO_MAS} tenía 66 escrituras.
+              <strong>1942 y 1944:</strong> se transcribieron después, cada año por su cuenta.
+              No sabemos si quedaron completos.
+            </li>
+            <li>
+              <strong>{ANIO_MAS}:</strong> se volvió a transcribir escritura por escritura, con
+              el libro completo. En la primera transcripción, {ANIO_MAS} tenía 66 escrituras,
+              como los demás años.
             </li>
             <li>Todo viene de una sola notaría; Cali tenía otras.</li>
           </ul>
+          <p className="mt-2 text-sm leading-relaxed text-stone-700">
+            En resumen: el número de escrituras de cada año dice cuánto se transcribió, no
+            solo cuánto se negoció.
+          </p>
         </div>
 
         <p className="mb-2 text-[15px] font-medium text-stone-800">

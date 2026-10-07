@@ -1,5 +1,5 @@
 // Métricas de red, calculadas en el navegador. Sin librerías: las redes del taller son
-// pequeñas (como mucho 172 personajes por temporada, 1.235 actores en Cali) y así cada
+// pequeñas (como mucho 172 personajes por temporada, 1.232 actores en Cali) y así cada
 // fórmula queda a la vista. Viene del Taller 2.
 //
 // Las métricas de abajo son para redes NO dirigidas (las interacciones de Juego de

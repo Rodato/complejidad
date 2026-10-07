@@ -152,7 +152,7 @@ export const FICHAS: Ficha[] = [
       "Francisco Caicedo B. y Pedro P. Caicedo B. constituyen una sociedad colectiva de comercio llamada Caicedo Hermanos Ltda. Valor registrado: $8.000.",
     correcta: null,
     porque:
-      "Esta era la trampa. Nadie le entrega tierra a nadie: los dos hermanos forman una sociedad juntos. Hay una relación, pero no una flecha de tierra, y además no tiene dirección: si Francisco es socio de Pedro, Pedro es socio de Francisco. Qué cuenta como vínculo es una decisión del investigador, y hay que tomarla antes de dibujar. En la base de datos del curso esta escritura quedó registrada como si fuera una venta: los datos también tienen errores.",
+      "Esta era la trampa. Nadie le entrega tierra a nadie: los dos hermanos forman una sociedad juntos. Hay una relación, pero no una flecha de tierra, y además no tiene dirección: si Francisco es socio de Pedro, Pedro es socio de Francisco. Lo que cuenta como vínculo es una decisión de quien investiga, y hay que tomarla antes de dibujar. En la base de datos del curso esta escritura quedó registrada como si fuera una venta: los datos también tienen errores.",
   },
 ];
 
@@ -224,9 +224,9 @@ export const FUENTE_NOTARIA =
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const PIEZAS_RELATO: { id: string; texto: string }[] = [
-  { id: "patron", texto: "Un patrón: algo que se repite o una forma que tiene la red." },
+  { id: "patron", texto: "Un patrón: algo que se repite, una estructura que se repite o una forma que tiene la red." },
   { id: "protagonista", texto: "Un protagonista con nombre propio, y su papel en la red." },
-  { id: "quiebre", texto: "Un cambio en el tiempo o un contraste entre dos actores." },
+  { id: "quiebre", texto: "Un quiebre: un evento que cambia el relato, o un contraste entre dos actores." },
   { id: "cifras", texto: "Al menos dos cifras sacadas del taller." },
   { id: "limite", texto: "Algo que los datos no permiten afirmar, y por qué." },
 ];

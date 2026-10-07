@@ -84,12 +84,22 @@ legible <- function(x) {
 g_not <- simplify(graph_from_data_frame(a[, c("source", "target")], directed = TRUE),
                   remove.multiple = TRUE, remove.loops = TRUE)
 nombres <- V(g_not)$name
-cod <- setNames(sprintf("c%d", seq_along(nombres)), nombres)
+# Los ids quedan guardados en las respuestas (p. ej. a3_acumula), así que se conservan
+# entre corridas: un actor que ya existía mantiene su id y uno nuevo toma el siguiente.
+# Si se unen alias, el id que desaparece no se reutiliza.
+previo <- if (file.exists("src/data/notaria.json")) read_json("src/data/notaria.json")$actores else list()
+id_previo <- setNames(vapply(previo, `[[`, "", "id"), vapply(previo, `[[`, "", "etiqueta"))
+etq_not <- vapply(nombres, legible, "")
+num <- suppressWarnings(as.integer(sub("^c", "", id_previo[etq_not])))
+libre <- max(c(0L, as.integer(sub("^c", "", id_previo))))
+nuevos <- is.na(num)
+num[nuevos] <- libre + seq_len(sum(nuevos))
+cod <- setNames(sprintf("c%d", num), nombres)
 
 write_json(
   list(
     actores = data.frame(
-      id = unname(cod), etiqueta = unname(vapply(nombres, legible, ""))
+      id = unname(cod), etiqueta = unname(etq_not)
     ),
     # [vendedor, comprador, año, escritura]
     aristas = unname(lapply(seq_len(nrow(a)), function(i) {
