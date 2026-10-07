@@ -59,8 +59,7 @@ hilo conductor es la complejidad de Cali vista desde las fallas de planificació
 
 - `0.Insumos/` — TREQ (evaluación de riesgo sísmico, GEM/USAID/SGC, 2022) + nota de
   Sergio Castañeda + las 14 infografías extraídas del PDF.
-- `1.Taller_Terremoto/taller-sismo/` — **Taller 1**, Next.js. Repo:
-  `Rodato/complejidad-taller1-sismo`. Desplegado. `node_modules` y `.next` se borraron
+- `1.Taller_Terremoto/taller-sismo/` — **Taller 1**, Next.js. Desplegado. `node_modules` y `.next` se borraron
   para liberar disco: correr `npm install` antes del próximo `npm run dev`.
 
 ---

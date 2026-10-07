@@ -30,7 +30,7 @@ desastre no lo produce un evento natural sino la interacción lenta de decisione
 - `3.Taller_Relatos/taller-relatos/` — **Taller 3**, «Lo que la red cuenta». Armar relatos a
   partir de datos: las 8 temporadas de Juego de tronos (Beveridge) → la Notaría 2 año por año,
   1938–1944. Usa el acto de las escrituras que estaba en `2.Taller_Redes/reserva_taller3/`.
-  Repo `Rodato/complejidad-taller3-relatos`. Ver su `README.md`.
+  Ver su `README.md`.
 
 ## Cifras de referencia (verificadas contra las fuentes)
 

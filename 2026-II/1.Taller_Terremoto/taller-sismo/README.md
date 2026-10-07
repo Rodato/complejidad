@@ -41,11 +41,14 @@ puesta en común de la clase se juntan los trece y aparece el patrón de no line
 ## Despliegue
 
 - **URL para estudiantes:** https://complejidad-taller1-sismo.vercel.app
-- **Repo:** `Rodato/complejidad-taller1-sismo` (privado, rama `main`). Es privado porque
-  incluye el texto íntegro de Castañeda y las infografías del TREQ (CC BY-NC-SA), que no son
-  material nuestro para publicar abierto.
+- **Repo:** el monorepo `Rodato/complejidad` (público, rama `main`), carpeta
+  `2026-II/1.Taller_Terremoto/taller-sismo`. Antes vivía en `Rodato/complejidad-taller1-sismo`,
+  que era privado por el texto íntegro de Castañeda y las infografías del TREQ (CC BY-NC-SA);
+  al unir los repos se decidió dejarlo público igual (oct-2026).
 - **Vercel:** proyecto `complejidad-taller1-sismo` (scope `rodatos-projects`), con GitHub
-  conectado: **un push a `main` redespliega solo**.
+  conectado al monorepo: **un push a `main` redespliega solo**.
+  Root Directory = esta carpeta, y solo se reconstruye cuando cambia algo dentro de ella
+  (Ignored Build Step `git diff --quiet HEAD^ HEAD -- .`).
 - Variables de entorno cargadas **solo en production**: `GOOGLE_SERVICE_ACCOUNT_EMAIL`,
   `GOOGLE_PRIVATE_KEY`, `SHEET_ID`, `SHEET_TAB`. Las de *preview* no se cargaron.
 

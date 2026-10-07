@@ -34,9 +34,10 @@ del 10 de agosto, sin sala de cómputo. Se empieza en clase y se termina en la s
 ## Despliegue
 
 - **URL para estudiantes:** https://complejidad-taller2-redes.vercel.app
-- **Repo:** `Rodato/complejidad-taller2-redes` (privado, rama `main`).
+- **Repo:** el monorepo `Rodato/complejidad` (rama `main`), carpeta
+  `2026-II/2.Taller_Redes/taller-redes`. Antes, `Rodato/complejidad-taller2-redes`.
 - **Vercel:** proyecto `complejidad-taller2-redes` (scope `rodatos-projects`), con GitHub
-  conectado: **un push a `main` redespliega solo**. `vercel.json` fija el preset de Next.js:
+  conectado al monorepo: **un push a `main` redespliega solo**. `vercel.json` fija el preset de Next.js:
   el proyecto se creó vacío y quedó en «Other», que da 404 en todo.
 - Variables de entorno solo en production, las mismas del Taller 1 con `SHEET_TAB=taller_redes`.
 

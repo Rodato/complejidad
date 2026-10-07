@@ -18,6 +18,10 @@ en local (6 GB de escaneos y claves de API).
 
 Cada carpeta tiene su propio `README.md`. `CLAUDE.md` es la versión para agentes.
 
+Los talleres 1, 2 y 3 de 2026-II se despliegan en Vercel desde este repo (scope
+`rodatos-projects`): cada proyecto tiene como Root Directory la carpeta de su app y solo se
+reconstruye cuando cambia algo dentro de ella.
+
 ## Por dónde empezar
 
 | Si querés… | Andá a |
