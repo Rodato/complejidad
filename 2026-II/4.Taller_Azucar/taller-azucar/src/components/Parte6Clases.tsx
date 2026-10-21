@@ -30,10 +30,11 @@ export default function Parte6Clases({ r, set }: Props) {
         <Ejercicio numero="6" titulo="La clase que falta">
           <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
             ¿Cuál sería la clase con la que se enfrentó la burguesía azucarera por la tierra y el
-            control de la producción? En el artículo casi no aparece: los trabajadores salen de
-            paso, vistos por los dueños y las autoridades como «inseguridad social» (págs.
-            606–609). Contrasten esa ausencia con el relato de Jacques Aprile-Gniset en «Cuatro
-            pistas para el estudio del espacio urbano caleño», que ya leyeron.
+            control de la producción? En el artículo esa clase casi no aparece: los trabajadores
+            salen solo como un problema de orden público para los dueños y las autoridades, la
+            «inseguridad social» de las págs. 606–609, nunca con voz propia. Contrasten esa
+            ausencia con el relato de Jacques Aprile-Gniset en «Cuatro pistas para el estudio del
+            espacio urbano caleño», que ya leyeron.
           </p>
           <Texto
             label="Su respuesta"
