@@ -12,10 +12,11 @@ Valle). Es un **control de lectura** en clase (21-oct-2026) sobre dos textos:
   11 (1980): 229–255.
 
 Las preguntas son las de Boris Salazar. La 2 aclara qué red se usa, la 4 corrige la
-atribución de la cita de Wright y la 5 extiende la lectura hasta la pág. 617. Igual que los
+atribución de la cita de Wright, la 5 extiende la lectura hasta la pág. 617 y la 6 (que
+Boris agregó el 21-oct) pregunta por la clase que no aparece en Collins. Igual que los
 talleres anteriores, está pensada para **celular**.
 
-## Las cinco partes
+## Las seis partes
 
 | Parte | Qué hay | Qué responde el estudiante |
 |---|---|---|
@@ -23,7 +24,8 @@ talleres anteriores, está pensada para **celular**.
 | 2 | Cuadro 7 (pág. 585) como matriz tocable + tres redes (grupos, grupos y empresas, personas) | Clusters y los «15 cruces» · trayectorias por A, C, F y B · obras públicas · Cali |
 | 3 | Matrimonios con IA | Pregunta hecha a la IA · lista de matrimonios con fuente y verificación · qué inventó la IA |
 | 4 | Wright (págs. 59–60) y cómo lo cita Collins (pág. 598) | ¿Pasó lo mismo con los azucareros del Valle? |
-| 5 | Caicedo en 1933 (págs. 611–613) y en 1945 (pág. 617) | ¿Son coherentes sus análisis? · ¿por qué creció la producción con el precio congelado? |
+| 5 | Caicedo en 1933 (págs. 611–613) y en 1945 (pág. 617) · cuadros 13 (pág. 619) y 15 (pág. 622) | ¿Son coherentes sus análisis? · ¿muestra el cuadro 13 baja rentabilidad, si la producción se triplicó? · ¿por qué tantas importaciones en 1958 y 1960? |
+| 6 | La cita de «lucha de clases» (pág. 627) | ¿Con qué clase se enfrentó la burguesía azucarera? · contraste con Aprile-Gniset, «Cuatro pistas para el estudio del espacio urbano caleño» |
 
 ## El cuadro 7 es una matriz de afiliación
 
@@ -76,12 +78,20 @@ Darían 15 si se marcara a Gustavo Lloreda en la carretera al mar, como dice el 
 - Pichichí: «1914» en el texto, 1941 en el cuadro 1.
 - Los Cabal «con cuatro ingenios» (pág. 595); el esquema 1 les pone tres.
 - La matriz pone las empresas B y C en la fila de Harold H. Eder (A5); el texto nombra a Henry.
+- Cita el cuadro 13 como prueba de la «poca rentabilidad» (pág. 617). El cuadro no la muestra
+  con claridad: la utilidad sobre patrimonio va de 4,5 % a 7,9 % y el número de sociedades
+  que reportan cambia cada año (de 16 en 1950 a 6 en 1955), así que los totales no se
+  comparan entre años.
+- Los trabajadores sí aparecen, pero solo como «inseguridad social» vista por los dueños y
+  las autoridades (págs. 606–609: sindicatos de 1934, conflictos en la Manuelita, incendios
+  de caña de 1946). La pregunta 6 lo dice así y no «no aparecen».
 
 ## Datos
 
 Todo está en `src/lib/collins.ts`, transcrito a mano y cotejado celda por celda contra el
-PDF: el esquema 1, las 25 filas del cuadro 7 con sus marcas (60 ✕) y la ficha de cada
-empresa (págs. 587–591).
+PDF: el esquema 1, las 25 filas del cuadro 7 con sus marcas (60 ✕), la ficha de cada
+empresa (págs. 587–591) y los cuadros 13 y 15 (este último solo producción e importación,
+1946–1961).
 
 ## Almacenamiento
 

@@ -34,7 +34,8 @@ desastre no lo produce un evento natural sino la interacción lenta de decisione
 - `4.Taller_Azucar/taller-azucar/` — **Taller 4**, «La burguesía azucarera en red». Control
   de lectura en clase (21-oct) de Collins (1983) y Wright (1980), con las preguntas de Boris:
   el esquema 1 y el cuadro 7 de Collins como redes, parentescos con IA, Wright y el Valle,
-  Hernando Caicedo como economista. Ver su `README.md`.
+  Hernando Caicedo como economista y la lucha de clases (contraste con Aprile-Gniset). Ver
+  su `README.md`.
 
 ## Cifras de referencia (verificadas contra las fuentes)
 

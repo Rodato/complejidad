@@ -12,6 +12,7 @@ import Parte2Cuadro from "@/components/Parte2Cuadro";
 import Parte3Parentesco from "@/components/Parte3Parentesco";
 import Parte4Wright from "@/components/Parte4Wright";
 import Parte5Caicedo from "@/components/Parte5Caicedo";
+import Parte6Clases from "@/components/Parte6Clases";
 import FormularioRegistro from "@/components/Registro";
 import { CLAVE_REGISTRO, clavePartes, claveRespuestas, limpiarBorrador } from "@/lib/claves";
 import {
@@ -28,6 +29,7 @@ const PARTES = [
   "Parentescos con IA",
   "¿Los dejaron solos?",
   "Hernando Caicedo, economista",
+  "¿Lucha de clases con quién?",
 ];
 
 /** Respuestas que conviene revisar antes de enviar: si están vacías se avisa, no se bloquea. */
@@ -39,6 +41,7 @@ const PRINCIPALES: { clave: keyof Respuestas; nombre: string }[] = [
   { clave: "p3_fallas_ia", nombre: "3.2 (lo que la IA inventó)" },
   { clave: "p4_valle", nombre: "4 (Wright y el Valle)" },
   { clave: "p5_caicedo", nombre: "5.1 (Caicedo)" },
+  { clave: "p6_clases", nombre: "6 (lucha de clases)" },
 ];
 
 type Envio =
@@ -469,6 +472,7 @@ function Taller() {
         {parte === 2 && <Parte3Parentesco r={r} set={set} />}
         {parte === 3 && <Parte4Wright r={r} set={set} />}
         {parte === 4 && <Parte5Caicedo r={r} set={set} />}
+        {parte === 5 && <Parte6Clases r={r} set={set} />}
 
         <section className="card mt-6 p-4 sm:p-5">
           <h3 className="text-base font-bold text-stone-900">

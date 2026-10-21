@@ -451,3 +451,57 @@ export const VISTAS_C7: { clave: VistaC7; nombre: string; idea: string }[] = [
       "Cada nodo es una fila del cuadro (A1 a H2). Dos personas se unen si están en la misma empresa. Ojo: D1 y F1 no son personas sino familias enteras.",
   },
 ];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cuadros 13 y 15: rentabilidad y producción después de la congelación del precio
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Cuadro 13 (pág. 619): «Rendimiento en otras cuentas de las sociedades anónimas
+ * productoras de azúcar de 1948-1955». Cifras como las imprime Collins, sin los «.00»;
+ * el cuadro no dice la unidad. La última columna es utilidad líquida ÷ activo neto, en %
+ * (verificado: 4.274 / 53.963 = 7,9). Se omiten la reserva legal y el good will.
+ */
+export const CUADRO_13: {
+  anio: number;
+  sociedades: number;
+  activoTotal: string;
+  activoNeto: string;
+  capitalPagado: string;
+  utilidad: string;
+  impuestos: string;
+  relacion: string;
+}[] = [
+  { anio: 1948, sociedades: 8, activoTotal: "63.662", activoNeto: "53.963", capitalPagado: "39.246", utilidad: "4.274", impuestos: "1.947", relacion: "7,9" },
+  { anio: 1949, sociedades: 15, activoTotal: "98.700", activoNeto: "83.400", capitalPagado: "56.100", utilidad: "4.200", impuestos: "2.453", relacion: "5,0" },
+  { anio: 1950, sociedades: 16, activoTotal: "N.D.", activoNeto: "87.788", capitalPagado: "63.917", utilidad: "3.939", impuestos: "2.390", relacion: "4,5" },
+  { anio: 1951, sociedades: 14, activoTotal: "116.754", activoNeto: "91.508", capitalPagado: "68.004", utilidad: "4.928", impuestos: "3.140", relacion: "5,4" },
+  { anio: 1952, sociedades: 12, activoTotal: "132.758", activoNeto: "96.925", capitalPagado: "68.127", utilidad: "5.460", impuestos: "3.869", relacion: "5,6" },
+  { anio: 1953, sociedades: 10, activoTotal: "142.991", activoNeto: "102.950", capitalPagado: "65.056", utilidad: "7.349", impuestos: "2.823", relacion: "7,1" },
+  { anio: 1954, sociedades: 8, activoTotal: "132.296", activoNeto: "93.322", capitalPagado: "57.168", utilidad: "6.547", impuestos: "2.000", relacion: "7,0" },
+  { anio: 1955, sociedades: 6, activoTotal: "134.535", activoNeto: "92.591", capitalPagado: "52.394", utilidad: "4.458", impuestos: "1.365", relacion: "4,8" },
+];
+
+/**
+ * Cuadro 15 (pág. 622): producción e importación de azúcar, en miles de toneladas
+ * (valores crudos), 1946–1961. Fuente de Collins: Fadul y Peñalosa (1961). Collins
+ * imprime algunas importaciones con tres decimales (1.676, 14.665…): aquí van con uno.
+ */
+export const CUADRO_15: { anio: number; produccion: number; importacion: number | null }[] = [
+  { anio: 1946, produccion: 82.0, importacion: 9.3 },
+  { anio: 1947, produccion: 88.6, importacion: 9.4 },
+  { anio: 1948, produccion: 115.5, importacion: null },
+  { anio: 1949, produccion: 147.5, importacion: null },
+  { anio: 1950, produccion: 156.0, importacion: null },
+  { anio: 1951, produccion: 197.6, importacion: 31.0 },
+  { anio: 1952, produccion: 196.7, importacion: 1.676 },
+  { anio: 1953, produccion: 189.6, importacion: 14.665 },
+  { anio: 1954, produccion: 240.6, importacion: 59.0 },
+  { anio: 1955, produccion: 253.3, importacion: 30.0 },
+  { anio: 1956, produccion: 261.3, importacion: 2.0 },
+  { anio: 1957, produccion: 233.9, importacion: 23.042 },
+  { anio: 1958, produccion: 263.6, importacion: 43.818 },
+  { anio: 1959, produccion: 278.8, importacion: 5.418 },
+  { anio: 1960, produccion: 328.3, importacion: 66.63 },
+  { anio: 1961, produccion: 362.6, importacion: null },
+];

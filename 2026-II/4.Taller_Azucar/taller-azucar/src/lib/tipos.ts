@@ -37,6 +37,9 @@ export type Respuestas = {
 
   p5_caicedo: string;
   p5_produccion: string;
+  p5_importaciones: string;
+
+  p6_clases: string;
 };
 
 export const ENLACE_VACIO: Enlace = { persona1: "", persona2: "", anio: "", fuente: "", verificado: "" };
@@ -61,6 +64,8 @@ export const RESPUESTAS_VACIAS: Respuestas = {
   p4_valle: "",
   p5_caicedo: "",
   p5_produccion: "",
+  p5_importaciones: "",
+  p6_clases: "",
 };
 
 /** Lo que se envía a guardar (Sheets). */

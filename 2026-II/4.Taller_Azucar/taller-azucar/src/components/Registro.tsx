@@ -56,7 +56,7 @@ export default function FormularioRegistro({
           capital en Colombia» (1980). Los esquemas de Collins se vuelven redes que puedes tocar.
         </p>
         <p className="mt-2 text-[15px] leading-relaxed text-stone-600">
-          Son cinco partes. Puedes cerrar la página y volver: tus respuestas quedan guardadas en
+          Son seis partes. Puedes cerrar la página y volver: tus respuestas quedan guardadas en
           este dispositivo mientras no las envíes.
         </p>
 

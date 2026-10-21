@@ -4,7 +4,7 @@
 import type { Respuestas } from "./tipos";
 
 /** Cuántas partes tiene el taller (lo usa el servidor para validar borradores). */
-export const N_PARTES = 5;
+export const N_PARTES = 6;
 
 /** Columnas de respuesta, en el mismo orden en que aparecen en el taller. */
 export const COLUMNAS_RESPUESTA = [
@@ -32,6 +32,9 @@ export const COLUMNAS_RESPUESTA = [
   // Parte 5 — Caicedo
   "p5_caicedo",
   "p5_produccion",
+  "p5_importaciones",
+  // Parte 6 — Lucha de clases
+  "p6_clases",
 ] as const satisfies readonly (keyof Respuestas)[];
 
 export const COLUMNAS = ["timestamp", "nombre", "codigo", "pareja", ...COLUMNAS_RESPUESTA] as const;

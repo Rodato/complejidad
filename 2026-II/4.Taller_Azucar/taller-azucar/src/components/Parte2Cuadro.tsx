@@ -34,7 +34,7 @@ export default function Parte2Cuadro({ r, set }: Props) {
           empresa.
         </p>
         <p>
-          Ojo: la misma letra significa dos cosas. La <strong>fila A</strong> son los accionistas
+          Ojo: la misma letra significa dos cosas distintas. La <strong>fila A</strong> son los accionistas
           de la Manuelita; la <strong>columna A</strong> es la Compañía de navegación por el río
           Cauca. En este taller, «grupo A» es siempre la fila y «empresa A» la columna.
         </p>
