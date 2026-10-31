@@ -467,7 +467,7 @@ export function MapaCali() {
         <figcaption className="px-3 py-2 text-xs leading-relaxed text-stone-500">
           {epoca === "40"
             ? `Cada círculo es un barrio de las escrituras, en el centro del barrio de hoy; el tamaño crece con el número de lotes. Color: mediana del barrio dividida por la de toda la ciudad (${pesos40(CUARENTA.mediana_lotes)} por m²). El gris de fondo es la Cali de hoy.`
-            : `Cuadros de unos 550 m con al menos 3 avisos. Color: mediana del cuadro dividida por la de toda la ciudad (${millones(HOY.mediana)} por m²). Base de Johan Torres.`}{" "}
+            : `Cuadros de unos 550 m con al menos 3 avisos. Color: mediana del cuadro dividida por la de toda la ciudad (${millones(HOY.mediana)} por m²).`}{" "}
           Toca para ver el dato.
         </figcaption>
       )}

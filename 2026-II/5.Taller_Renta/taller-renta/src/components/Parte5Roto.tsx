@@ -27,10 +27,10 @@ export default function Parte5Roto({ r, set }: Props) {
       <CabezaParte
         numero={5}
         titulo="El cono roto"
-        bajada="Ochenta años después. Con los avisos de venta que reunió Johan Torres para su trabajo de grado sobre gentrificación, ¿dónde está hoy el metro cuadrado más caro de Cali?"
+        bajada="Ochenta años después. Con avisos de venta de 2020 a 2024, ¿dónde está hoy el metro cuadrado más caro de Cali?"
       />
 
-      <Definicion titulo="La base de Johan Torres">
+      <Definicion titulo="Los avisos de hoy">
         <p>
           Son {num(HOY.n)} avisos de venta de casas y apartamentos de Cali, con precio, área
           construida, barrio y coordenadas. Usamos los {num(HOY.n_ref)} de 2020 a 2024. Dos
