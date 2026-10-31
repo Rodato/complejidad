@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/* ── Tokens de marca ─────────────────────────────────────────────────────────
+   Superficies en neutro cálido (stone) para que las infografías del TREQ —que son
+   rojas y naranjas— no compitan con la interfaz. Acento en terracota.
+     brand   = acción / interacción
+     emerald = éxito (solo)
+     rose    = error (solo)                                                     */
+@theme {
+  --color-brand-50: #fdf6f0;
+  --color-brand-100: #fae8d9;
+  --color-brand-200: #f4cdb0;
+  --color-brand-300: #eaa87c;
+  --color-brand-400: #dd7f4c;
+  --color-brand-500: #c9602c;
+  --color-brand-600: #ad4a1f;
+  --color-brand-700: #8c391b;
+  --color-brand-800: #70301b;
+}
+
+:root {
+  --background: #faf9f7;
+  --foreground: #1c1917;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-stone-200 bg-white shadow-sm;
+  }
+
+  /* Tarjeta de definición: lo que el taller *enseña*, no lo que pregunta. */
+  .definicion {
+    @apply rounded-xl border border-brand-200 bg-brand-50 p-4 sm:p-5;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5
+      text-sm font-medium transition-colors duration-150
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500
+      focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed
+      active:scale-[0.98];
+  }
+  .btn-primary {
+    @apply bg-brand-600 text-white hover:bg-brand-700;
+  }
+  .btn-secondary {
+    @apply border border-stone-300 bg-white text-stone-700 hover:bg-stone-50;
+  }
+  .btn-ghost {
+    @apply text-stone-600 hover:bg-stone-100;
+  }
+
+  .field {
+    @apply w-full rounded-lg border border-stone-300 bg-white px-3 py-2.5 text-base
+      text-stone-900 placeholder:text-stone-400 outline-none transition
+      focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-wider text-stone-500;
+  }
+
+  /* Botón-opción de selección múltiple. Alto mínimo 44px = objetivo táctil cómodo. */
+  .opcion {
+    @apply flex min-h-11 flex-1 items-center justify-center rounded-lg border
+      border-stone-300 bg-white px-3 py-2 text-center text-sm font-medium
+      text-stone-700 transition-colors;
+  }
+  .opcion-activa {
+    @apply border-brand-500 bg-brand-500 text-white;
+  }
+
+  .prosa p {
+    @apply mb-3 leading-relaxed text-stone-700;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

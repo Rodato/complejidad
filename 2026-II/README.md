@@ -37,6 +37,13 @@ desastre no lo produce un evento natural sino la interacción lenta de decisione
   Hernando Caicedo como economista y la lucha de clases (contraste con Aprile-Gniset). Ver
   su `README.md`.
 
+- `5.Taller_Renta/taller-renta/` — **Taller 5**, «La renta del suelo en Cali» (4-nov). El
+  precio del m² en las escrituras de 1941–44 (Notaría 2 + extracción del ACH) y en los avisos
+  de venta 2020–26 de Johan Torres, leído con Harvey (1982, cap. 11) y Smith (1979): el cono
+  de 1943, tierra contra casa, los ejidos del Municipio, el cono roto de hoy, el salto falso
+  de 2026 y la tierra como capital ficticio. Ver su `README.md`.
+- `0.Insumos/johan_torres/` — la base de Johan (no se versiona; ver el `README.md` del Taller 5).
+
 ## Cifras de referencia (verificadas contra las fuentes)
 
 Del **TREQ (2022)**:
