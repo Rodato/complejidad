@@ -30,7 +30,7 @@ Las citas en inglés están traducidas por nosotros y así se dice en cada una.
 | 3 | Lotes contra casas por anillo | Razón casa/lote en el centro y afuera · separar suelo y casa (Smith pág. 543) |
 | 4 | Quién vendía: el Municipio y sus ejidos frente a las urbanizadoras | % de ventas del Municipio · ¿quién se quedó con la renta? (Harvey pág. 368) |
 | 5 | Mapa de las dos épocas y perfil de hoy por sectores | ¿Sigue el cono? · ¿dónde está la brecha de renta? (Smith pág. 545) · historia de un barrio |
-| 6 | Mediana ingenua contra índice dentro de barrio, composición de 2026, IPC | El salto de 2026 · ¿se duplicó? · cambio real 2020–24 · avisos contra ventas |
+| 6 | Mediana simple contra índice ajustado por barrio y tipo, composición de 2026, IPC | El salto de 2026 · ¿se duplicó? · cambio real 2020–24 · avisos contra ventas |
 | 7 | Precio = renta ÷ tasa, tabla 1 de Uribe y Vásquez | Precio del lote al 25,6 % y al 6 % · ¿renta o expectativa? |
 
 Cada parte cierra con un recuadro «Lo que estos datos no dicen».
@@ -62,7 +62,7 @@ que si se regeneran los datos, el texto y las respuestas esperadas se mueven sol
   **oriente** se queda entre $1,4 y $2,1 M; el **occidente** cercano está en $3,9 M.
 - Índice dentro de barrio y tipo (2020 = 100): 105,7 · 114,8 · 121,6 · **130,2** (2024) ·
   171,1 (2026). IPC dic-2020 a dic-2024: +37,4 % → cambio real **−5,2 %**.
-- Mediana tal cual de las casas: 2024 $1,875 M → 2026 $3,80 M, **+103 %**, porque en 2026 el
+- Mediana simple de las casas: 2024 $1,875 M → 2026 $3,80 M, **+103 %**, porque en 2026 el
   68 % de los avisos viene de las comunas 17, 2 y 22.
 
 ## Decisiones de datos

@@ -37,8 +37,9 @@ export default function Parte6Precios({ r, set }: Props) {
       <Definicion titulo="Una mediana mezcla dos cosas">
         <p>
           Si la mediana de un año sube, puede ser porque los inmuebles valen más o porque ese año
-          se vendieron (o se anunciaron) inmuebles de barrios más caros. Para separar las dos
-          cosas se compara cada inmueble solo con otros del mismo barrio y del mismo tipo.
+          se vendieron (o se anunciaron) inmuebles de barrios más caros. Lo segundo es un efecto
+          composición. Para separar las dos cosas se compara cada inmueble solo con otros del
+          mismo barrio y del mismo tipo.
         </p>
       </Definicion>
 
@@ -51,7 +52,7 @@ export default function Parte6Precios({ r, set }: Props) {
       <div className="mt-2">
         <Ejercicio numero="6.1" titulo="El salto de 2026">
           <Calculo
-            label="Con la mediana tal cual, ¿cuánto subió el m² de las casas entre 2024 y 2026, en porcentaje?"
+            label="Con la mediana simple de la tabla, ¿cuánto subió el m² de las casas entre 2024 y 2026, en porcentaje?"
             valor={r.p6_salto}
             onChange={(v) => set("p6_salto", v)}
             esperado={salto}

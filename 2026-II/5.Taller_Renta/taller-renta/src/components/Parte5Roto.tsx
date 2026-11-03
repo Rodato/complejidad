@@ -63,7 +63,7 @@ export default function Parte5Roto({ r, set }: Props) {
           {r.p5_donde && (
             <Veredicto bien={r.p5_donde === "otra_parte"}>
               {r.p5_donde === "otra_parte"
-                ? "Así es. Alrededor de la plaza los cuadros están cerca de la mediana de la ciudad. Los picos están en el sur lejano (Ciudad Jardín, Pance) y en la ladera del occidente; el oriente queda por debajo."
+                ? "Así es. Alrededor de la plaza los cuadros están cerca de la mediana de la ciudad. Los picos están en el noroeste (Normandía), en el oeste (Santa Isabel, Bellavista) y en el sur lejano (Ciudad Jardín, Pance); el oriente queda por debajo."
                 : "Miren otra vez: comparen los cuadros que rodean la plaza con los del sur lejano y los del oriente."}
             </Veredicto>
           )}

@@ -585,8 +585,8 @@ export function Indices() {
   const tramos = (s: { anio: number; v: number }[]) => [s.filter((p) => p.anio <= 2024), s.filter((p) => p.anio >= 2026)];
 
   const series = [
-    { nombre: "Mediana de las casas, tal cual", color: COLOR.casa, datos: ingenua },
-    { nombre: "Mismo barrio y mismo tipo", color: COLOR.lote, datos: dentro },
+    { nombre: "Mediana simple de las casas", color: COLOR.casa, datos: ingenua },
+    { nombre: "Índice ajustado por barrio y tipo", color: COLOR.lote, datos: dentro },
   ];
 
   return (
@@ -641,10 +641,12 @@ export function Indices() {
       </svg>
       <Leyenda items={series.map((s) => ({ color: s.color, nombre: s.nombre, forma: "linea" as const }))} />
       <figcaption className="px-3 py-2 text-xs leading-relaxed text-stone-500">
-        Las dos series valen 100 en 2020. La naranja es la mediana del precio por m² de todas las
-        casas de cada año. La azul compara cada aviso solo con otros del mismo barrio y del mismo
-        tipo (casa o apartamento), así que no la mueve que un año traiga más avisos de barrios
-        caros. 2025 no viene en la base.
+        Las dos series valen 100 en 2020. La naranja es la mediana simple del precio por m² de
+        las casas de cada año, sin ajuste por composición. La azul es un índice ajustado por
+        barrio y tipo: compara cada aviso solo con otros del mismo barrio y del mismo tipo (casa
+        o apartamento), así que no la mueve que un año traiga más avisos de barrios caros. Se
+        estima con una regresión del logaritmo del precio por m² con efectos fijos de barrio ×
+        tipo y de año. 2025 no viene en la base.
       </figcaption>
     </figure>
   );
@@ -692,8 +694,9 @@ export function Composicion() {
       />
       <figcaption className="px-3 py-2 text-xs leading-relaxed text-stone-500">
         Comunas ordenadas de la más cara a la más barata según la mediana por m² de 2020–2024
-        (el número pequeño). Cada barra es el porcentaje de los avisos de ese período que caen
-        en la comuna.
+        (el número pequeño). Las barras no son precios: cada una es el porcentaje de los avisos
+        de ese período que caen en la comuna. La comuna 1 sale cara porque casi todos sus avisos
+        son apartamentos de Aguacatal, pegados a Normandía.
       </figcaption>
     </figure>
   );
