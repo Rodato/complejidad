@@ -29,11 +29,18 @@ El dataset que alimenta casi todo. **Vive en la raíz a propósito**: tres scrip
 distintas carpetas lo referencian por ruta relativa (`construir_datos.py` del parcial,
 `build-red-data.mjs` del Taller 5, `candidatos_alias.py` del ACH). Moverlo los rompe.
 
-- `consolidado_notaria2.csv` — **724 registros, 1938–1944, serie completa**. Columnas:
-  `fuente, anio, fecha, vendedor, comprador, valor_texto, valor_num, area, negocio, escritura`.
+- `consolidado_notaria2.csv` — **1.450 registros, 1938–1944**: las 724 filas transcritas
+  a mano (primero, intactas) + 726 escrituras del ACH que no estaban (fusión del
+  2026-11-10, `fuente = ach_notaria2`). Columnas: `fuente, anio, fecha, vendedor,
+  comprador, valor_texto, valor_num, area, negocio, escritura, tipo_inmueble, ubicacion,
+  confianza, ach_ref` (las cuatro últimas solo vienen del ACH; `ach_ref` = tomo y páginas,
+  y en las filas a mano, con qué escritura del ACH cruzan). Las partes del ACH separan
+  co-partes con `;`.
 - `consolidar.py` — une 1938–41 (CSV viejo, **excluye 1943**) + `1942.xlsx` + `1943.xlsx`
-  (tabla completa, ~442 registros, reemplaza los 66 viejos) + `Base de datos 1944.xlsx`,
-  en esquema superset. Normaliza `valor_num` (US `$1,795.33` vs europeo `3.360,00`).
+  (tabla completa, ~442 registros, reemplaza los 66 viejos) + `Base de datos 1944.xlsx`
+  + `ach_escrituras.csv` (copia de las escrituras completas del ACH; se refresca sola si
+  existe `investigacion/ACH`), en esquema superset. Normaliza `valor_num` (US `$1,795.33`
+  vs europeo `3.360,00`). Las reglas del cruce con el ACH están en su docstring.
   Correr: `python3 consolidar.py`.
 - `limpiar_red.py` + `alias_curados.csv` — depuración de la red. Modos
   `raw/moderada/afondo/curada`; `--comparar` imprime la tabla. **Se usa `curada`** =
@@ -69,7 +76,7 @@ hilo conductor es la complejidad de Cali vista desde las fallas de planificació
 ### `investigacion/ACH/` — captura del Archivo Histórico de Cali
 
 Ver `investigacion/ACH/README.md`, que está al día. Tomos escaneados del protocolo de
-la Notaría 2 (escrituras **manuscritas en cursiva**, 1941–1944) → páginas JPEG
+la Notaría 2 (escrituras **manuscritas en cursiva**, 1940–1944) → páginas JPEG
 (pdftoppm 150 dpi) → **Claude Opus 5 con visión directa** vía OpenRouter → CSV.
 
 - Script principal: `scripts/extraer_transacciones.py` (`--modo imagen` por defecto).
@@ -77,9 +84,10 @@ la Notaría 2 (escrituras **manuscritas en cursiva**, 1941–1944) → páginas 
   esquema compatible con `data/consolidado_notaria2.csv`.
 - **Corrida completa hecha (sep-2026)**: 50 tomos, 3.634 págs. únicas, **US$90.74** en 36
   minutos. 870 filas = 608 escrituras completas + 262 encabezados sin cuerpo (esos
-  auditan qué se saltó el escaneo del AHC).
-- **`OPENROUTER_API_KEY` se comparte con Paper_PPE**: `ocr_mistral.py` busca
-  `ACH/.env` y luego `Paper_PPE/.env`. Si separás las carpetas, hay que separar la key.
+  auditan qué se saltó el escaneo del AHC). **Segunda corrida (2026-11-10)**: 1940 completo
+  y 1941 tomos 18–29, US$49.50; el CSV queda en 1.376 filas (977 escrituras, 1940–1944).
+- **`OPENROUTER_API_KEY`**: `ocr_mistral.py` busca `ACH/.env` y luego `Paper_PPE/.env`.
+  Desde sep-2026 el ACH tiene su propia llave en `ACH/.env`.
 - Campo más frágil: **`ubicacion`** (calles y carreras manuscritas). **Pendiente**:
   no es confiable para georreferenciar; requiere verificación contra la imagen.
   Regla general: revisar filas con confianza < 0.85 o con variantes en `observaciones`.

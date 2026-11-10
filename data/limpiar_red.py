@@ -117,7 +117,7 @@ def valido(p):
 # separadores de co-partes (romperían "Eder y Cía. S.A." en nodos basura).
 _SUF_SOC = r"c[ií]a\b|compa[nñ][ií]a\b|hnos\b|hermanos\b"
 _SEP_COPARTES = re.compile(
-    r"\s*,\s*"                              # la coma siempre separa
+    r"\s*[,;]\s*"                           # la coma (y el ; del ACH) siempre separa
     r"|\s+y\s+(?!(?:" + _SUF_SOC + r"))"    # ' y ' salvo ' y Cía/Compañía/Hnos'
     r"|\s+e\s+(?!hijos\b)"                   # ' e ' salvo ' e hijos'
 )
