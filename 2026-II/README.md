@@ -42,7 +42,16 @@ desastre no lo produce un evento natural sino la interacción lenta de decisione
   de venta 2020–26 de Johan Torres, leído con Harvey (1982, cap. 11) y Smith (1979): el cono
   de 1943, tierra contra casa, los ejidos del Municipio, el cono roto de hoy, el salto falso
   de 2026 y la tierra como capital ficticio. Ver su `README.md`.
+- `6.Quiz_Gentrificacion/quiz-gentrificacion/` — **Quiz** «Renta, gentrificación y segregación»
+  (armado el 11-nov). Cinco preguntas que aplican Mosquera y Aprile (1980) y Smith (1979) a las
+  escrituras de 1941–44 y a los avisos de 2020–24: la doble curva de precios, la ruta de la élite
+  (La Merced → Centenario y Granada), el desclasamiento de los viejos bastiones, Ciudad Jardín en
+  1980 y hoy, y San Antonio como brecha de renta. Ver su `README.md`.
 - `0.Insumos/johan_torres/` — la base de Johan (no se versiona; ver el `README.md` del Taller 5).
+- `graficos/segregacion_precios/` — gráfico para Mosquera y Aprile (1980), págs. 85–91, pedido por
+  Boris el 11-nov: índice de precios 2020–24 por nueve grupos de barrios contra la
+  inflación, con la base de Johan. El método y las exclusiones están en el docstring de
+  `preparar.py`.
 
 ## Cifras de referencia (verificadas contra las fuentes)
 

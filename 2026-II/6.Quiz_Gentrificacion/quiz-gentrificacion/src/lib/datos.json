@@ -1,0 +1,472 @@
+{
+ "cuarenta": {
+  "n": 268,
+  "n_lotes": 221,
+  "mediana_lotes": 1.5,
+  "perfil": [
+   {
+    "tipo": "lote",
+    "desde": 0,
+    "hasta": 1,
+    "n": 26,
+    "mediana": 8.05
+   },
+   {
+    "tipo": "lote",
+    "desde": 1,
+    "hasta": 2,
+    "n": 81,
+    "mediana": 1.45
+   },
+   {
+    "tipo": "lote",
+    "desde": 2,
+    "hasta": 3,
+    "n": 61,
+    "mediana": 1.2
+   },
+   {
+    "tipo": "lote",
+    "desde": 3,
+    "hasta": 5,
+    "n": 5,
+    "mediana": 2.5
+   }
+  ],
+  "esquinas": [
+   {
+    "anio": 1943,
+    "donde": "Barrio del Sindicato (ejido)",
+    "pm2": 0.7,
+    "area": 123.5
+   },
+   {
+    "anio": 1943,
+    "donde": "Saavedra Galindo (El Cascajero)",
+    "pm2": 0.8,
+    "area": 222.5
+   },
+   {
+    "anio": 1942,
+    "donde": "La Chanca",
+    "pm2": 2.0,
+    "area": 130.0
+   },
+   {
+    "anio": 1943,
+    "donde": "La Alameda",
+    "pm2": 2.0,
+    "area": 180.0
+   },
+   {
+    "anio": 1943,
+    "donde": "Esquina sureste de la carrera 8ª con la calle 24",
+    "pm2": 11.88,
+    "area": 1600.0
+   },
+   {
+    "anio": 1943,
+    "donde": "Esquina de la carrera 3ª con calle 9ª",
+    "pm2": 28.67,
+    "area": 86.9
+   }
+  ],
+  "n_esquina": 6,
+  "mediana_esquina": 2.0,
+  "n_resto": 215,
+  "mediana_resto": 1.5,
+  "fuga": [
+   {
+    "fecha": "1941-01-09",
+    "anio": 1941,
+    "barrio": "Centenario",
+    "tipo": "lote",
+    "vendedor": "Pablo Calatrava",
+    "comprador": "Lilian Córdoba de Holguín",
+    "pm2": 12.19,
+    "area": 160.0
+   },
+   {
+    "fecha": "1942-05-16",
+    "anio": 1942,
+    "barrio": "Granada",
+    "tipo": "lote",
+    "vendedor": "Gerardo Posada G.",
+    "comprador": "Geraldo Botero O'Byrne",
+    "pm2": 9.67,
+    "area": 258.6
+   },
+   {
+    "fecha": "1942-10-06",
+    "anio": 1942,
+    "barrio": "La Merced",
+    "tipo": "lote",
+    "vendedor": "José Garcés Mercado",
+    "comprador": "Guillermo A. Garrido F.",
+    "pm2": 30.0,
+    "area": 784.0
+   },
+   {
+    "fecha": "1942-12-17",
+    "anio": 1942,
+    "barrio": "Granada",
+    "tipo": "lote",
+    "vendedor": "Clemencia Quintero de González",
+    "comprador": "Carlos Caicedo P.; Ana Romero de Caicedo",
+    "pm2": 12.0,
+    "area": 390.0
+   },
+   {
+    "fecha": "1943-01-26",
+    "anio": 1943,
+    "barrio": "Granada",
+    "tipo": "lote",
+    "vendedor": "Teófilo Martínez; Emilia Hormaza de Martínez",
+    "comprador": "Susana Caicedo de Vaccari",
+    "pm2": 11.35,
+    "area": 1233.0
+   },
+   {
+    "fecha": "1943-02-04",
+    "anio": 1943,
+    "barrio": "Versalles",
+    "tipo": "lote",
+    "vendedor": "Sixta Julia Córdoba de Garcés",
+    "comprador": "Susana Caicedo de Vaccari",
+    "pm2": 9.5,
+    "area": 610.0
+   },
+   {
+    "fecha": "1943-04-08",
+    "anio": 1943,
+    "barrio": "Granada",
+    "tipo": "lote",
+    "vendedor": "Felícita Bonero v. de Price",
+    "comprador": "Elodia Domínguez de Cruz",
+    "pm2": 12.5,
+    "area": 226.0
+   },
+   {
+    "fecha": "1943-04-20",
+    "anio": 1943,
+    "barrio": "Versalles",
+    "tipo": "casa",
+    "vendedor": "Pedro Armando Caicedo y esposa Josefina Rusca de Caicedo",
+    "comprador": "Susana Caicedo de Vaccari",
+    "pm2": 30.54,
+    "area": 298.0
+   },
+   {
+    "fecha": "1943-05-13",
+    "anio": 1943,
+    "barrio": "Centenario",
+    "tipo": "lote",
+    "vendedor": "Hernando Navia V. & Cía. S.A.",
+    "comprador": "Ilse Leib; Hilde Leib",
+    "pm2": 25.0,
+    "area": 400.0
+   },
+   {
+    "fecha": "1943-06-30",
+    "anio": 1943,
+    "barrio": "Centenario",
+    "tipo": "lote",
+    "vendedor": "Concepción Vélez M.",
+    "comprador": "Reinaldo Prati",
+    "pm2": 8.11,
+    "area": 370.0
+   },
+   {
+    "fecha": "1943-07-14",
+    "anio": 1943,
+    "barrio": "Versalles",
+    "tipo": "casa",
+    "vendedor": "Compañía Central de Construcciones",
+    "comprador": "Carlos E. Valencia",
+    "pm2": 22.75,
+    "area": 293.6
+   },
+   {
+    "fecha": "1943-07-28",
+    "anio": 1943,
+    "barrio": "Granada",
+    "tipo": "lote",
+    "vendedor": "Sociedad Agrícola del Valle",
+    "comprador": "Lisandro Palau",
+    "pm2": 0.5,
+    "area": 9600.0
+   },
+   {
+    "fecha": "1943-09-30",
+    "anio": 1943,
+    "barrio": "La Merced",
+    "tipo": "casa",
+    "vendedor": "Leonardo Lomuido Vásquez",
+    "comprador": "Leonor Vásquez de Domínguez",
+    "pm2": 75.73,
+    "area": 264.1
+   },
+   {
+    "fecha": "1943-10-08",
+    "anio": 1943,
+    "barrio": "Granada",
+    "tipo": "casa",
+    "vendedor": "Leticia O'Byrne de Botero",
+    "comprador": "Joaquín Borrero Sinisterra",
+    "pm2": 37.78,
+    "area": 225.0
+   },
+   {
+    "fecha": "1943-10-11",
+    "anio": 1943,
+    "barrio": "Centenario",
+    "tipo": "casa",
+    "vendedor": "María Josefa Giraldo viuda de Garcés",
+    "comprador": "Antoinette F. Byrne de Castro",
+    "pm2": 48.27,
+    "area": 1243.1
+   },
+   {
+    "fecha": "1944-02-05",
+    "anio": 1944,
+    "barrio": "Granada",
+    "tipo": "lote",
+    "vendedor": "Claudio Herrera",
+    "comprador": "Municipio de Cali",
+    "pm2": 10.0,
+    "area": 94.5
+   }
+  ],
+  "posiciones": [
+   {
+    "barrio": "Centenario",
+    "n_40": 3,
+    "pm2_40": 12.19,
+    "pos_40": 8.13,
+    "n_hoy": 20,
+    "pm2_hoy": 2872000.0,
+    "pos_hoy": 1.17
+   },
+   {
+    "barrio": "Granada",
+    "n_40": 6,
+    "pm2_40": 10.68,
+    "pos_40": 7.12,
+    "n_hoy": 8,
+    "pm2_hoy": 1767000.0,
+    "pos_hoy": 0.72
+   },
+   {
+    "barrio": "Versalles",
+    "n_40": 1,
+    "pm2_40": 9.5,
+    "pos_40": 6.33,
+    "n_hoy": 14,
+    "pm2_hoy": 2041000.0,
+    "pos_hoy": 0.83
+   },
+   {
+    "barrio": "Juanambú",
+    "n_40": 4,
+    "pm2_40": 8.14,
+    "pos_40": 5.42,
+    "n_hoy": 13,
+    "pm2_hoy": 3873000.0,
+    "pos_hoy": 1.57
+   },
+   {
+    "barrio": "Santa Mónica",
+    "n_40": 4,
+    "pm2_40": 4.5,
+    "pos_40": 3.0,
+    "n_hoy": 17,
+    "pm2_hoy": 2737000.0,
+    "pos_hoy": 1.11
+   },
+   {
+    "barrio": "San Fernando",
+    "n_40": 31,
+    "pm2_40": 2.0,
+    "pos_40": 1.33,
+    "n_hoy": 31,
+    "pm2_hoy": 2696000.0,
+    "pos_hoy": 1.1
+   }
+  ],
+  "san_antonio": [
+   {
+    "fecha": "1942-01-14",
+    "vendedor": "Municipio de Cali",
+    "comprador": "Santos Bastidas T.",
+    "pm2": 0.95,
+    "area": 103.9
+   },
+   {
+    "fecha": "1942-02-09",
+    "vendedor": "Municipio de Cali",
+    "comprador": "Camila Ariza",
+    "pm2": 0.9,
+    "area": 112.7
+   },
+   {
+    "fecha": "1942-10-20",
+    "vendedor": "Municipio de Cali",
+    "comprador": "Jorge Aníbal Ortiz; Luis Raúl Ortiz; María Josefina Ortiz; Ramón Dolores Ortiz; Felipe Javier Ortiz; Ana Smith Ortiz",
+    "pm2": 1.2,
+    "area": 106.1
+   },
+   {
+    "fecha": "1942-11-04",
+    "vendedor": "Municipio de Cali",
+    "comprador": "Ofelia Sierra; Isabel Sierra",
+    "pm2": 0.9,
+    "area": 121.8
+   }
+  ]
+ },
+ "hoy": {
+  "n": 4815,
+  "mediana": 2461538.0,
+  "grupos": [
+   {
+    "clave": "sur_alto",
+    "titulo": "Ciudad Jardín y Pance",
+    "apto": 4910217.0,
+    "n_apto": 56,
+    "anio_real": 2023,
+    "real": -1.3
+   },
+   {
+    "clave": "oeste",
+    "titulo": "Normandía y vecinos",
+    "apto": 4375000.0,
+    "n_apto": 65,
+    "anio_real": 2024,
+    "real": -19.4
+   },
+   {
+    "clave": "aguacatal",
+    "titulo": "Aguacatal y Terrón Colorado",
+    "apto": 3848527.0,
+    "n_apto": 96,
+    "anio_real": 2024,
+    "real": -15.6
+   },
+   {
+    "clave": "norte_trad",
+    "titulo": "Santa Mónica y el norte",
+    "apto": 3701852.0,
+    "n_apto": 176,
+    "anio_real": 2024,
+    "real": 5.7
+   },
+   {
+    "clave": "c19",
+    "titulo": "San Fernando y Santa Isabel",
+    "apto": 3578125.0,
+    "n_apto": 149,
+    "anio_real": 2024,
+    "real": 4.6
+   },
+   {
+    "clave": "lili",
+    "titulo": "Valle del Lili",
+    "apto": 3487605.0,
+    "n_apto": 56,
+    "anio_real": 2024,
+    "real": 0.6
+   },
+   {
+    "clave": "c17",
+    "titulo": "El Ingenio, Caney, Capri…",
+    "apto": 3298347.0,
+    "n_apto": 92,
+    "anio_real": 2024,
+    "real": -4.3
+   },
+   {
+    "clave": "medio_oriente",
+    "titulo": "Centro-oriente",
+    "apto": 2615975.0,
+    "n_apto": 182,
+    "anio_real": 2024,
+    "real": -1.0
+   },
+   {
+    "clave": "aguablanca",
+    "titulo": "Distrito de Aguablanca",
+    "apto": 2015625.0,
+    "n_apto": 40,
+    "anio_real": 2024,
+    "real": 11.0
+   }
+  ],
+  "nuevo": {
+   "c22_n": 117,
+   "c22_nuevo": 24,
+   "ciudad_n": 4815,
+   "ciudad_nuevo": 176
+  },
+  "ciudad_jardin": {
+   "n": 23,
+   "pm2": 5200000.0,
+   "pos": 2.11,
+   "apto_pct": 61.0,
+   "nuevo_pct": 26.0,
+   "area": 153.0
+  },
+  "san_antonio": {
+   "n": 24,
+   "pm2": 2437050.0,
+   "pos": 0.99,
+   "apto_pct": 0.0,
+   "nuevo_pct": 0.0,
+   "area": 292.0,
+   "por_anio": {
+    "2021": 9,
+    "2022": 10,
+    "2023": 5
+   },
+   "casas": 24,
+   "usadas": 24
+  },
+  "centro": [
+   {
+    "barrio": "La Merced",
+    "n": 5,
+    "pm2": 2500000.0,
+    "pos": 1.02,
+    "apto_pct": 80.0,
+    "nuevo_pct": 0.0,
+    "area": 130.0
+   },
+   {
+    "barrio": "Granada",
+    "n": 8,
+    "pm2": 1767151.0,
+    "pos": 0.72,
+    "apto_pct": 50.0,
+    "nuevo_pct": 0.0,
+    "area": 275.0
+   },
+   {
+    "barrio": "El Peñón",
+    "n": 25,
+    "pm2": 3181818.0,
+    "pos": 1.29,
+    "apto_pct": 88.0,
+    "nuevo_pct": 0.0,
+    "area": 143.0
+   },
+   {
+    "barrio": "San Antonio",
+    "n": 24,
+    "pm2": 2437050.0,
+    "pos": 0.99,
+    "apto_pct": 0.0,
+    "nuevo_pct": 0.0,
+    "area": 292.0
+   }
+  ]
+ }
+}
