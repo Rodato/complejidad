@@ -54,10 +54,12 @@ lib/
 
 ## Pipeline de datos (2 pasos, DEV)
 
-1. En `../data/`: `python3 consolidar.py` → `consolidado_notaria2.csv` (308→**724**
-   registros, 1938–1944). Luego la limpieza vive en `../data/limpiar_red.py`
+1. En `../data/`: `python3 consolidar.py` → `consolidado_notaria2.csv`. El parcial se
+   armó con la versión de 724 registros (jul-2026); desde 2026-11-10 tiene 1.450 (suma
+   726 escrituras del ACH), así que re-correr `construir_datos.py` cambia la red que se
+   calificó. Luego la limpieza vive en `../data/limpiar_red.py`
    (modo **`curada`** = moderada + `../data/alias_curados.csv`).
-2. Aquí: `python construir_datos.py` → `datos/red_parcial.csv`. **Re-correr si
+2. Aquí: `python3 construir_datos.py` → `datos/red_parcial.csv`. **Re-correr si
    cambian los datos o la tabla de alias.** (El builder importa `limpiar_red`
    vía `sys.path`; solo se corre en el monorepo, pero su salida se commitea.)
 
@@ -126,8 +128,8 @@ selector de grupo). NO reintroducir un selector de grupo ni preguntas por grupo.
   (`lib/canvas.py`), portado 1:1 del Taller 5 (`RedRealCanvas.tsx`): mismas
   constantes de fuerza, flechas vendedor→comprador, rampa de calor por compras
   (azul claro→rojo), hover con vecinos, zoom/pan, botón "Centrar". Se embebe con
-  `components.v1.html` (d3 por CDN). **`st.iframe` NO sirve** (requiere URL, no
-  acepta HTML+JS inline) → se ignora el deprecation warning de `components.v1.html`.
+  `components.v1.html` (d3 por CDN). `components.v1.html` está deprecado (2026-06-01);
+  en Streamlit reciente `st.iframe(html)` acepta HTML con JS (srcdoc): migrar cuando se toque.
 - Filtro `conectados` (comp≥3, default) / `todos` / `nucleos` (comp≥4): solo
   cambia lo que se DIBUJA; las métricas usan siempre la red completa.
 - Verificación visual del canvas: Playwright con el chromium ya cacheado
@@ -148,20 +150,18 @@ selector de grupo). NO reintroducir un selector de grupo ni preguntas por grupo.
 
 ## Deploy
 
-- **Repo creado (jul 2026)**: `Rodato/complejidad-parcial-final` (**público**,
-  branch `main`). GitHub conectado → push a `main` redespliega.
+- **Repo de deploy**: `Rodato/complejidad-parcial-final` (**público**, `main`); push a
+  su `main` redespliega. La copia local vive en el monorepo `Rodato/complejidad`, cuyo
+  push no redespliega la app.
 - **Una sola app**: se despliega **solo `parcial_app.py`** (main file path
   `parcial_app.py`). Se decidió **NO** desplegar el dashboard docente; las
   respuestas se leen directo del Google Sheet.
 - **Secrets ya generados en local**: `.streamlit/secrets.toml` (gitignoreado) se
   armó desde la llave del service account del Taller 3
-  (`../3. Inmobilliario/complejidad-496215-*.json`), con solo `[gcp_service_account]`
+  (`../3.Taller_Inmobiliario/complejidad-496215-*.json`), con solo `[gcp_service_account]`
   + `[sheets]` (`worksheet="parcial_final"`). **Sin `[dashboard]`** (no hay
   password porque no se despliega el panel). Ese mismo bloque se pega en
   Streamlit Cloud → Settings → Secrets.
-- **Falta (paso manual del usuario)**: conectar la app en share.streamlit.io y
-  pegar los secrets. La pestaña `parcial_final` del Sheet se crea sola al primer
-  envío.
 
 ## Autoría
 

@@ -66,8 +66,7 @@ hilo conductor es la complejidad de Cali vista desde las fallas de planificació
 
 - `0.Insumos/` — TREQ (evaluación de riesgo sísmico, GEM/USAID/SGC, 2022) + nota de
   Sergio Castañeda + las 14 infografías extraídas del PDF.
-- `1.Taller_Terremoto/taller-sismo/` — **Taller 1**, Next.js. Desplegado. `node_modules` y `.next` se borraron
-  para liberar disco: correr `npm install` antes del próximo `npm run dev`.
+- `1.Taller_Terremoto/taller-sismo/` — **Taller 1**, Next.js. Desplegado.
 
 ---
 
@@ -106,14 +105,14 @@ propietarios/fiduciarias/constructoras y agencias (DAPM, CVC, DAGMA, EMCALI, cur
 
 Pipeline: OCR Mistral → segmentación por considerando → extracción de eventos con LLM →
 **consenso multi-modelo** (flash + minimax, árbitro `claude-sonnet-4.6`) → análisis →
-reporte. Cero dependencias externas. Estado: 11 documentos, `outputs/events/eventos_consenso.csv`
-con **1.277 eventos, 9 planes, 0 alucinaciones**. Falta el gold set de validación humana.
+reporte. Cero dependencias externas. Estado y cifras: ver `investigacion/Paper_PPE/CLAUDE.md`
+(viven en `outputs/events/eventos_consenso_summary.json`).
 
 **Dos reportes que no hay que confundir**: `outputs/memo/informe_hallazgos_negociacion_ppe.{md,docx,tex}`
 (narrativa pura, el `.tex` se compila en Overleaf) vs.
 `outputs/memo/reconstruccion_negociacion_ppe_consenso.pdf` (narrativa + gráficas, motor
-de PDF propio — **este es el que se envía**). El archivo sin el sufijo `_consenso` es un
-artefacto viejo de jun-2026 que ya no se regenera.
+de PDF propio — **este es el que se envía**). Correr `make_negociacion_report_pdf.py` siempre
+con `--consenso`: sin él regenera `reconstruccion_negociacion_ppe.pdf` con el dataset sin consenso.
 
 Tono de los correos a Boris: informal, primera persona singular, **sin negrillas markdown**.
 

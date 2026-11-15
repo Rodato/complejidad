@@ -47,9 +47,9 @@ data/nombres.json           # Apellidos caleños, bancos, urbanizadoras
 
 - **scipy es obligatorio en `requirements.txt`.** `nx.spring_layout` cambia internamente a matriz sparse cuando N ≥ 500 y requiere scipy. Localmente puede que ya esté por transitividad (pandas/streamlit); en Streamlit Cloud (Python 3.14 minimal) no está.
 - **Strings con LaTeX → `r"""..."""`.** Python 3.14 emite `SyntaxWarning` (y eventualmente `SyntaxError`) por secuencias `\s`, `\g`, `\gamma`, `\sim`, `\geq`, `\gg` en strings normales. Todos los `EJn_INTRO`, `EJn_INTERPRETACION`, `EJn_NOTA_BARABASI` que contienen LaTeX están marcados como raw.
-- **`st.html` ≠ `components.html`.** `st.html` no ejecuta JavaScript embebido. Para HTML con scripts (pyvis, vis.js), usar `streamlit.components.v1.html(html, height=H)`. El deprecation warning (`components.v1.html` se removerá 2026-06-01) es prematuro; el reemplazo recomendado `st.iframe` requiere URL, no acepta HTML inline con scripts.
+- **`st.html` ≠ `components.html`.** `st.html` no ejecuta JavaScript embebido. Para HTML con scripts (pyvis, vis.js), usar `streamlit.components.v1.html(html, height=H)`. `components.v1.html` está deprecado (2026-06-01); en Streamlit reciente `st.iframe(html)` acepta HTML con JS (srcdoc): migrar cuando se toque.
 - **IDs de nodos a pyvis deben ser Python `int`, no `numpy.int64`.** JSON encoder de Jinja falla. Forzar `int(n)` y `float(...)` en `red_pyvis`.
-- **Streamlit Cloud auto-deploya en cada push a `main`.** Push → ~1–2 min → app actualizada. Si las dependencias cambian, agrega ~30 s más (scipy es el más grande).
+- **Streamlit Cloud auto-deploya en cada push a `main` de `Rodato/complejidad-taller4-conceptos`** (no del monorepo). Push → ~1–2 min → app actualizada. Si las dependencias cambian, agrega ~30 s más (scipy es el más grande).
 
 ## Persistencia (Google Sheets)
 
@@ -87,15 +87,9 @@ Salida esperada con seed=42:
 - 23 componentes débilmente conectados (1 gigante de 478 + 22 isolates)
 - γ_observado ≈ 1.11, clustering global ≈ 0.037 (vs ER ≈ 0.009)
 
-## Para hacer commits/push
+## Commits y deploy
 
-```bash
-git add -A
-git commit -m "..."
-git push origin main
-```
-
-Streamlit Cloud detecta el push y rebuilea solo. **No** crear branches secundarios sin avisar — el deploy apunta a `main`.
+Esta carpeta vive en el monorepo `Rodato/complejidad`; la app desplegada sale de `Rodato/complejidad-taller4-conceptos` (`main`). Un push del monorepo **no** la redespliega: para cambiar la app publicada hay que llevar el cambio a ese repo. Commitear solo esta carpeta, no `git add -A`.
 
 ## Autoría
 
