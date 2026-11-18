@@ -8,26 +8,26 @@ export const N_PARTES = 6;
 
 /** Columnas de respuesta, en el mismo orden en que aparecen en el taller. */
 export const COLUMNAS_RESPUESTA = [
-  // Parte 1 — Desde dónde se escribe
+  // Parte 1 — El lugar de enunciación
   "p1_lugar",
   "p1_sobre",
   "p1_iniciativa",
-  // Parte 2 — Quién se sienta a la mesa
+  // Parte 2 — Actores incluidos y excluidos
   "p2_mesa",
   "p2_copias",
   "p2_cvc",
   "p2_contradiccion",
-  // Parte 3 — El agua y el río
+  // Parte 3 — La expansión oriental y el agua
   "p3_estudios",
   "p3_clase",
   "p3_agua",
   "p3_fuente",
-  // Parte 4 — Lo que la carta no dice
+  // Parte 4 — El silencio sobre el terremoto
   "p4_terremoto",
   "p4_sismico",
   "p4_leccion",
   "p4_responsabilidad",
-  // Parte 5 — Las cifras de Camacol
+  // Parte 5 — La evidencia cuantitativa
   "p5_viviendas",
   "p5_master",
   "p5_m2",

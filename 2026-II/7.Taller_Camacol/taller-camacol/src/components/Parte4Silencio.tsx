@@ -14,12 +14,12 @@ export default function Parte4Silencio({ r, set }: Props) {
     <>
       <CabezaParte
         numero={4}
-        titulo="Lo que la carta no dice"
-        bajada={`La carta llega tres meses después del terremoto del ${TERREMOTO.fecha}. Lean qué dice de él.`}
+        titulo="El silencio sobre el terremoto"
+        bajada={`La carta se radicó tres meses después del terremoto del ${TERREMOTO.fecha}. Esta parte examina el lugar que ocupa el sismo en su argumentación.`}
       />
 
       <Contexto
-        titulo="El plazo que la carta quiere aprovechar"
+        titulo="La prórroga del Tribunal"
         fuente={
           <>
             Fuente: Alcaldía de Cali,{" "}
@@ -40,8 +40,8 @@ export default function Parte4Silencio({ r, set }: Props) {
           El POT de 2014 (Acuerdo 0373) fue anulado, y el Tribunal Administrativo del Valle aplazó
           los efectos de la nulidad para darle tiempo a la ciudad de adoptar uno nuevo. Después del
           terremoto, la Alcaldía pidió seis meses más con el argumento de que el sismo era «un hecho
-          extraordinario, imprevisible y sobreviniente». El Tribunal movió el plazo del 9 de enero
-          al 9 de julio de 2027. La Alcaldía dijo que usaría ese tiempo para incorporar las
+          extraordinario, imprevisible y sobreviniente». El Tribunal amplió el plazo del 9 de enero
+          al 9 de julio de 2027. La Alcaldía anunció que destinaría ese tiempo a incorporar las
           lecciones del terremoto, con nuevos estudios de microzonificación.
         </p>
       </Contexto>
@@ -53,23 +53,23 @@ export default function Parte4Silencio({ r, set }: Props) {
         </p>
       </Cita>
 
-      <Ejercicio numero="4.1" titulo="Contar">
+      <Ejercicio numero="4.1" titulo="Frecuencia de términos">
         <div className="flex flex-col gap-4">
           <Campo
-            label="¿Cuántas veces aparecen las palabras «terremoto» o «sismo» en las seis páginas de la carta?"
+            label="¿Cuántas veces aparecen los términos «terremoto» o «sismo» en las seis páginas de la carta?"
             valor={r.p4_terremoto}
             onChange={(v) => set("p4_terremoto", v)}
             numerico
           />
           <Campo
-            label="¿Cuántas veces aparece «riesgo sísmico», y en qué página y parte de la carta?"
+            label="¿Cuántas veces aparece «riesgo sísmico», en qué página y en qué sección de la carta?"
             valor={r.p4_sismico}
             onChange={(v) => set("p4_sismico", v)}
           />
         </div>
       </Ejercicio>
 
-      <Ejercicio numero="4.2" titulo="Dos lecciones">
+      <Ejercicio numero="4.2" titulo="Dos lecturas de la «lección aprendida»">
         <Cita fuente="Carta de Camacol Valle, pág. 1.">
           <p>
             Como lo manifestamos en la reunión, debemos partir de una lección aprendida. En 2014
@@ -80,7 +80,7 @@ export default function Parte4Silencio({ r, set }: Props) {
           </p>
         </Cita>
         <Texto
-          label="Camacol propone partir de «una lección aprendida». Compárenla con la lección que, según Castañeda (Taller 1), deja el terremoto. ¿Qué problema del POT de 2014 ve cada uno, y qué haría cada uno con los seis meses de plazo?"
+          label="Camacol propone partir de «una lección aprendida». Compárenla con la lección que, según Castañeda (Taller 1), deja el terremoto. ¿Qué problema del POT de 2014 identifica cada uno y qué uso le daría cada uno a los seis meses de prórroga?"
           valor={r.p4_leccion}
           onChange={(v) => set("p4_leccion", v)}
           filas={6}
@@ -89,8 +89,8 @@ export default function Parte4Silencio({ r, set }: Props) {
         />
       </Ejercicio>
 
-      <Ejercicio numero="4.3" titulo="¿Responsabilidad?">
-        <Contexto titulo="Lo que ya sabemos del terremoto (Taller 1)" fuente="Fuentes: Alcaldía de Cali, repositorio oficial del terremoto (corte 8-sep-2026); TREQ (2022), págs. 11 y 44; Castañeda, «Cali ante el espejo del terremoto», sección 9.">
+      <Ejercicio numero="4.3" titulo="La responsabilidad del sector constructor">
+        <Contexto titulo="Datos del terremoto (Taller 1)" fuente="Fuentes: Alcaldía de Cali, repositorio oficial del terremoto (corte 8-sep-2026); TREQ (2022), págs. 11 y 44; Castañeda, «Cali ante el espejo del terremoto», sección 9.">
           <p>
             {TERREMOTO.fallecidos} fallecidos y {TERREMOTO.colapsos} estructuras con colapso total.
             Según el TREQ, más del 48 % de los caleños vive en estructuras de 1 a 2 pisos con
@@ -102,7 +102,7 @@ export default function Parte4Silencio({ r, set }: Props) {
           </p>
         </Contexto>
         <Texto
-          label="Una lectura crítica de la carta sostiene que el gremio olvida la responsabilidad que les cabe a los constructores por la catástrofe y por no cumplir la norma sísmica. ¿Qué evidencia necesitarían para sostener o refutar esa tesis? ¿Qué aportan el TREQ y Castañeda, y qué les falta (por ejemplo: quién construyó los edificios que fallaron, cuándo y con qué norma)? Distingan lo que pueden afirmar de lo que no."
+          label="Una lectura crítica de la carta sostiene que el gremio omite la responsabilidad que les cabe a los constructores en la catástrofe y en el incumplimiento de la norma sísmica. ¿Qué evidencia se requeriría para sostener o refutar esa tesis? ¿Qué aportan el TREQ y Castañeda y qué información falta (por ejemplo: quién construyó las edificaciones que colapsaron, en qué año y bajo qué norma)? Distingan lo que pueden afirmar con evidencia de lo que no."
           valor={r.p4_responsabilidad}
           onChange={(v) => set("p4_responsabilidad", v)}
           filas={7}
@@ -112,8 +112,9 @@ export default function Parte4Silencio({ r, set }: Props) {
       </Ejercicio>
 
       <Limite>
-        Contar palabras mide lo que la carta dice, no lo que el gremio sabe ni lo que hace. Un
-        silencio no prueba una intención: hay que explicarlo con evidencia.
+        La frecuencia de un término mide lo que el texto dice, no lo que el gremio sabe ni lo que
+        hace. Una omisión no demuestra por sí sola una intención: debe interpretarse a la luz de
+        otras fuentes.
       </Limite>
     </>
   );

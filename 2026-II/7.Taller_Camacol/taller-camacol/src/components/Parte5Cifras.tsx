@@ -16,11 +16,11 @@ export default function Parte5Cifras({ r, set }: Props) {
     <>
       <CabezaParte
         numero={5}
-        titulo="Las cifras de Camacol"
-        bajada="La carta argumenta con números. Revisen qué mueven y de dónde salen."
+        titulo="La evidencia cuantitativa"
+        bajada="La carta sustenta sus propuestas con cifras. Esta parte examina qué redistribución proponen, qué incluye la propuesta para el oriente y quién produce cada dato."
       />
 
-      <Ejercicio numero="5.1" titulo="Dónde van las viviendas">
+      <Ejercicio numero="5.1" titulo="La distribución de la necesidad habitacional">
         <Tabla
           columnas={[
             { titulo: "Tipo de suelo" },
@@ -41,7 +41,7 @@ export default function Parte5Cifras({ r, set }: Props) {
           pie={`Carta de Camacol Valle, pág. 4. Necesidad habitacional estimada por el DAPD: ${n(CUADRO_VIVIENDA.total)} viviendas.`}
         />
         <Texto
-          label="¿Cuántas viviendas más pone Camacol en suelo de expansión que el Proyecto de Acuerdo, y de qué tipos de suelo las quita?"
+          label="¿Cuántas viviendas adicionales asigna Camacol al suelo de expansión frente al Proyecto de Acuerdo, y de qué tipos de suelo las retira?"
           valor={r.p5_viviendas}
           onChange={(v) => set("p5_viviendas", v)}
           filas={2}
@@ -61,7 +61,7 @@ export default function Parte5Cifras({ r, set }: Props) {
         </Cita>
         <div className="mb-5">
           <Texto
-            label="Esta es la propuesta central de la carta para el oriente. ¿Qué incluye el Master Plan del Oriente: cuántas hectáreas, sobre qué suelo y hacia dónde? ¿Quién lo diseñaría y quién lo aprobaría, según la carta? Con lo que respondieron en la Parte 3, ¿qué significa llevar la urbanización hacia el río Cauca?"
+            label="El Master Plan del Oriente es la propuesta central de la carta para esa zona de la ciudad. ¿Qué comprende: cuántas hectáreas, sobre qué suelo y en qué dirección? Según la carta, ¿quién lo formularía y quién lo aprobaría? Con base en la Parte 3, ¿qué implica extender la urbanización hacia el río Cauca?"
             valor={r.p5_master}
             onChange={(v) => set("p5_master", v)}
             filas={6}
@@ -78,7 +78,7 @@ export default function Parte5Cifras({ r, set }: Props) {
           />
         </div>
         <Texto
-          label="Comparen su cuenta con el salto de 3,8 a 12,6 m². ¿Qué parte del salto explica el parque solo? ¿Por qué creen que la carta presenta el Master Plan del Oriente junto a un parque del río, y qué cambia si se leen por separado?"
+          label="Comparen su resultado con el aumento de 3,8 a 12,6 m². ¿Qué proporción de ese aumento explica el parque por sí solo? ¿Por qué la carta presenta el Master Plan del Oriente junto con un parque sobre el río, y qué cambia si ambas propuestas se analizan por separado?"
           valor={r.p5_parque}
           onChange={(v) => set("p5_parque", v)}
           filas={5}
@@ -87,7 +87,7 @@ export default function Parte5Cifras({ r, set }: Props) {
         />
       </Ejercicio>
 
-      <Ejercicio numero="5.3" titulo="Quién produce cada cifra">
+      <Ejercicio numero="5.3" titulo="La procedencia de las cifras">
         <Tabla
           columnas={[{ titulo: "Cifra" }, { titulo: "Pág.", derecha: true }]}
           filas={CIFRAS.map((c) => [
@@ -99,7 +99,7 @@ export default function Parte5Cifras({ r, set }: Props) {
           pie="Cifras de la carta de Camacol Valle."
         />
         <Texto
-          label="Para cada cifra, ¿quién la produce según la carta: el DAPD, el gremio, o no lo dice? ¿Cuáles podrían verificar ustedes y cuáles hay que creerle a Camacol? Y una en particular: ¿para qué usa la carta los 147 mil hogares en asentamientos irregulares (pág. 3)?"
+          label="Para cada cifra, identifiquen quién la produce según la carta: el DAPD, el gremio, o si la carta no lo indica. ¿Cuáles pueden verificar ustedes y cuáles deben aceptarse sin posibilidad de verificación? En particular, ¿con qué propósito usa la carta la cifra de 147 mil hogares localizados irregularmente (pág. 3)?"
           valor={r.p5_fuentes}
           onChange={(v) => set("p5_fuentes", v)}
           filas={7}
@@ -109,8 +109,8 @@ export default function Parte5Cifras({ r, set }: Props) {
       </Ejercicio>
 
       <Limite>
-        Que una cifra venga del gremio no la hace falsa, ni que venga del DAPD la hace cierta. La
-        pregunta es si se puede revisar, y con qué.
+        El origen gremial de una cifra no la invalida, así como su origen oficial no la valida. La
+        cuestión es si puede verificarse y con qué fuentes.
       </Limite>
     </>
   );

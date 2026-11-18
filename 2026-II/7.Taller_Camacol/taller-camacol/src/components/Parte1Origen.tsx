@@ -14,8 +14,8 @@ export default function Parte1Origen({ r, set }: Props) {
     <>
       <CabezaParte
         numero={1}
-        titulo="Desde dónde se escribe"
-        bajada="Una carta de un gremio al alcalde también es un mapa de quién habla con quién. Antes de leer lo que propone, miren desde dónde se escribe, entre quiénes y por iniciativa de quién."
+        titulo="El lugar de enunciación"
+        bajada="Una carta gremial dirigida al alcalde es también un registro de las relaciones entre actores. Antes de examinar sus propuestas, esta parte analiza desde dónde se enuncia, entre quiénes se gestó y quién tuvo la iniciativa."
       />
 
       <Definicion titulo="La carta">
@@ -26,13 +26,14 @@ export default function Parte1Origen({ r, set }: Props) {
         </p>
         <p>
           Las páginas 1 a 6 del PDF son la carta. Las páginas 7 a 9 son el certificado de la firma
-          electrónica (DocuSign). Allí tachamos nombres de terceros, teléfonos, direcciones e IP;
-          lo demás está como llegó.
+          electrónica (DocuSign). En ellas se tacharon los nombres de terceros, los teléfonos, las
+          direcciones físicas y las direcciones IP; el resto del documento se conserva sin
+          modificaciones.
         </p>
       </Definicion>
 
       <Contexto
-        titulo="¿Por qué hay un alcalde ad hoc?"
+        titulo="La figura del alcalde ad hoc"
         fuente={
           <>
             Fuente: Alcaldía de Cali,{" "}
@@ -51,9 +52,10 @@ export default function Parte1Origen({ r, set }: Props) {
         <p>
           En octubre de 2024 el alcalde Alejandro Eder se declaró impedido para las decisiones del
           POT por «un eventual conflicto de intereses»: según la Alcaldía, sus familiares podrían
-          tener inversiones en sectores como la construcción y la finca raíz. Desde entonces esas
-          decisiones, y solo esas, las toma un alcalde ad hoc. Nicolás Gómez Arenas, el tercero, fue
-          designado por el presidente de la República y se posesionó el 5 de octubre de 2026.
+          tener inversiones en sectores como la construcción y la finca raíz. Desde entonces, esas
+          decisiones, y solo esas, corresponden a un alcalde ad hoc. Nicolás Gómez Arenas, el
+          tercero en ocupar el cargo, fue designado por el presidente de la República y se posesionó
+          el 5 de octubre de 2026.
         </p>
       </Contexto>
 
@@ -68,9 +70,9 @@ export default function Parte1Origen({ r, set }: Props) {
         </p>
       </Cita>
 
-      <Ejercicio numero="1.1" titulo="Dónde empezó la conversación">
+      <Ejercicio numero="1.1" titulo="El origen de la propuesta">
         <Texto
-          label="Según la carta, ¿dónde y entre quiénes se discutieron primero estas propuestas? ¿Qué clase de lugar es ese, y a quién no se ve en esa reunión?"
+          label="Según la carta, ¿dónde y entre qué actores se discutieron inicialmente estas propuestas? ¿Qué tipo de espacio es ese y qué actores públicos y sociales estuvieron ausentes de la reunión?"
           valor={r.p1_lugar}
           onChange={(v) => set("p1_lugar", v)}
           filas={4}
@@ -79,14 +81,14 @@ export default function Parte1Origen({ r, set }: Props) {
         />
       </Ejercicio>
 
-      <Ejercicio numero="1.2" titulo="El certificado de la firma">
+      <Ejercicio numero="1.2" titulo="El certificado de firma electrónica">
         <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
-          Vayan a las páginas 7 a 9 del PDF. Es el registro que genera DocuSign cuando un documento
-          se firma en línea: quién creó el sobre, a quién se le envió, en qué orden firmaron y a qué
-          hora.
+          Consulten las páginas 7 a 9 del PDF. Corresponden al registro que genera DocuSign cuando
+          un documento se firma electrónicamente: quién creó el sobre, a quiénes se envió, en qué
+          orden firmaron y a qué hora.
         </p>
         <Texto
-          label="¿Desde qué organización se creó el sobre? ¿De qué dominios son los correos de quienes firman? ¿Qué les dice eso sobre quiénes hacen parte de la Junta Directiva de Camacol y sobre quién movió la carta?"
+          label="¿Desde qué organización se creó el sobre? ¿A qué dominios pertenecen los correos de los firmantes? ¿Qué indica esa información sobre quiénes hacen parte de la Junta Directiva de Camacol y sobre quién gestionó el envío de la carta?"
           valor={r.p1_sobre}
           onChange={(v) => set("p1_sobre", v)}
           filas={5}
@@ -97,7 +99,7 @@ export default function Parte1Origen({ r, set }: Props) {
 
       <Ejercicio numero="1.3" titulo="La iniciativa">
         <Texto
-          label="¿Quién toma la iniciativa: la Alcaldía convoca al gremio, o el gremio le propone a la Alcaldía qué hacer, con quién y en cuánto tiempo? Citen al menos dos frases de la carta, con su página, que lo muestren."
+          label="¿Quién tiene la iniciativa: la Alcaldía convoca al gremio, o el gremio le propone a la Alcaldía la agenda, los participantes y los plazos? Sustenten su respuesta con al menos dos citas textuales de la carta, con indicación de la página."
           valor={r.p1_iniciativa}
           onChange={(v) => set("p1_iniciativa", v)}
           filas={5}

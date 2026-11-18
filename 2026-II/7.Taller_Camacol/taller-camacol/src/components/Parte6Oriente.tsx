@@ -13,8 +13,8 @@ export default function Parte6Oriente({ r, set }: Props) {
     <>
       <CabezaParte
         numero={6}
-        titulo="¿Del suroeste al oriente?"
-        bajada="El hilo del semestre: un desastre no lo produce un evento natural, sino la interacción lenta de decisiones humanas. ¿Se está armando el próximo?"
+        titulo="Del suroeste al oriente"
+        bajada="El hilo conductor del semestre sostiene que un desastre no es producto de un evento natural, sino de la interacción lenta de decisiones humanas. Esta parte examina si la expansión oriental reproduce el proceso que precedió al daño en el abanico de Cañaveralejo."
       />
 
       <h3 className="mb-2 text-base font-bold text-stone-900">El suroeste: el abanico de Cañaveralejo</h3>
@@ -46,27 +46,27 @@ export default function Parte6Oriente({ r, set }: Props) {
       </Cita>
 
       <Contexto
-        titulo="Leer también lo que la carta no dice"
+        titulo="Las omisiones como objeto de análisis"
         fuente="Fuentes: Castañeda, «Cali ante el espejo del terremoto», introducción y sección 2 (Taller 1); TREQ (2022), págs. 15 y 45."
       >
         <p>
-          Un texto también se analiza por lo que no dice. Sobre el abanico de Cañaveralejo hubo
-          advertencias, y no venían de cartas de un gremio sino de estudios científicos, como la
-          microzonificación de 2005 citada arriba. Castañeda lo resume así: la
+          Un texto también se analiza por lo que omite. Sobre el abanico de Cañaveralejo hubo
+          advertencias, y no provenían de comunicaciones gremiales sino de estudios científicos,
+          como la microzonificación de 2005 citada arriba. Castañeda lo sintetiza así: la
           ciudad «produjo conocimiento científico suficiente para reconocer el peligro, delimitar
           los sectores críticos y construir modelos avanzados de pérdidas», pero «no ha demostrado
           haber convertido oportunamente ese conocimiento en una intervención sistemática de las
           edificaciones privadas más vulnerables».
         </p>
         <p>
-          Para el oriente también hay estudios científicos, como el TREQ citado arriba. La carta no
-          los menciona.
+          También sobre el oriente existen estudios científicos, como el TREQ citado arriba, y la
+          carta no los menciona.
         </p>
       </Contexto>
 
-      <Ejercicio numero="6.1" titulo="¿Se repite?">
+      <Ejercicio numero="6.1" titulo="¿Una repetición del proceso?">
         <Texto
-          label="Una lectura crítica sostiene que la carta propone repetir en el oriente lo que se hizo en el suroeste con el río Cañaveralejo. Averigüen qué pasó con el Cañaveralejo y su abanico al urbanizarse. ¿Qué tendría que ser igual en los dos casos para que la comparación se sostenga: quién urbaniza, quién produce los estudios, qué pasa con el río, qué riesgo queda por fuera? Usen al menos un dato de la carta y uno del TREQ o de Castañeda."
+          label="Una lectura crítica sostiene que la carta propone repetir en el oriente lo que se hizo en el suroeste con el río Cañaveralejo. Investiguen qué ocurrió con el Cañaveralejo y su abanico durante el proceso de urbanización. ¿Qué condiciones tendrían que coincidir en ambos casos para que la comparación se sostenga: quién urbaniza, quién produce los estudios, qué ocurre con el río y qué riesgos quedan excluidos del análisis? Utilicen al menos un dato de la carta y uno del TREQ o de Castañeda."
           valor={r.p6_comparacion}
           onChange={(v) => set("p6_comparacion", v)}
           filas={7}
@@ -75,9 +75,9 @@ export default function Parte6Oriente({ r, set }: Props) {
         />
       </Ejercicio>
 
-      <Ejercicio numero="6.2" titulo="La cadena">
+      <Ejercicio numero="6.2" titulo="La secuencia de decisiones">
         <Texto
-          label="Supongan que dentro de 20 años hay un desastre en la expansión oriental. ¿Qué decisiones de esta carta, tomadas por quiénes y en qué orden, aparecerían en la explicación? Ordénenlas como una cadena."
+          label="Supongan que dentro de 20 años ocurre un desastre en la zona de expansión oriental. ¿Qué decisiones propuestas en esta carta formarían parte de su explicación, qué actores las tomarían y en qué orden? Preséntenlas como una secuencia causal."
           valor={r.p6_decisiones}
           onChange={(v) => set("p6_decisiones", v)}
           filas={6}

@@ -47,14 +47,14 @@ export default function FormularioRegistro({
         </div>
 
         <p className="text-[15px] leading-relaxed text-stone-600">
-          El 12 de noviembre de 2026, tres meses después del terremoto, Camacol Valle le escribió al
-          alcalde ad hoc con sus propuestas para el ajuste del POT. Seis partes para leer esa carta:
-          desde dónde se escribe, quién se sienta a la mesa y quién no, qué pasa con el agua y el
-          río Cauca, qué calla sobre el terremoto, qué cifras usa y si el oriente repite al
-          suroeste.
+          El 12 de noviembre de 2026, tres meses después del terremoto, Camacol Valle dirigió al
+          alcalde ad hoc una carta con sus propuestas para el ajuste del POT. Este control de
+          lectura la examina en seis partes: el lugar de enunciación, los actores incluidos y
+          excluidos, la expansión oriental y el agua, el silencio sobre el terremoto, la evidencia
+          cuantitativa y la comparación entre el oriente y el abanico de Cañaveralejo.
         </p>
         <p className="mt-2 text-[15px] leading-relaxed text-stone-600">
-          Ten a mano el PDF de la carta: las preguntas citan sus páginas.
+          Ten a mano el PDF de la carta: las preguntas remiten a sus páginas.
         </p>
         <p className="mt-2 text-[15px] leading-relaxed text-stone-600">
           Puedes cerrar la página y volver: tus respuestas quedan guardadas en este dispositivo

@@ -14,39 +14,39 @@ export default function Parte2Mesa({ r, set }: Props) {
     <>
       <CabezaParte
         numero={2}
-        titulo="Quién se sienta a la mesa"
-        bajada="Un POT pasa por varias instituciones antes de aprobarse. La carta propone con quién negociarlo, y deja a otras por fuera."
+        titulo="Actores incluidos y excluidos"
+        bajada="El proyecto de POT debe surtir varias instancias antes de su aprobación. La carta propone una instancia de negociación propia y define quiénes participan en ella y quiénes no."
       />
 
       <Contexto
-        titulo="Quién interviene en un POT"
+        titulo="Las instancias del POT según la Ley 388"
         fuente="Fuente: Ley 388 de 1997, artículos 24 y 25."
       >
         <p>
-          Antes de llegar al Concejo, que es quien lo aprueba, el proyecto de POT pasa por la
-          concertación de los asuntos ambientales con la autoridad ambiental (en el Valle, la CVC),
-          por el concepto del Consejo Territorial de Planeación y por la consulta a la ciudadanía.
-          La misma ley dice que la administración pedirá la opinión de los gremios económicos y
-          hará convocatorias públicas, con audiencias para las juntas administradoras locales.
+          Antes de su aprobación por el Concejo, el proyecto de POT debe surtir la concertación de
+          los asuntos ambientales con la autoridad ambiental (en el Valle, la CVC), el concepto del
+          Consejo Territorial de Planeación y la consulta a la ciudadanía. La misma ley dispone que
+          la administración solicitará la opinión de los gremios económicos y realizará
+          convocatorias públicas, con audiencias para las juntas administradoras locales.
         </p>
       </Contexto>
 
-      <Ejercicio numero="2.1" titulo="La mesa que propone Camacol">
+      <Ejercicio numero="2.1" titulo="La mesa técnica y jurídica">
         <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
-          En el punto 2 (pág. 4), ¿quiénes conforman la «mesa técnica y jurídica» que propone el
-          gremio? Marquen todos los que estén.
+          En el punto 2 (pág. 4), ¿qué actores conforman la «mesa técnica y jurídica» que propone
+          el gremio? Seleccionen todos los que correspondan.
         </p>
         <Casillas opciones={ACTORES} valor={r.p2_mesa} onChange={(v) => set("p2_mesa", v)} />
       </Ejercicio>
 
-      <Ejercicio numero="2.2" titulo="Las copias">
+      <Ejercicio numero="2.2" titulo="Los destinatarios de copia">
         <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
-          ¿A quiénes les llega copia de la carta (pág. 6)? Marquen todos.
+          ¿A quiénes se envía copia de la carta (pág. 6)? Seleccionen todos los que correspondan.
         </p>
         <Casillas opciones={ACTORES} valor={r.p2_copias} onChange={(v) => set("p2_copias", v)} />
       </Ejercicio>
 
-      <Ejercicio numero="2.3" titulo="La CVC">
+      <Ejercicio numero="2.3" titulo="El lugar de la CVC">
         <Cita fuente="Carta de Camacol Valle, pág. 2.">
           <p>
             El gremio desea dejar constancia expresa de su recomendación sobre el retorno del
@@ -58,7 +58,7 @@ export default function Parte2Mesa({ r, set }: Props) {
           </p>
         </Cita>
         <Texto
-          label="¿Qué papel le da la carta a la CVC? ¿Por qué pedir delegados del gobierno nacional «con capacidad suficiente de interlocución ante» ella, en vez de sentarla en la mesa? Si dibujan la red que propone la carta (quién habla con quién), ¿por dónde pasa el camino entre el alcalde y la CVC?"
+          label="¿Qué papel le asigna la carta a la CVC? ¿Por qué solicitar delegados del gobierno nacional «con capacidad suficiente de interlocución ante» ella, en lugar de incluirla en la mesa? Si representan como red las relaciones que propone la carta, ¿qué ruta conecta al alcalde con la CVC y qué actores actúan como intermediarios?"
           valor={r.p2_cvc}
           onChange={(v) => set("p2_cvc", v)}
           filas={5}
@@ -67,7 +67,7 @@ export default function Parte2Mesa({ r, set }: Props) {
         />
       </Ejercicio>
 
-      <Ejercicio numero="2.4" titulo="Dos varas">
+      <Ejercicio numero="2.4" titulo="Dos criterios de participación">
         <Cita fuente="Carta de Camacol Valle, pág. 2.">
           <p>
             Una consulta democrática sobre un texto que la ciudadanía no conoce no satisface la
@@ -80,7 +80,7 @@ export default function Parte2Mesa({ r, set }: Props) {
           </p>
         </Cita>
         <Texto
-          label="En el punto 1 Camacol defiende que el proyecto sea público y que estén todas las autoridades ambientales. Comparen eso con la mesa que propone en el punto 2. ¿Es una contradicción? ¿Para qué le sirve al gremio cada uno de los dos argumentos?"
+          label="En el punto 1, Camacol exige que el proyecto sea público y que participen todas las autoridades ambientales competentes. Contrasten esa exigencia con la composición de la mesa que propone en el punto 2. ¿Se trata de una contradicción? ¿Qué función cumple cada argumento en la estrategia del gremio?"
           valor={r.p2_contradiccion}
           onChange={(v) => set("p2_contradiccion", v)}
           filas={5}
@@ -90,9 +90,10 @@ export default function Parte2Mesa({ r, set }: Props) {
       </Ejercicio>
 
       <Limite>
-        Pedir opinión a los gremios está en la ley; lo que se discute aquí es la forma: una mesa
-        de cuatro, por 30 días, propuesta por una de las partes. La carta es una propuesta: no
-        sabemos si el alcalde la aceptó.
+        La Ley 388 contempla la consulta a los gremios; lo que aquí se examina es la forma que
+        propone la carta: una mesa de cuatro actores, con un plazo de 30 días, propuesta por una de
+        las partes interesadas. Se trata de una propuesta: no consta que el alcalde la haya
+        aceptado.
       </Limite>
     </>
   );

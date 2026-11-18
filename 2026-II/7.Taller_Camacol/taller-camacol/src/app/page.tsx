@@ -24,12 +24,12 @@ import {
 } from "@/lib/tipos";
 
 const PARTES = [
-  "Desde dónde se escribe",
-  "Quién se sienta a la mesa",
-  "El agua y el río Cauca",
-  "Lo que la carta no dice",
-  "Las cifras de Camacol",
-  "¿Del suroeste al oriente?",
+  "El lugar de enunciación",
+  "Actores incluidos y excluidos",
+  "La expansión oriental y el agua",
+  "El silencio sobre el terremoto",
+  "La evidencia cuantitativa",
+  "Del suroeste al oriente",
 ];
 
 /** Respuestas que conviene revisar antes de enviar: si están vacías se avisa, no se bloquea. */

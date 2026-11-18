@@ -14,8 +14,8 @@ export default function Parte3Agua({ r, set }: Props) {
     <>
       <CabezaParte
         numero={3}
-        titulo="El agua y el río Cauca"
-        bajada="La carta pide más suelo para urbanizar y dice dónde: hacia el oriente, donde la ciudad llega al río Cauca."
+        titulo="La expansión oriental y el agua"
+        bajada="La carta solicita ampliar el suelo de expansión urbana hacia el oriente, en dirección al río Cauca. Esta parte examina los estudios que la respaldan y sus implicaciones para el agua de la ciudad."
       />
 
       <Cita fuente="Carta de Camacol Valle, pág. 4.">
@@ -28,9 +28,9 @@ export default function Parte3Agua({ r, set }: Props) {
         </p>
       </Cita>
 
-      <Ejercicio numero="3.1" titulo="Los estudios">
+      <Ejercicio numero="3.1" titulo="El origen de los estudios técnicos">
         <p className="mb-3 text-[15px] leading-relaxed text-stone-600">
-          Según la carta (pág. 4), ¿quién le entregó al DAPD los estudios de la «expansión
+          Según la carta (pág. 4), ¿quién entregó al DAPD los estudios de la «expansión
           oriental»?
         </p>
         <Opciones
@@ -44,19 +44,19 @@ export default function Parte3Agua({ r, set }: Props) {
       <Definicion titulo="Clases agrológicas">
         <p>
           El IGAC clasifica los suelos de la clase I a la VIII según su capacidad de uso. Las clases
-          I a III son las mejores para la agricultura; de la IV en adelante, los suelos tienen cada
-          vez más limitaciones.
+          I a III son las de mayor aptitud agrícola; a partir de la clase IV, las limitaciones de
+          uso aumentan progresivamente.
         </p>
         <p>
-          La norma nacional pone los suelos de clase I, II y III entre las categorías de protección
+          La normativa nacional incluye los suelos de clases I, II y III entre las categorías de protección
           del suelo rural (Decreto 3600 de 2007, art. 4, hoy compilado en el Decreto 1077 de 2015,
           art. 2.2.2.2.1.3).
         </p>
       </Definicion>
 
-      <Ejercicio numero="3.2" titulo="Clase IV">
+      <Ejercicio numero="3.2" titulo="La reclasificación a clase IV">
         <Texto
-          label="Entre los estudios entregados, la carta nombra una «reclasificación agrológica expedida por el IGAC (clase IV)». ¿Por qué le importa eso a la expansión oriental? ¿Qué cambia para ese suelo, y qué significa que el estudio lo haya entregado quien lo entregó (3.1)?"
+          label="Entre los estudios aportados, la carta menciona una «reclasificación agrológica expedida por el IGAC (clase IV)». ¿Qué implicaciones tiene esa reclasificación para la expansión oriental? ¿Qué cambia en el régimen de ese suelo y qué implica que el estudio provenga del actor identificado en 3.1?"
           valor={r.p3_clase}
           onChange={(v) => set("p3_clase", v)}
           filas={5}
@@ -65,7 +65,7 @@ export default function Parte3Agua({ r, set }: Props) {
         />
       </Ejercicio>
 
-      <Ejercicio numero="3.3" titulo="El agua de la ciudad">
+      <Ejercicio numero="3.3" titulo="El abastecimiento de agua de la ciudad">
         <Cita fuente="Carta de Camacol Valle, pág. 3.">
           <p>
             El modelo propuesto impone un desarrollo progresivo según el cual los propietarios de
@@ -82,7 +82,7 @@ export default function Parte3Agua({ r, set }: Props) {
           </p>
         </Cita>
         <Texto
-          label="Averigüen de dónde sale el agua que consume Cali: qué plantas de EMCALI la potabilizan y de qué ríos la toman. Con eso, ¿qué implica para el agua de la ciudad urbanizar 500 hectáreas más hacia el Cauca y, además, sin esperar a que estén las redes de la corona anterior?"
+          label="Investiguen de dónde proviene el agua que consume Cali: qué plantas de EMCALI la potabilizan y de qué ríos la captan. Con base en ello, ¿qué implicaciones tiene para el abastecimiento de la ciudad urbanizar 500 hectáreas adicionales hacia el río Cauca sin esperar a que se complete la infraestructura de servicios de la corona anterior?"
           valor={r.p3_agua}
           onChange={(v) => set("p3_agua", v)}
           filas={6}
@@ -91,7 +91,7 @@ export default function Parte3Agua({ r, set }: Props) {
         />
         <div className="mt-4">
           <Campo
-            label="¿De dónde sacaron lo del agua? (enlace o referencia)"
+            label="Fuente consultada sobre el abastecimiento de agua (enlace o referencia bibliográfica)"
             valor={r.p3_fuente}
             onChange={(v) => set("p3_fuente", v)}
             placeholder="https://…"
@@ -101,9 +101,9 @@ export default function Parte3Agua({ r, set }: Props) {
       </Ejercicio>
 
       <Limite>
-        La carta no trae mapa: no sabemos exactamente dónde quedan las 500 hectáreas ni qué tan
-        cerca del río. De los estudios de inundación solo sabemos que existen y quién los
-        entregó, no qué dicen.
+        La carta no incluye cartografía: no es posible establecer con precisión la localización de
+        las 500 hectáreas ni su distancia al río. De los estudios de inundación solo consta que
+        existen y quién los aportó, no su contenido.
       </Limite>
     </>
   );
