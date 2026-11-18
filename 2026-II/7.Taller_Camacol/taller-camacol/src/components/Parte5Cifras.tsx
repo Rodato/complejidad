@@ -61,12 +61,12 @@ export default function Parte5Cifras({ r, set }: Props) {
         </Cita>
         <div className="mb-5">
           <Texto
-            label="El Master Plan del Oriente es la propuesta central de la carta para esa zona de la ciudad. ¿Qué comprende: cuántas hectáreas, sobre qué suelo y en qué dirección? Según la carta, ¿quién lo formularía y quién lo aprobaría? Con base en la Parte 3, ¿qué implica extender la urbanización hacia el río Cauca?"
+            label="El Master Plan del Oriente es la propuesta central de la carta para esa zona de la ciudad. ¿Qué comprende: cuántas hectáreas, sobre qué suelo y en qué dirección? Según la carta, ¿quién lo formularía y quién lo aprobaría? ¿Cuáles son las implicaciones para los recursos hídricos, ambientales y paisajísticos de urbanizar el oriente de la ciudad hacia el río Cauca, tal como lo propone Camacol en su Master Plan del Oriente?"
             valor={r.p5_master}
             onChange={(v) => set("p5_master", v)}
-            filas={6}
-            minPalabras={50}
-            maxPalabras={180}
+            filas={7}
+            minPalabras={60}
+            maxPalabras={220}
           />
         </div>
         <div className="mb-4">

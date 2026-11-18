@@ -23,6 +23,7 @@ export type Respuestas = {
 
   p4_terremoto: string;
   p4_sismico: string;
+  p4_certeza: string;
   p4_leccion: string;
   p4_responsabilidad: string;
 
@@ -32,8 +33,10 @@ export type Respuestas = {
   p5_parque: string;
   p5_fuentes: string;
 
+  p6_falla: string;
   p6_comparacion: string;
   p6_decisiones: string;
+  p6_valoracion: string;
 };
 
 export const RESPUESTAS_VACIAS: Respuestas = {
@@ -50,6 +53,7 @@ export const RESPUESTAS_VACIAS: Respuestas = {
   p3_fuente: "",
   p4_terremoto: "",
   p4_sismico: "",
+  p4_certeza: "",
   p4_leccion: "",
   p4_responsabilidad: "",
   p5_viviendas: "",
@@ -57,8 +61,10 @@ export const RESPUESTAS_VACIAS: Respuestas = {
   p5_m2: "",
   p5_parque: "",
   p5_fuentes: "",
+  p6_falla: "",
   p6_comparacion: "",
   p6_decisiones: "",
+  p6_valoracion: "",
 };
 
 /** Lo que se envía a guardar (Sheets). */

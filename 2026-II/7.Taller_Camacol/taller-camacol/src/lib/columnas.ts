@@ -25,6 +25,7 @@ export const COLUMNAS_RESPUESTA = [
   // Parte 4 — El silencio sobre el terremoto
   "p4_terremoto",
   "p4_sismico",
+  "p4_certeza",
   "p4_leccion",
   "p4_responsabilidad",
   // Parte 5 — La evidencia cuantitativa
@@ -34,8 +35,10 @@ export const COLUMNAS_RESPUESTA = [
   "p5_parque",
   "p5_fuentes",
   // Parte 6 — Del suroeste al oriente
+  "p6_falla",
   "p6_comparacion",
   "p6_decisiones",
+  "p6_valoracion",
 ] as const satisfies readonly (keyof Respuestas)[];
 
 export const COLUMNAS = ["timestamp", "nombre", "codigo", "pareja", ...COLUMNAS_RESPUESTA] as const;

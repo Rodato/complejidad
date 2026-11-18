@@ -69,7 +69,25 @@ export default function Parte4Silencio({ r, set }: Props) {
         </div>
       </Ejercicio>
 
-      <Ejercicio numero="4.2" titulo="Dos lecturas de la «lección aprendida»">
+      <Ejercicio numero="4.2" titulo="Un POT moderno y la certeza de la inversión">
+        <Cita fuente="Carta de Camacol Valle, pág. 5.">
+          <p>
+            Un POT moderno, que impulse la competitividad y dé certeza a la inversión privada, sin
+            dejar a un lado la sostenibilidad ambiental y la mitigación y atención del riesgo
+            sísmico.
+          </p>
+        </Cita>
+        <Texto
+          label="¿Es posible, como proclama Camacol, un POT que dé certeza a la inversión privada sin dejar a un lado la sostenibilidad ambiental y la mitigación y atención del riesgo sísmico? ¿Existen conflictos entre la «certidumbre» de la inversión privada y el respeto a la sostenibilidad ambiental y a la mitigación y atención del riesgo sísmico?"
+          valor={r.p4_certeza}
+          onChange={(v) => set("p4_certeza", v)}
+          filas={7}
+          minPalabras={60}
+          maxPalabras={200}
+        />
+      </Ejercicio>
+
+      <Ejercicio numero="4.3" titulo="Dos lecturas de la «lección aprendida»">
         <Cita fuente="Carta de Camacol Valle, pág. 1.">
           <p>
             Como lo manifestamos en la reunión, debemos partir de una lección aprendida. En 2014
@@ -89,7 +107,7 @@ export default function Parte4Silencio({ r, set }: Props) {
         />
       </Ejercicio>
 
-      <Ejercicio numero="4.3" titulo="La responsabilidad del sector constructor">
+      <Ejercicio numero="4.4" titulo="La responsabilidad del sector constructor">
         <Contexto titulo="Datos del terremoto (Taller 1)" fuente="Fuentes: Alcaldía de Cali, repositorio oficial del terremoto (corte 8-sep-2026); TREQ (2022), págs. 11 y 44; Castañeda, «Cali ante el espejo del terremoto», sección 9.">
           <p>
             {TERREMOTO.fallecidos} fallecidos y {TERREMOTO.colapsos} estructuras con colapso total.
@@ -102,7 +120,7 @@ export default function Parte4Silencio({ r, set }: Props) {
           </p>
         </Contexto>
         <Texto
-          label="Una lectura crítica de la carta sostiene que el gremio omite la responsabilidad que les cabe a los constructores en la catástrofe y en el incumplimiento de la norma sísmica. ¿Qué evidencia se requeriría para sostener o refutar esa tesis? ¿Qué aportan el TREQ y Castañeda y qué información falta (por ejemplo: quién construyó las edificaciones que colapsaron, en qué año y bajo qué norma)? Distingan lo que pueden afirmar con evidencia de lo que no."
+          label="¿Tuvieron en cuenta los afiliados de Camacol, que construyeron los edificios colapsados en el terremoto del 10 de agosto de 2026, las normas para la mitigación y atención del riesgo sísmico?"
           valor={r.p4_responsabilidad}
           onChange={(v) => set("p4_responsabilidad", v)}
           filas={7}

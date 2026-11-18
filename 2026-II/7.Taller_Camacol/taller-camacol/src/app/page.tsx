@@ -41,13 +41,16 @@ const PRINCIPALES: { clave: keyof Respuestas; nombre: string }[] = [
   { clave: "p2_contradiccion", nombre: "2.4" },
   { clave: "p3_clase", nombre: "3.2" },
   { clave: "p3_agua", nombre: "3.3" },
-  { clave: "p4_leccion", nombre: "4.2" },
-  { clave: "p4_responsabilidad", nombre: "4.3" },
+  { clave: "p4_certeza", nombre: "4.2" },
+  { clave: "p4_leccion", nombre: "4.3" },
+  { clave: "p4_responsabilidad", nombre: "4.4" },
   { clave: "p5_master", nombre: "5.2" },
   { clave: "p5_parque", nombre: "5.2" },
   { clave: "p5_fuentes", nombre: "5.3" },
-  { clave: "p6_comparacion", nombre: "6.1" },
-  { clave: "p6_decisiones", nombre: "6.2" },
+  { clave: "p6_falla", nombre: "6.1" },
+  { clave: "p6_comparacion", nombre: "6.2" },
+  { clave: "p6_decisiones", nombre: "6.3" },
+  { clave: "p6_valoracion", nombre: "6.4" },
 ];
 
 type Envio =
