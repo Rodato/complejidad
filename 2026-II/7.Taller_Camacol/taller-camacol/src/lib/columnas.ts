@@ -29,6 +29,7 @@ export const COLUMNAS_RESPUESTA = [
   "p4_responsabilidad",
   // Parte 5 — Las cifras de Camacol
   "p5_viviendas",
+  "p5_master",
   "p5_m2",
   "p5_parque",
   "p5_fuentes",

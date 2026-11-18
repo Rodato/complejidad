@@ -48,14 +48,27 @@ export default function Parte5Cifras({ r, set }: Props) {
         />
       </Ejercicio>
 
-      <Ejercicio numero="5.2" titulo="El parque del río">
+      <Ejercicio numero="5.2" titulo="El Master Plan del Oriente">
         <Cita fuente="Carta de Camacol Valle, pág. 4.">
           <p>
-            La propuesta se integraría, además, con un parque ecoturístico del río Cauca, con una
-            dimensión cercana a 2.000 hectáreas, que permitiría pasar de 3,8 m² a 12,6 m² el índice
-            de espacio público verde por habitante.
+            …sugerimos como opciones concretas la denominada «expansión oriental», adicionando 500
+            hectáreas al área de expansión concertada con la CVC, para desarrollar mediante un
+            Master Plan del Oriente, y además la destinación de 80 hectáreas al control de borde en
+            las laderas. […] La propuesta se integraría, además, con un parque ecoturístico del río
+            Cauca, con una dimensión cercana a 2.000 hectáreas, que permitiría pasar de 3,8 m² a
+            12,6 m² el índice de espacio público verde por habitante.
           </p>
         </Cita>
+        <div className="mb-5">
+          <Texto
+            label="Esta es la propuesta central de la carta para el oriente. ¿Qué incluye el Master Plan del Oriente: cuántas hectáreas, sobre qué suelo y hacia dónde? ¿Quién lo diseñaría y quién lo aprobaría, según la carta? Con lo que respondieron en la Parte 3, ¿qué significa llevar la urbanización hacia el río Cauca?"
+            valor={r.p5_master}
+            onChange={(v) => set("p5_master", v)}
+            filas={6}
+            minPalabras={50}
+            maxPalabras={180}
+          />
+        </div>
         <div className="mb-4">
           <Campo
             label={`Con ${POBLACION_TREQ}, ¿cuántos m² de espacio verde por habitante agrega, por sí solo, un parque de 2.000 hectáreas? (1 hectárea = 10.000 m²)`}
@@ -65,7 +78,7 @@ export default function Parte5Cifras({ r, set }: Props) {
           />
         </div>
         <Texto
-          label="Comparen su cuenta con el salto de 3,8 a 12,6 m². ¿Qué parte del salto explica el parque solo? ¿Qué papel cumple el parque del río en el argumento de la carta, al lado de las 500 hectáreas de expansión oriental?"
+          label="Comparen su cuenta con el salto de 3,8 a 12,6 m². ¿Qué parte del salto explica el parque solo? ¿Por qué creen que la carta presenta el Master Plan del Oriente junto a un parque del río, y qué cambia si se leen por separado?"
           valor={r.p5_parque}
           onChange={(v) => set("p5_parque", v)}
           filas={5}

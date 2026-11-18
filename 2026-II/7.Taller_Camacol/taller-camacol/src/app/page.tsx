@@ -43,6 +43,7 @@ const PRINCIPALES: { clave: keyof Respuestas; nombre: string }[] = [
   { clave: "p3_agua", nombre: "3.3" },
   { clave: "p4_leccion", nombre: "4.2" },
   { clave: "p4_responsabilidad", nombre: "4.3" },
+  { clave: "p5_master", nombre: "5.2" },
   { clave: "p5_parque", nombre: "5.2" },
   { clave: "p5_fuentes", nombre: "5.3" },
   { clave: "p6_comparacion", nombre: "6.1" },
@@ -289,7 +290,9 @@ function Taller() {
 
   async function enviar() {
     if (!registro) return;
-    const vacias = PRINCIPALES.filter((p) => !String(r[p.clave]).trim()).map((p) => p.nombre);
+    const vacias = [
+      ...new Set(PRINCIPALES.filter((p) => !String(r[p.clave]).trim()).map((p) => p.nombre)),
+    ];
     if (
       vacias.length &&
       !confirm(

@@ -1,6 +1,6 @@
 "use client";
 
-import { CabezaParte, Cita, Ejercicio, Limite, Texto } from "./ui";
+import { CabezaParte, Cita, Contexto, Ejercicio, Texto } from "./ui";
 import type { Respuestas } from "@/lib/tipos";
 
 type Props = {
@@ -45,6 +45,25 @@ export default function Parte6Oriente({ r, set }: Props) {
         </p>
       </Cita>
 
+      <Contexto
+        titulo="Leer también lo que la carta no dice"
+        fuente="Fuentes: Castañeda, «Cali ante el espejo del terremoto», introducción y sección 2 (Taller 1); TREQ (2022), págs. 15 y 45."
+      >
+        <p>
+          Un texto también se analiza por lo que no dice. Sobre el abanico de Cañaveralejo hubo
+          advertencias, y no venían de cartas de un gremio sino de estudios científicos, como la
+          microzonificación de 2005 citada arriba. Castañeda lo resume así: la
+          ciudad «produjo conocimiento científico suficiente para reconocer el peligro, delimitar
+          los sectores críticos y construir modelos avanzados de pérdidas», pero «no ha demostrado
+          haber convertido oportunamente ese conocimiento en una intervención sistemática de las
+          edificaciones privadas más vulnerables».
+        </p>
+        <p>
+          Para el oriente también hay estudios científicos, como el TREQ citado arriba. La carta no
+          los menciona.
+        </p>
+      </Contexto>
+
       <Ejercicio numero="6.1" titulo="¿Se repite?">
         <Texto
           label="Una lectura crítica sostiene que la carta propone repetir en el oriente lo que se hizo en el suroeste con el río Cañaveralejo. Averigüen qué pasó con el Cañaveralejo y su abanico al urbanizarse. ¿Qué tendría que ser igual en los dos casos para que la comparación se sostenga: quién urbaniza, quién produce los estudios, qué pasa con el río, qué riesgo queda por fuera? Usen al menos un dato de la carta y uno del TREQ o de Castañeda."
@@ -66,12 +85,6 @@ export default function Parte6Oriente({ r, set }: Props) {
           maxPalabras={180}
         />
       </Ejercicio>
-
-      <Limite>
-        La comparación es una hipótesis, no un hecho: la carta no habla del Cañaveralejo ni del
-        suelo blando del oriente. Lo que se puede hacer es mostrar qué mecanismos se repetirían y
-        qué evidencia falta para afirmarlo.
-      </Limite>
     </>
   );
 }

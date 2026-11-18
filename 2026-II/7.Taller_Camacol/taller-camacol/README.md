@@ -46,7 +46,8 @@ viven aquí y no en el navegador.
 | 4.2 | Dos lecciones | Camacol: el POT de 2014 tenía problemas de financiación y viabilidad normativa y solo se cumplió el 37 %, así que hace falta más suelo de expansión y menos restricciones. Castañeda: la ciudad produjo conocimiento (microzonificación de 2005, RAC, TREQ) y no lo convirtió en intervención de las edificaciones vulnerables (art. 233 del POT de 2000, reiterado en 2014), así que los seis meses son para microzonificación y vulnerabilidad. Además, el plazo que la carta «aprovecha» lo pidió la Alcaldía **por el terremoto**. |
 | 4.3 | ¿Responsabilidad? | Una buena respuesta separa lo que se puede afirmar de lo que no. Hay 154 fallecidos en 24 colapsos totales, más de seis por estructura, lo que apunta a edificios de alta ocupación (Acto 4 del Taller 1), y Castañeda nombra edificios de apartamentos (Ana Pilar, María Elvira Lloreda, Cantabria, Torres del Limonar). Pero el TREQ ubica el riesgo modelado en vivienda de 1–2 pisos e informal, y Castañeda le atribuye la falla al Municipio. Para sostener la tesis faltaría saber, de los edificios que fallaron, quién los construyó (y si era afiliado), en qué año, con qué norma (antes de 1984 no había código; CCCSR-84, NSR-98, NSR-10), qué curaduría los licenció, quién hizo la supervisión técnica y si se modificaron después. Se penaliza afirmar la culpa sin evidencia, y también descartarla sin mirar los edificios. |
 | 5.1 | Las viviendas | **+60.847** en suelo de expansión (de 108.172 a 169.019, +56 %). Salen del suelo urbano y de renovación (−33.804) y del área metropolitana (−27.043). |
-| 5.2 | El parque | 2.000 ha = 20.000.000 m² ÷ 2.460.000 hab. = **8,1 m²** (8,7 si usan 2,3 millones). El salto de la carta es de 8,8 m², así que el parque solo explica cerca del **92 %**. El parque del río es la compensación verde que acompaña la expansión. Vale preguntar si es suelo que de todos modos no se puede urbanizar (ronda del río, zona inundable). |
+| 5.2 | El Master Plan del Oriente | **Lo central de la propuesta** (corrección de Boris, 18-nov): +500 ha sumadas al área de expansión ya concertada con la CVC, en el oriente, hacia el río Cauca, sobre suelo con la reclasificación agrológica a clase IV que aportaron los interesados (3.1–3.2), más 80 ha de control de borde en las laderas y el parque de 2.000 ha del río. La carta **no dice quién diseñaría el Master Plan ni quién lo aprobaría**, ni dónde quedan exactamente las 500 ha. Llevar la urbanización hacia el Cauca es ocupar la llanura de inundación, cerca de donde EMCALI toma el agua (3.3), y antes de que estén las redes. No se encontró en línea ningún documento público llamado «Master Plan del Oriente» (búsqueda del 18-nov). |
+| 5.2 | El parque | 2.000 ha = 20.000.000 m² ÷ 2.460.000 hab. = **8,1 m²** (8,7 si usan 2,3 millones). El salto de la carta es de 8,8 m², así que el parque solo explica cerca del **92 %**. El parque del río es la compensación verde que acompaña la expansión: leído junto al Master Plan, hace presentable la urbanización del oriente; leído por separado, el Master Plan son 500 ha más de vivienda hacia el río. Vale preguntar si el parque es suelo que de todos modos no se puede urbanizar (ronda del río, zona inundable). |
 | 5.3 | Quién produce cada cifra | **DAPD**: 37 %, 338.038 viviendas. **El gremio**: pérdidas del 19 % y el 5 % («evaluados por el gremio»), 17 ha al año («la experiencia») y 65 ha al año (su lectura del modelo). **El borrador**: 105 mil predios, 71 y 23 decisiones. **Sin fuente**: 147 mil hogares, 63 mil y 10 mil; 1.600 y 622 ha; 3,8 → 12,6 m². Lo que se puede verificar: la aritmética del cuadro y del parque, y las cifras del DAPD contra sus documentos. Los **147 mil hogares** irregulares se usan para pedir que se compense a los propietarios y se flexibilice la protección: el asentamiento informal aparece como argumento a favor del dueño del suelo. |
 | 6.1 | ¿Se repite? | Suroeste: el abanico de Cañaveralejo, urbanizado, es la microzona 4C (amplificación) y ahí se concentró el daño. Lo que averigüen sobre el río (canalización) hay que **verificarlo** contra la fuente. Oriente: el TREQ dice que los depósitos blandos son más gruesos hacia el este («cientos de metros») y que la ribera del Cauca concentra asentamientos expuestos a inundación. Lo que tendría que repetirse: expansión empujada por propietarios y promotores, estudios aportados por los interesados y el riesgo sísmico del suelo fuera de la discusión. La carta no menciona microzonificación del oriente. |
 | 6.2 | La cadena | Ejemplo: reunión en el club → carta → retorno a concertación con presión ministerial sobre la CVC → reclasificación a clase IV → +500 ha → se eliminan las coronas (urbanizar antes de las redes) → vivienda en suelo blando e inundable. Vale más si nombran actores y no solo eventos. |
@@ -65,7 +66,8 @@ viven aquí y no en el navegador.
 - **TREQ (2022)**: pág. 11 (48 %), pág. 15 (2,46 millones de habitantes; depósitos más
   gruesos hacia el este), pág. 44 (OSSO 2017 sobre el cumplimiento de la norma), pág. 45
   (ribera del Cauca).
-- **Castañeda**: secciones 2 (microzona 4C) y 9 (daños del terremoto).
+- **Castañeda**: introducción (la ciudad produjo conocimiento científico y no lo convirtió en
+  intervención), secciones 2 (microzona 4C) y 9 (daños del terremoto).
 
 ## Decisiones
 
@@ -77,6 +79,12 @@ viven aquí y no en el navegador.
 - **No nombra al concejal** que hizo llegar la carta.
 - **Casillas de selección múltiple** (2.1 y 2.2): guardan las claves separadas por comas, en
   el orden de la lista (`camacol,dapd`), para que todas las respuestas sigan siendo texto.
+- **Correcciones de Boris (18-nov)**: 1.2 dice «quiénes hacen parte de la Junta Directiva»;
+  se quitó el recuadro «Lo que no se puede afirmar» de la Parte 1; la 5.2 pasó a ser sobre el
+  Master Plan del Oriente (nueva columna `p5_master`) y el parque queda como segunda parte; en
+  la Parte 6, el recuadro final se cambió por uno antes de 6.1 que pide leer lo que la carta no
+  dice: las advertencias científicas sobre el Cañaveralejo y los estudios del oriente que la
+  carta no cita. Los recuadros de las partes 2 a 5 siguen como estaban.
 - **Pegar está bloqueado** en las respuestas, salvo en la fuente del agua (3.3).
 
 ## Almacenamiento

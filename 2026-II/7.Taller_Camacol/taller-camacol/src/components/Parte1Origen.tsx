@@ -1,6 +1,6 @@
 "use client";
 
-import { CabezaParte, Cita, Contexto, Definicion, Ejercicio, Limite, Texto } from "./ui";
+import { CabezaParte, Cita, Contexto, Definicion, Ejercicio, Texto } from "./ui";
 import { CARTA } from "@/lib/carta";
 import type { Respuestas } from "@/lib/tipos";
 
@@ -86,7 +86,7 @@ export default function Parte1Origen({ r, set }: Props) {
           hora.
         </p>
         <Texto
-          label="¿Desde qué organización se creó el sobre? ¿De qué dominios son los correos de quienes firman? ¿Qué les dice eso sobre quiénes son la Junta Directiva de Camacol y sobre quién movió la carta?"
+          label="¿Desde qué organización se creó el sobre? ¿De qué dominios son los correos de quienes firman? ¿Qué les dice eso sobre quiénes hacen parte de la Junta Directiva de Camacol y sobre quién movió la carta?"
           valor={r.p1_sobre}
           onChange={(v) => set("p1_sobre", v)}
           filas={5}
@@ -105,12 +105,6 @@ export default function Parte1Origen({ r, set }: Props) {
           maxPalabras={150}
         />
       </Ejercicio>
-
-      <Limite>
-        Que el sobre se haya creado desde una empresa no prueba quién redactó cada frase, ni que
-        la carta no recoja la posición de los demás afiliados. Y de la reunión en el Club Colombia
-        solo sabemos lo que la carta cuenta.
-      </Limite>
     </>
   );
 }

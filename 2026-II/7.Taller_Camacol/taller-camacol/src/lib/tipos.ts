@@ -27,6 +27,7 @@ export type Respuestas = {
   p4_responsabilidad: string;
 
   p5_viviendas: string;
+  p5_master: string;
   p5_m2: string;
   p5_parque: string;
   p5_fuentes: string;
@@ -52,6 +53,7 @@ export const RESPUESTAS_VACIAS: Respuestas = {
   p4_leccion: "",
   p4_responsabilidad: "",
   p5_viviendas: "",
+  p5_master: "",
   p5_m2: "",
   p5_parque: "",
   p5_fuentes: "",
