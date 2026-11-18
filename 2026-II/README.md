@@ -47,7 +47,15 @@ desastre no lo produce un evento natural sino la interacción lenta de decisione
   escrituras de 1941–44 y a los avisos de 2020–24: la doble curva de precios, la ruta de la élite
   (La Merced → Centenario y Granada), el desclasamiento de los viejos bastiones, Ciudad Jardín en
   1980 y hoy, y San Antonio como brecha de renta. Ver su `README.md`.
+- `7.Taller_Camacol/taller-camacol/` — **Taller 6**, «Quién ordena Cali» (armado el 18-nov).
+  Control de lectura de la carta CV-066 de Camacol Valle al alcalde ad hoc sobre el ajuste del
+  POT (12-nov-2026), propuesto por Boris: desde dónde se escribe (el certificado de DocuSign),
+  quién se sienta a la mesa y quién no (la CVC), la expansión oriental hacia el río Cauca y la
+  clase IV, el terremoto que la carta no nombra, sus cifras y la comparación entre el oriente y
+  el Cañaveralejo. Ver su `README.md`.
 - `0.Insumos/johan_torres/` — la base de Johan (no se versiona; ver el `README.md` del Taller 5).
+- `0.Insumos/camacol/` — la carta de Camacol: el original y la versión para repartir, con el
+  certificado tachado. No se versiona: llegó por un concejal y no está publicada.
 - `graficos/segregacion_precios/` — gráfico para Mosquera y Aprile (1980), págs. 85–91, pedido por
   Boris el 11-nov: índice de precios 2020–24 por nueve grupos de barrios contra la
   inflación, con la base de Johan. El método y las exclusiones están en el docstring de
